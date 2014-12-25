@@ -41,14 +41,14 @@ def recorrer_sgfs():
         for line in lines:
             #print line
             if pw=="" or pw==None:
-                mo = re.search("PW\[(\w*[\s]?\w)\]", line)
+                mo = re.search("PW\[(\w*\s?\w*)\]", line)
                 if mo:
                     for e in mo.groups():
                         pw=e
                 #print "pw: "+str(pw)+"\n"+line
             if pb=="" or pb==None:
                 #mo = re.search("PB\[(\w*)\]", line)
-                mo = re.search("PB\[(\w*[\s]?\w)\]", line)
+                mo = re.search("PB\[(\w*\s?\w*)\]", line)
                 if mo:
                     for e in mo.groups():
                         pb=e
@@ -58,7 +58,8 @@ def recorrer_sgfs():
                     for e in mo.groups():
                         date=e
             if result=="" or result==None:
-                mo = re.search("RE\[(\w\+.*)\]", line)
+                #mo = re.search("RE\[(\w\+.*)\]", line)
+                mo = re.search("RE\[(\w*\+\w*\W?\w*?)\]", line)
                 if mo:
                     for e in mo.groups():
                         result=e
