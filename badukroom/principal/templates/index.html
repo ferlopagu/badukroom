@@ -1,0 +1,52 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ebay.ly</title>
+
+    <!-- Bootstrap -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    
+    <!-- WGO.js -->
+    <script type="text/javascript" src="{% static 'wgo/wgo.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'wgo/wgo.player.min.js' %}"></script>
+    <link type="text/css" href="{% static 'wgo/wgo.player.css' %}" rel="stylesheet" />
+
+  </head>
+  <body>
+  <div class="container">
+    <h1>EBAY.ly!</h1>
+
+		<ul class="nav nav-tabs">
+		<li role="presentation" class="active"><a href="">Home</a></li>
+		<li role="presentation"><a href="">Productos y Tiendas</a></li>
+		<li role="presentation"><a href="">Usuarios y Puntuaciones</a></li>
+		<li role="presentation"><a href="">Usuarios y sus Recomendaciones</a></li>
+		<li role="presentation"><a href="">Crear Usuario</a></li>
+		<li role="presentation"><a href="">Iniciar Sesion</a></li>
+		<li role="presentation"><a href="">Cerrar Sesion</a></li>
+	</ul>
+	<br>
+	<br>
+	<br>
+	
+		<h1>WELCOME TO BADUKROOM</h1>
+		<br>
+		<br>
+		<h4>TU RED SOCIAL DE GO</h4>
+		
+		<div data-wgo="{% static 'sgf/ersev-butsimple.sgf' %}" style="width: 700px">
+		Sorry, your browser doesn't support WGo.js. Download SGF 
+		<a href="{% static 'sgf/ersev-butsimple.sgf' %}">directly</a>.
+		
+		
+	</div>
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+  </body>
+</html>
