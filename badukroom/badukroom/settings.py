@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 """
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-from django.conf.global_settings import STATICFILES_DIRS
+from django.conf.global_settings import STATICFILES_DIRS, MEDIA_ROOT, MEDIA_URL
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'principal',
+    'login',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -68,7 +69,8 @@ DATABASES = {
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+#LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-ES'
 
 TIME_ZONE = 'UTC'
 
@@ -88,9 +90,14 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
                     os.path.join(BASE_DIR, 'static'),
                     )
+#fin add por mi
 
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
 #     'django.template.loaders.eggs.Loader',
 )
+
+#add por me
+MEDIA_ROOT='/home/fla2727/workspace/tfg/badukroom/static/sgf' # seguardaran en esa carpeta y para visualizar en el template --> data-wgo="{% static 'sgf/kymco-ersev.sgf' %}"
+MEDIA_URL='/media/' # para descargar un sgf --> http://127.0.0.1:8000/media/ersev-butsimple

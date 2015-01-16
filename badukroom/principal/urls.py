@@ -7,6 +7,6 @@ from django.conf.urls import patterns, url
 from principal import views
 
 urlpatterns = patterns ('' ,
-    url(r'^$', views.login, name='login'),
-    url(r'^index/', views.index, name='index'),
+    url(r'^$', views.index, name='index'),
+    url(r'^creaPartida/', views.crea_partida, name='crea_partida'),
 )
