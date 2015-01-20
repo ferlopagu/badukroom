@@ -9,6 +9,8 @@ from badukroom.settings import MEDIA_ROOT
 
 # Create your models here.
 
+#PROBLEMA A RESOLVER, SE PUEDE GUARDAR VARIAS VECES EL MISMO JUGADOR
+# ESTADO: NO RESUELTO
 class Jugador(models.Model):
     nombre=models.CharField(max_length=50)
         
