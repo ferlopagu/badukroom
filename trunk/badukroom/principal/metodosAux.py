@@ -6,6 +6,7 @@ Created on 25/12/2014
 '''
 import os
 import re
+from principal.models import Jugador
 
 """METODO PARA AVERIGUAR PATH DE CADA FICHERO """
 def pathFile(path): #example--> path="Correos",    dir="Correos/"
@@ -73,4 +74,16 @@ def recorrer_sgfs():
     for e in lista_diccionarios_res:
         print e
      
-recorrer_sgfs()
+#recorrer_sgfs()
+
+profesionales=['Yoshiteru Abe','Akaboshi Intetsu','Jiro Akiyama','Nobuo Amayake','Akio Ando','Takeo Ando','Toshiyuki Ando','Nobuaki Anzai','Kaori Aoba','Kikuyo Aoki','Shinichi Aoki','Takeshi Aragaki','Shuzo Awaji','Shigeru Baba','Kaori Chinen','Hideyuki Fujisawa','Hosai Fujisawa','Susumu Fukui','Go Seigen','Dogen Handa','Naoki Hane','Yasumasa Hane','Shoji Hashimoto','Utaro Hashimoto','Naoto Hikosaka','Hirose Heijiro','Kunihisa Honda','Honinbo Chihaku','Honinbo Doetsu','Honinbo Shuhaku','Honinbo Shusai','Honinbo Dochi','Honinbo Dosaku','Honinbo Doteki',
+       'Honinbo Genjo','Honinbo Hakugen','Honinbo Jowa','Honinbo Retsugen','Honinbo Sansa','Honinbo Satsugen','Honinbo Shuei','Honinbo Shuetsu','Honinbo Shugen','Honinbo Shuho','Honinbo Shusaku','Honinbo Shuwa','Masaki Hoshino''Inoue Genan Inseki','Akira Ishida','Yoshio Ishida','Kunio Ishii','Kaoru Iwamoto','Tatsuaki Iwata','Yuta Iyama','Honinbo Josaku','Toshiro Kageyama','Takeo Kajiwara','Masaaki Kanagawa','Karigane Junichi','Satoshi Kataoka','Atsushi Kato','Masao Kato','Shin Kato','Kazumi Akedo','Yasuro Kikuchi','Minoru Kitani','Tetsuya Kiyonari',
+       'Ko Iso','Ko Reibun','Izumi Kobayashi','Koichi Kobayashi','Satoru Kobayashi','Hideki Komatsu','Rin Kono','Yasuo Koyama','Katsukiyo Kubomatsu','Shuchi Kubouchi','Norio Kudo','Nobuaki Maeda','Kana Mannami','Takehisa Matsumoto','Hideki Matsuoka','Tomoyasu Mimura','Naoki Miyamoto','Hidehiro Miyashita','Goro Miyazawa','Tomochika Mizokami','Yoshika Mizuno','Michihiro Morita','Daisuke Murakawa','Nakamura Doseki','Shinya Nakamura','Yusuke Oeda','Masaki Ogata','Shuzo Ohira','Yumiko Okada','Chiyotaro Onoda','Ota Yuzo','Hideo Otake','Hideyuki Sakai',
+       'Toshio Sakai','Eio Sakata','Honinbo Sanetsu','Sunao Sato','Kensaku Segoe','Riichi Sekiyama','Taiki Seto','Toshihiro Shimamura','So Yokoku','Masao Sugiuchi','Keizo Suzuki','Tamejiro Suzuki','Dohei Takabe','Kaku Takagawa','Shinji Takao','Masaki Takemiya','Hiroaki Tono','Masamitsu Tsuchida','Atsushi Tsuruyama','Tsuzuki Yoneko','Shuhei Uchida','Yoshio Ueki','Toshiro Yamabe','Kimio Yamada','Takuji Yamada','Hiroshi Yamashiro','Keigo Yamashita','Katsunori Yanaka','Yasui Sanchi','Hajime Yasunaga','Norimoto Yoda','Shigeaki Yokota','Yukari Yoshihara','Satoshi Yuki',]
+def guardar_profesionales(lista):
+    for e in lista:
+        jugador = Jugador(nombre=e)
+        jugador.save()
+    print "Jugadores deberian haber sido guardados"
+        
+#guardar_profesionales(profesionales)

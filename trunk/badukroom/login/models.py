@@ -42,6 +42,7 @@ rango=[("30k","30k"),
        ("8D","8D"),
        ("9D","9D"),
        ]
+
 class Perfil(models.Model):
     user=models.OneToOneField(User, unique=True)
     fecha_nacimiento=models.DateField()
