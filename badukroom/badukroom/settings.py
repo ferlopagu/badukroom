@@ -100,5 +100,6 @@ TEMPLATE_LOADERS = (
 )
 
 #add por me
-MEDIA_ROOT='/home/fla2727/workspace/tfg/badukroom/static/sgf' # seguardaran en esa carpeta y para visualizar en el template --> data-wgo="{% static 'sgf/kymco-ersev.sgf' %}"
+#MEDIA_ROOT='/home/fla2727/workspace/tfg/badukroom/static/sgf' # seguardaran en esa carpeta y para visualizar en el template --> data-wgo="{% static 'sgf/kymco-ersev.sgf' %}"
+MEDIA_ROOT='/home/fla2727/workspace/tfg/badukroom/static/' # seguardaran en esa carpeta y para visualizar en el template --> data-wgo="{% static 'sgf/kymco-ersev.sgf' %}"
 MEDIA_URL='/media/' # para descargar un sgf --> http://127.0.0.1:8000/media/ersev-butsimple
