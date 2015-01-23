@@ -3,10 +3,18 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>{% block title %}Base.html{% endblock %}</title>
 
 	<!-- Bootstrap -->
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    
+        <!-- WGO.js -->
+    <script type="text/javascript" src="{% static 'wgo/wgo.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'wgo/wgo.player.min.js' %}"></script>
+    <link type="text/css" href="{% static 'wgo/wgo.player.css' %}" rel="stylesheet" />
+    
 
 </head>
 <body>
