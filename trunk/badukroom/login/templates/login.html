@@ -22,7 +22,7 @@
 				<form id='formulario_login' method="post" action=''>
 					{% csrf_token %} {{formulario_login.as_p}}
 					<p>
-						<input type='submit' value='Entrar' />
+						<input type='submit' value='Entrar' name='entrar'/>
 					</p>
 				</form>
 				{% endblock %}
@@ -40,11 +40,11 @@
 
 							<div class="modal-body">
 								{% block contenido2 %}
-								<form id='formulario_registro' method="post" action=''>
+								<form id='formulario_registro' method="post"  enctype="multipart/form-data" action=''>
 									{% csrf_token %} {{user_form.as_p}}
 									{% csrf_token %} {{perfil_form.as_p}}
 									<p>
-										<input type='submit' value='Crear usuario' />
+										<input type='submit' value='Crear usuario' name='registrar'/>
 									</p>
 								</form>
 								{% endblock %}

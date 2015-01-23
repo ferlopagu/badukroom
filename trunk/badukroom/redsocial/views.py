@@ -3,7 +3,7 @@ from django.shortcuts import render_to_response
 from django.core.context_processors import request
 from django.contrib.auth.decorators import login_required
 from django.template.context import RequestContext
-from redsocial.models import Comentario
+from redsocial.models import Comentario, Respuesta
 from login.models import Perfil
 
 # Create your views here.
@@ -19,6 +19,7 @@ def inicio(request):
     add al diccionario que teniamos los comentarios de cada usuario dando como resultado un diccionario de la forma {"perfil":perfilX, "comentarios":[com1, com2]}
     add una lista con el diccionario de cada usuario siendo esta la que devolveremos
     """
+    """ VERSION ANTIGUA FUNCIONAL
     lista_diccionarios_def=[]
     perfiles=Perfil.objects.all()
     for p in perfiles:
@@ -33,14 +34,28 @@ def inicio(request):
         
     context = {'lista_diccionario_comentarios': lista_diccionarios_def}
     return render_to_response('inicio.html',context,context_instance=RequestContext(request))
-
-
-""" Esto devuelve en la lista comentarios TODOS los comentarios del sistema
-    lista_comentarios=[]
+    """
+    """ PROBAMOS VERSION NUEVA PARA ADD LAS RESPUESTAS """
+    lista_diccionarios_def=[]
     perfiles=Perfil.objects.all()
     for p in perfiles:
+        diccionario_perfil_comentarios={}
+        diccionario_perfil_comentarios["perfil"]=p 
         comentarios=Comentario.objects.filter(perfil=p)
+        lista_diccionario_comentarios_respuestas=[] #va a almacenar una lista del diccionario siguiente
         for c in comentarios:
-            lista_comentarios.append(c)
-    context = {'comentarios': lista_comentarios}
-"""
+            diccionario_comentarios_respuestas={}# diccionario = {'comentario': r1, 'respuestas': [r1,r2,r3]}
+            diccionario_comentarios_respuestas['comentario']=c
+            resp=Respuesta.objects.filter(comentario=c)
+            respuestas=[]
+            for r in resp:
+                respuestas.append(r)
+            diccionario_comentarios_respuestas['respuestas']=respuestas
+            lista_diccionario_comentarios_respuestas.append(diccionario_comentarios_respuestas)
+        diccionario_perfil_comentarios['comentarios']=lista_diccionario_comentarios_respuestas
+        lista_diccionarios_def.append(diccionario_perfil_comentarios)
+    context = {'lista_diccionario_comentarios': lista_diccionarios_def}
+    return render_to_response('inicio.html',context,context_instance=RequestContext(request))
+        
+        
+
