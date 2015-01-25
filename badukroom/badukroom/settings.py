@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'principal',
     'login',
     'redsocial',
+    'logout',
 )
 
 MIDDLEWARE_CLASSES = (

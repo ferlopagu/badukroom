@@ -7,6 +7,6 @@ from django.conf.urls import patterns, url
 from redsocial import views
 
 urlpatterns = patterns ('' ,
-    url(r'^$', views.inicio, name='inicio'),
-    #url(r'^login/', views.login, name='login2'),
+    url(r'^$', views.home, name='home'),
+    url(r'^(?P<username>\w+)/$', views.inicio, name='inicio'),
 )

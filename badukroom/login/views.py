@@ -27,7 +27,7 @@ def login_view(request):
                 if acceso is not None:
                     if acceso.is_active:
                         login(request, acceso)
-                        return HttpResponseRedirect('/')
+                        return HttpResponseRedirect('/redsocial')
                     else:
                         return render_to_response('noactivo.html', context_instance=RequestContext(request))
                 else:
@@ -47,8 +47,3 @@ def login_view(request):
         user_form = UserForm()
         perfil_form=PerfilForm()
     return render_to_response('login.html', {'formulario_login':formulario_login, 'user_form':user_form, 'perfil_form':perfil_form}, context_instance=RequestContext(request))
-
-@login_required(login_url='/login')
-def logout(request):
-    logout(request)
-    return HttpResponseRedirect('/')
