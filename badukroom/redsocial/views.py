@@ -7,6 +7,11 @@ from redsocial.models import Comentario, Respuesta
 from login.models import Perfil
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
+from django.views.generic.base import TemplateView
+from redsocial.forms import ComentarioForm
+from django.http import JsonResponse
+from datetime import datetime
+
 
 # Create your views here.
 #@login_required(login_url='/login')
@@ -81,7 +86,9 @@ def inicio(request, username):
         lista_diccionario_comentarios_respuestas.append(diccionario_comentarios_respuestas)
     diccionario_perfil_comentarios['comentarios']=lista_diccionario_comentarios_respuestas
     lista_diccionarios_def.append(diccionario_perfil_comentarios)
-    context = {'lista_diccionario_comentarios': lista_diccionarios_def}
+    """ add form comentar"""
+    formulario=ComentarioForm()
+    context = {'lista_diccionario_comentarios': lista_diccionarios_def, 'formulario':formulario}
     return render_to_response('inicio.html',context,context_instance=RequestContext(request))
 
 @login_required(login_url='/login')
@@ -95,7 +102,28 @@ def home(request):
             lista_comentarios.append(c)
     context = {'lista_comentarios': lista_comentarios}
     return render_to_response('home.html',context,context_instance=RequestContext(request))
-    
-         
-        
 
+
+    
+def crea_comentario(request):
+    if request.is_ajax():
+        #formulario=ComentarioForm(texto=request.POST['texto'])
+        form = ComentarioForm(request.POST)
+        if form.is_valid():
+            #form.save()
+            comentario=form.save(commit=False)
+            comentario.fecha=datetime.now()
+            perfil=Perfil.objects.get(user=request.user)
+            comentario.perfil=perfil
+            comentario.save()
+            comentarios=list(Comentario.objects.values())
+            return JsonResponse(comentarios, safe=False)
+    else:
+        print "ENTRAMOS EN ELSE AL NO SER AJAX"
+        home(request)
+        #print "JEJEJEJEJEJEJEJEJEJEJEJEJEJJEJ"
+        #formulario=ComentarioForm()
+        #comentarios=list(Comentario.objects.values())
+        #print comentarios
+        #context = {'formulario':formulario, 'comentarios':comentarios}
+        #return render_to_response('comentar.html',context,context_instance=RequestContext(request))

@@ -33,7 +33,7 @@
 							<!-- centrar la columna principal-->
 							<div class="col-sm-6">
 								<div class="well"> 
-								
+									<!--  
 									<form class="form-horizontal" role="form">
 										<h4>¿Qué estás pensando?</h4>
 										<div class="form-group" style="padding:14px;">
@@ -45,6 +45,21 @@
 											<li><a href=""><i class="glyphicon glyphicon-camera"></i></a></li>
 										</ul>
 									</form>
+									-->
+
+
+									<!-- { csrf_token } -->
+									<form id='formulario' method="post" action="{% url 'redsocial:creaComentario' %}" enctype="multipart/form-data">
+										 {% csrf_token %} {{formulario.as_p}}
+										<p>
+											<input id='enviar' type='submit' value='enviar' />
+										</p>
+									</form>
+
+
+
+
+
 								</div>
 								{% for e in lista_diccionario_comentarios %} 
 									{% if e.perfil.user.username == user.username %} 
@@ -104,5 +119,26 @@
 		</div>
 	</div>
 </div>
-
 {% endblock cuerpo %}
+
+{% block js %}
+	<script>
+	$('#formulario').submit(function(event) { // catch the form's submit event
+    	event.preventDefault();
+    	$.ajax({ // create an AJAX call...
+            data: $(this).serialize(), // get the form data
+            type: $(this).attr('method'), // GET or POST
+            url: $(this).attr('action'), // the file to call
+            success: function(data){ // on success..
+            	console.log("comentario creado");
+            	console.log(data);
+            	console.log("recargando página");
+            	location.reload(true);
+
+            }  
+        });
+    	
+    });
+	</script>
+
+{% endblock js %}
