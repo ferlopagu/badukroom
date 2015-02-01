@@ -1,0 +1,70 @@
+{% extends "base.html" %} {% block title %}My amazing blog{% endblock %}
+
+{% block cuerpo %} 
+<p>Welcome, {{ user.username }}. Thanks for logging in.</p>
+
+<div class="wrapper">
+	<div class="box">
+		<div class="row row-offcanvas row-offcanvas-left">
+			<!-- sidebar left-->
+			<div class="column col-sm-2 col-xs-1 sidebar-offcanvas" id="sidebar1">
+				<ul class="nav">
+					<li><a href="#" data-toggle="offcanvas" class="visible-xs text-center"><i class="glyphicon glyphicon-chevron-right"></i></a></li>
+				</ul>
+
+				<ul class="nav hidden-xs" id="lg-menu">
+					<li class="active"><a href="#featured"><i class="glyphicon glyphicon-list-alt"></i> Mensajes</a></li>
+					<li><a href="#stories"><i class="glyphicon glyphicon-list"></i> Grupos</a></li>
+					<li><a href="#"><i class="glyphicon glyphicon-paperclip"></i> Saved</a></li>
+					<li><a href="#"><i class="glyphicon glyphicon-refresh"></i> Refresh</a></li>
+				</ul> 
+			</div>
+			<!-- /sidebar left-->
+
+			<!-- main right col -->
+			<div class="column col-sm-8 col-xs-12" id="main">
+				<div class="padding">
+					<div class="full col-sm-12">
+						<!-- content -->                      
+						<div class="row">
+							<!-- main col left -->
+							<!-- Creamos una columna de tamaño 3 sin utilizar -->
+							<div class="col-sm-3">
+							</div>
+							<!-- centrar la columna principal-->
+							<div class="col-sm-6">
+								<div class="well"> 
+									
+									{% for p in lista_perfiles %}
+									 <ul><li><a href="/redsocial/{{p.user.username}}">{{ p.user.first_name }} {{p.user.last_name}}</a></li></ul>
+									{% endfor %}
+									
+								</div>
+							</div> <!-- fin columna principal--> 
+							<!--Creamos el margen derecho para centrar la de arriba con una columna falsa de 3 -->
+							<div class="col-sm-3">
+							</div>
+						</div><!--/row-->
+					</div><!-- /col-9 -->
+				</div><!-- /padding -->
+			</div><!-- /main -->
+
+						<!-- sidebar right-->
+			<div class="column col-sm-2 col-xs-1 sidebar-offcanvas" id="sidebar2">
+				<ul class="nav">
+					<li><a href="#" data-toggle="offcanvas" class="visible-xs text-center"><i class="glyphicon glyphicon-chevron-right"></i></a></li>
+				</ul>
+
+				<ul class="nav hidden-xs" id="lg-menu">
+					<li class="active"><a href="#featured"><i class="glyphicon glyphicon-list-alt"></i> Mensajes</a></li>
+					<li><a href="#stories"><i class="glyphicon glyphicon-list"></i> Grupos</a></li>
+					<li><a href="#"><i class="glyphicon glyphicon-paperclip"></i> Saved</a></li>
+					<li><a href="#"><i class="glyphicon glyphicon-refresh"></i> Refresh</a></li>
+				</ul> 
+			</div>
+			<!-- /sidebar right-->
+
+		</div>
+	</div>
+</div>
+{% endblock cuerpo %}

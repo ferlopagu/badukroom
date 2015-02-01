@@ -139,6 +139,31 @@
         });
     	
     });
+	
+	$('#buscar').on('click', function(event) { // catch the form's submit event
+    	event.preventDefault();
+		alert($('#buscar_texto').val())
+	
+    	$.ajax({ // create an AJAX call...
+            data: {"texto":$('#buscar_texto').val()}, // get the form data
+            type: 'POST', // GET or POST
+            url: "{% url 'redsocial:buscar' %}", // the file to call
+            success: function(data){ // on success..
+            	console.log(data);
+            	console.log("construyendo enlaces");
+            	html=""
+            	for(var i=0;i<data.length; i++){
+            		console.log(data[i]);
+            		console.log(data[i].username);
+            		html+="<a href='/redsocial/"+data[i].username+"' class='list-group-item'>"+data[i].first_name+" "+data[i].last_name+"</a>"
+            	}
+            	$('#list-group').html(html)
+            	/*window.location("{ url 'redsocial:{username}' }");*/
+            }  
+        });
+    	
+    });
+	
 	</script>
 
 {% endblock js %}

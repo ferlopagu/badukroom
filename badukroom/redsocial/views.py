@@ -11,7 +11,10 @@ from django.views.generic.base import TemplateView
 from redsocial.forms import ComentarioForm
 from django.http import JsonResponse
 from datetime import datetime
-
+from django.http.response import HttpResponseRedirect
+from Tkconstants import CHAR
+from django.conf.urls import url
+from django.contrib.auth.models import User
 
 # Create your views here.
 #@login_required(login_url='/login')
@@ -127,3 +130,26 @@ def crea_comentario(request):
         #print comentarios
         #context = {'formulario':formulario, 'comentarios':comentarios}
         #return render_to_response('comentar.html',context,context_instance=RequestContext(request))
+
+def buscador(request):
+    if request.is_ajax():
+        if request.method=='POST':
+            print "Esto contiene request.POST: "+request.POST['texto']
+            cadena=request.POST['texto']
+            lista_perfiles=list(Perfil.objects.values('user').filter(Q(user__first_name__iregex=cadena) | Q(user__last_name__iregex=cadena))) #cambiar username por first_name o last_name
+            print lista_perfiles
+            for p in lista_perfiles:
+                lista_user=list(User.objects.values('first_name', 'last_name', 'username').filter(id=p['user']))
+            
+            print lista_user
+            return JsonResponse(lista_user, safe=False)
+            """
+            print lista_perfiles
+            context={'lista_perfiles',lista_perfiles}
+            return render_to_response('busqueda.html', context, context_instance=RequestContext(request))
+            """
+        else:
+            render("Hubo un problema en su peticion")
+    else:
+        
+        return HttpResponseRedirect(request.META['HTTP_REFERER'])
