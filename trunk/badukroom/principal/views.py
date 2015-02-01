@@ -5,6 +5,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate, logout
 from django.template import RequestContext
 from principal.forms import PartidaForm
+from login.models import Perfil
 # Create your views here.
 
 def index(request):
@@ -19,3 +20,6 @@ def crea_partida(request):
     else:
         partida_form=PartidaForm()
     return render_to_response('crea_partida.html', {'partida_form':partida_form}, context_instance=RequestContext(request))
+
+
+        

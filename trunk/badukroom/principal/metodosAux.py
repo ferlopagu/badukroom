@@ -7,6 +7,7 @@ Created on 25/12/2014
 import os
 import re
 from principal.models import Jugador
+from login.models import Perfil
 
 """METODO PARA AVERIGUAR PATH DE CADA FICHERO """
 def pathFile(path): #example--> path="Correos",    dir="Correos/"
@@ -74,7 +75,7 @@ def recorrer_sgfs():
     for e in lista_diccionarios_res:
         print e
      
-recorrer_sgfs()
+#recorrer_sgfs()
 
 profesionales=['Yoshiteru Abe','Akaboshi Intetsu','Jiro Akiyama','Nobuo Amayake','Akio Ando','Takeo Ando','Toshiyuki Ando','Nobuaki Anzai','Kaori Aoba','Kikuyo Aoki','Shinichi Aoki','Takeshi Aragaki','Shuzo Awaji','Shigeru Baba','Kaori Chinen','Hideyuki Fujisawa','Hosai Fujisawa','Susumu Fukui','Go Seigen','Dogen Handa','Naoki Hane','Yasumasa Hane','Shoji Hashimoto','Utaro Hashimoto','Naoto Hikosaka','Hirose Heijiro','Kunihisa Honda','Honinbo Chihaku','Honinbo Doetsu','Honinbo Shuhaku','Honinbo Shusai','Honinbo Dochi','Honinbo Dosaku','Honinbo Doteki',
        'Honinbo Genjo','Honinbo Hakugen','Honinbo Jowa','Honinbo Retsugen','Honinbo Sansa','Honinbo Satsugen','Honinbo Shuei','Honinbo Shuetsu','Honinbo Shugen','Honinbo Shuho','Honinbo Shusaku','Honinbo Shuwa','Masaki Hoshino''Inoue Genan Inseki','Akira Ishida','Yoshio Ishida','Kunio Ishii','Kaoru Iwamoto','Tatsuaki Iwata','Yuta Iyama','Honinbo Josaku','Toshiro Kageyama','Takeo Kajiwara','Masaaki Kanagawa','Karigane Junichi','Satoshi Kataoka','Atsushi Kato','Masao Kato','Shin Kato','Kazumi Akedo','Yasuro Kikuchi','Minoru Kitani','Tetsuya Kiyonari',
@@ -87,3 +88,12 @@ def guardar_profesionales(lista):
     print "Jugadores deberian haber sido guardados"
         
 #guardar_profesionales(profesionales)
+""" Ejecutar en shell with Django enviroment
+introducir primero 
+import django
+django.setup()
+from login.models import Perfil
+cadena="Pris"
+lista_perfiles=Perfil.objects.filter(user__username__iregex=cadena) #cambiar username por el campo que queramos filtrar con la expresion regular por ejemplo first name
+print lista_perfiles
+"""
