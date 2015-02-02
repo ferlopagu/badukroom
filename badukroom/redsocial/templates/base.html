@@ -44,7 +44,7 @@
 			<div class="collapse navbar-collapse navbar-ex1-collapse">
 				<ul class="nav navbar-nav">
 						<!-- % url 'redsocial:inicio' user.username % -->
-					  <li class="active"><a href="{% url 'redsocial:inicio' user.username %}">Perfil</a></li> 
+					  <li class="active"><a href="{% url 'redsocial:perfil' user.username %}">Perfil</a></li> 
 					<li><a href="#">Grupos</a></li>
 				</ul>
 				
@@ -73,8 +73,6 @@
 			</div><!-- /.navbar-collapse -->
 			<div class="list-group" id="list-group">
   					
- 					<a href="#" class="list-group-item">Second item</a>
-  					<a href="#" class="list-group-item">Third item</a>
 				</div>
 		</nav>
 		{% endblock %}

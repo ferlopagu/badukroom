@@ -1,79 +1,40 @@
+# -*- coding: utf-8 -*-
 from django.shortcuts import render
 from django.shortcuts import render_to_response
-from django.core.context_processors import request
 from django.contrib.auth.decorators import login_required
 from django.template.context import RequestContext
 from redsocial.models import Comentario, Respuesta
 from login.models import Perfil
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
-from django.views.generic.base import TemplateView
 from redsocial.forms import ComentarioForm
 from django.http import JsonResponse
 from datetime import datetime
 from django.http.response import HttpResponseRedirect
-from Tkconstants import CHAR
-from django.conf.urls import url
 from django.contrib.auth.models import User
-
+import re
 # Create your views here.
 #@login_required(login_url='/login')
-def inicio(request, username):
-    #return render_to_response('inicio.html', locals())
-    
-    """Este metodo devuelve los comentarios de un usuario, para mostrarlos en su dashboard
-    recorremos todos los perfiles
-    en un diccionario almacenamos {"perfil":perfilX}
-    filtramos los comentarios por el perfil correspondiente
-    Creamos una lista donde almacenaremos cada comentario
-    add al diccionario que teniamos los comentarios de cada usuario dando como resultado un diccionario de la forma {"perfil":perfilX, "comentarios":[com1, com2]}
-    add una lista con el diccionario de cada usuario siendo esta la que devolveremos
+def perfil(request, username):
+    print request.user
+    #return render_to_response('inicio.html', locals())   
+    """Probamos version pasandole directamente el username
+    1º Capturamos username de la url
+    2º Buscamos el perfil con el que coincide
+    3º Recogemos lista de diccionarios def que contendra diccionarios (diccionario_perfil_comentarios)
+    4º Estos diccionarios seran {"perfil":p, "comentarios"=lista de diccionarios con comentarios y sus respuestas (diccionario_comentarios_respuestas)  }
+    5º diccionario_comentarios_respuestas ---> {"comentario":c, "respuestas"=[r1,r2,r3,...]}
+    6º devolvemos lista_diccionarios_def, que sera de la forma:  [{"perfil":fla2727,"comentarios": [{"comentario":c, "respuestas":[r1,r2]},..]}, y asi para cada perfil ]
+    7º recogemos las imagenes de perfil y portada del perfil
+    8º creamos el formulario para comentar
+    9º Comprobar si el usuario que vemos es amigo nuestro, 
+    en caso negativo devolver variable para imprimir en el template un boton de agregar como amigo
+    en caso afirmativo devolver variable para imprimir en el template un boton de eliminar
     """
-    """ VERSION ANTIGUA FUNCIONAL
+    #Pasos 1 a 6
     lista_diccionarios_def=[]
-    perfiles=Perfil.objects.all()
-    for p in perfiles:
-        diccionario_perfil_comentarios={}
-        diccionario_perfil_comentarios["perfil"]=p 
-        comentarios=Comentario.objects.filter(perfil=p)
-        lista_comentarios=[]
-        for c in comentarios:
-            lista_comentarios.append(c)
-        diccionario_perfil_comentarios["comentarios"]=lista_comentarios
-        lista_diccionarios_def.append(diccionario_perfil_comentarios)
-        
-    context = {'lista_diccionario_comentarios': lista_diccionarios_def}
-    return render_to_response('inicio.html',context,context_instance=RequestContext(request))
-    """
+    p = get_object_or_404(Perfil, user__username=username) 
     
-    """ PROBAMOS VERSION NUEVA PARA ADD LAS RESPUESTAS """
-    """
-    lista_diccionarios_def=[]
-    perfiles=Perfil.objects.all()
-    for p in perfiles:
-        diccionario_perfil_comentarios={}
-        diccionario_perfil_comentarios["perfil"]=p 
-        comentarios=Comentario.objects.filter(perfil=p)
-        lista_diccionario_comentarios_respuestas=[] #va a almacenar una lista del diccionario siguiente
-        for c in comentarios:
-            diccionario_comentarios_respuestas={}# diccionario = {'comentario': r1, 'respuestas': [r1,r2,r3]}
-            diccionario_comentarios_respuestas['comentario']=c
-            resp=Respuesta.objects.filter(comentario=c)
-            respuestas=[]
-            for r in resp:
-                respuestas.append(r)
-            diccionario_comentarios_respuestas['respuestas']=respuestas
-            lista_diccionario_comentarios_respuestas.append(diccionario_comentarios_respuestas)
-        diccionario_perfil_comentarios['comentarios']=lista_diccionario_comentarios_respuestas
-        lista_diccionarios_def.append(diccionario_perfil_comentarios)
-    context = {'lista_diccionario_comentarios': lista_diccionarios_def}
-    return render_to_response('inicio.html',context,context_instance=RequestContext(request))
-
-    """
-    
-    """Probamos version pasandole directamente el username"""
-    lista_diccionarios_def=[]
-    p = get_object_or_404(Perfil, user__username=username)
     diccionario_perfil_comentarios={}
     diccionario_perfil_comentarios["perfil"]=p 
     comentarios=Comentario.objects.filter(perfil=p)
@@ -89,10 +50,33 @@ def inicio(request, username):
         lista_diccionario_comentarios_respuestas.append(diccionario_comentarios_respuestas)
     diccionario_perfil_comentarios['comentarios']=lista_diccionario_comentarios_respuestas
     lista_diccionarios_def.append(diccionario_perfil_comentarios)
+    
+    
+    #Paso 7
+    """
+    Almacenar un string con el path de la imagen principal el cual no estamos almacenando en la base de datos como si hacemos en el modelo Partida
+    """
+    path_perfil=p.foto_principal.name.__str__()
+    m1 = re.match(".*/(imagenes/.*)", path_perfil)
+    print path_perfil
+    print m1.group(1)
+    perfil= m1.group(1)
+    
+    path_portada=p.foto_portada.name.__str__() #es posible hacerlo asi supuestamente p.foto_portada.url
+    m2 = re.match(".*/(imagenes/.*)", path_portada)
+    portada=m2.group(1)
+    
+    dic_imagenes={'perfil':perfil,'portada':portada}
+    print dic_imagenes
+    lista_dic_imagenes=[]
+    lista_dic_imagenes.append(dic_imagenes)
+    """fin almacenar"""
+    
+    #Paso 8
     """ add form comentar"""
     formulario=ComentarioForm()
-    context = {'lista_diccionario_comentarios': lista_diccionarios_def, 'formulario':formulario}
-    return render_to_response('inicio.html',context,context_instance=RequestContext(request))
+    context = {'lista_diccionario_comentarios': lista_diccionarios_def, 'formulario':formulario, 'lista_dic_imagenes':lista_dic_imagenes}
+    return render_to_response('perfil.html',context,context_instance=RequestContext(request))
 
 @login_required(login_url='/login')
 def home(request):
@@ -123,7 +107,8 @@ def crea_comentario(request):
             return JsonResponse(comentarios, safe=False)
     else:
         print "ENTRAMOS EN ELSE AL NO SER AJAX"
-        home(request)
+        return HttpResponseRedirect(request.META['HTTP_REFERER'])
+        #home(request)
         #print "JEJEJEJEJEJEJEJEJEJEJEJEJEJJEJ"
         #formulario=ComentarioForm()
         #comentarios=list(Comentario.objects.values())

@@ -2,6 +2,7 @@
 {% load staticfiles %}
 {% block cuerpo %} 
 <p>Welcome, {{ user.username }}. Thanks for logging in.</p>
+
 <div class="wrapper">
 	<div class="box">
 		<div class="row row-offcanvas row-offcanvas-left">
@@ -49,6 +50,12 @@
 
 
 									<!-- { csrf_token } -->
+									{%for e in lista_dic_imagenes %}
+										<img src='/static/{{e.perfil}}' >
+										<img src="/static/{{e.portada}}" >
+									{% endfor %}
+									
+									
 									<form id='formulario' method="post" action="{% url 'redsocial:creaComentario' %}" enctype="multipart/form-data">
 										 {% csrf_token %} {{formulario.as_p}}
 										<p>
