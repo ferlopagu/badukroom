@@ -27,7 +27,7 @@ class Respuesta(models.Model):
 
 
 class PeticionAmistad(models.Model):
-    sender=models.ForeignKey(Perfil, related_name='sender')
-    receiver=models.ForeignKey(Perfil, related_name='receiver')
+    emisor=models.ForeignKey(Perfil, related_name='sender')
+    receptor=models.ForeignKey(Perfil, related_name='receiver')
     es_aceptada=models.BooleanField(default=False, editable=True)
     es_rechazada=models.BooleanField(default=False, editable=True)

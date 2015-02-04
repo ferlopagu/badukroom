@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import login_required
 from django.template.context import RequestContext
-from redsocial.models import Comentario, Respuesta
+from redsocial.models import Comentario, Respuesta, PeticionAmistad
 from login.models import Perfil
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
@@ -11,6 +11,7 @@ from redsocial.forms import ComentarioForm
 from django.http import JsonResponse
 from datetime import datetime
 from django.http.response import HttpResponseRedirect
+from django.http import HttpResponse
 from django.contrib.auth.models import User
 import re
 # Create your views here.
@@ -75,11 +76,38 @@ def perfil(request, username):
     #Paso 8
     """ add form comentar"""
     formulario=ComentarioForm()
-    context = {'lista_diccionario_comentarios': lista_diccionarios_def, 'formulario':formulario, 'lista_dic_imagenes':lista_dic_imagenes}
+    
+    
+    #Paso 9
+    """comprobamos si el perfil que visualizamos somos nosotros, es un amigo o desconocido """
+    somos_nosotros=False
+    es_amigo=False
+    
+    if username == request.user.username:
+        """ el perfil que vemos es el nuestro"""
+        somos_nosotros=True
+        print "somos nosotros"
+    else:
+        """comprobamos si es amigo"""
+        for amigo in p.amigos.all(): 
+            print "amigo:"+amigo.__unicode__()
+            if amigo.user.username == request.user.username:
+                print username+"es amigo de"+amigo.user.username
+                es_amigo=True
+            else:
+                print "no son amigos"
+    diccionario_amigos={"somos_nosotros":somos_nosotros,"es_amigo":es_amigo}
+    print diccionario_amigos
+    lista_dic_amigo=[]
+    lista_dic_amigo.append(diccionario_amigos) #devolvemos lista con diccionario unico donde especifica si es amigo o no el perfil que visitamos
+    
+    
+    context = {'lista_diccionario_comentarios': lista_diccionarios_def, 'formulario':formulario, 'lista_dic_imagenes':lista_dic_imagenes, 'lista_dic_amigo':lista_dic_amigo}
     return render_to_response('perfil.html',context,context_instance=RequestContext(request))
 
 @login_required(login_url='/login')
 def home(request):
+    #REvisar el bucle porque cuando no tiene amigos no muestra ni sus propios comentarios
     username=request.user.username
     lista_comentarios=[]
     p = get_object_or_404(Perfil, user__username=username)
@@ -87,6 +115,7 @@ def home(request):
         comentarios=Comentario.objects.filter(Q(perfil=amigo)|Q(perfil=p)).order_by('fecha').reverse()
         for c in comentarios:
             lista_comentarios.append(c)
+    print lista_comentarios
     context = {'lista_comentarios': lista_comentarios}
     return render_to_response('home.html',context,context_instance=RequestContext(request))
 
@@ -138,3 +167,33 @@ def buscador(request):
     else:
         
         return HttpResponseRedirect(request.META['HTTP_REFERER'])
+
+def agregar_ajax(request):
+    #revisar falta de else para todos los if
+    if request.is_ajax():
+        if request.method=='POST':
+            print "Esto contiene request.Post['perfil_para_agregar]: "+request.POST['perfil_para_agregar']
+            username_receptor=request.POST['perfil_para_agregar']
+            emisor=get_object_or_404(Perfil, user__username=request.user.username)
+            receptor=get_object_or_404(Perfil, user__username=username_receptor)
+            es_aceptada=False
+            es_rechazada=False
+            print emisor
+            print receptor
+            peticion=PeticionAmistad(emisor=emisor, receptor=receptor, es_aceptada=es_aceptada, es_rechazada=es_rechazada)
+            peticion.save()
+            return HttpResponse("Peticion de amistad enviada con éxito")
+    else:
+        print "fue un fracaso la peticion ajax"
+
+def contar_notificaciones(request):
+    if request.is_ajax():
+        if request.method=='GET':
+            recuento = PeticionAmistad.objects.filter(receptor__user__username=request.user.username).count()
+            print "Recuento: "+recuento.__str__()
+            return HttpResponse(recuento)
+    else:
+        print "no es peticion ajax o GET"
+        return HttpResponse("no es peticion ajax o GET")
+        
+           
