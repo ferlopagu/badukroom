@@ -19,7 +19,9 @@ import re
 def perfil(request, username):
     print request.user
     #return render_to_response('inicio.html', locals())   
-    """Probamos version pasandole directamente el username
+    """
+    Con esta vista vamos a visualizar los perfiles de los usuarios, tanto el del usuario que se loguea como el de los demas.
+    Probamos version pasandole directamente el username
     1º Capturamos username de la url
     2º Buscamos el perfil con el que coincide
     3º Recogemos lista de diccionarios def que contendra diccionarios (diccionario_perfil_comentarios)
@@ -76,13 +78,13 @@ def perfil(request, username):
     #Paso 8
     """ add form comentar"""
     formulario=ComentarioForm()
-    
-    
+
     #Paso 9
     """comprobamos si el perfil que visualizamos somos nosotros, es un amigo o desconocido """
     somos_nosotros=False
     es_amigo=False
-    
+    peticion_enviada=False
+    peticion_recibida=False
     if username == request.user.username:
         """ el perfil que vemos es el nuestro"""
         somos_nosotros=True
@@ -92,11 +94,37 @@ def perfil(request, username):
         for amigo in p.amigos.all(): 
             print "amigo:"+amigo.__unicode__()
             if amigo.user.username == request.user.username:
-                print username+"es amigo de"+amigo.user.username
+                print request.user.username+"es amigo de"+amigo.user.username
                 es_amigo=True
+        if es_amigo==False:
+            """ si no es amigo tres casos:
+                    - Le hemos mandado una peticion de amistad, luego deberiamos ver 'La peticion fue enviada'
+                    - Hemos recibido una peticion suya, luego debemos ver 'Aceptar peticion' y 'Rechazar peticion'
+                    - No hay peticiones entre ambos, no somos amigos, luego debemos ver 'Agregar como amigo'
+            """
+            print 'no son amigos'
+            usuario_logueado= get_object_or_404(Perfil, user__username=request.user.username) 
+            if PeticionAmistad.objects.filter(emisor=usuario_logueado, receptor=p):
+                peticion_enviada=True
+                print 'Existe peticion de '+usuario_logueado.user.username+' a '+p.user.username
+            elif PeticionAmistad.objects.filter(emisor=p, receptor=usuario_logueado):
+                peticion_recibida=True
+                print 'Existe peticion de '+p.user.username+' a '+usuario_logueado.user.username
+            else:
+                print 'ni son amigos ni le envio la peticion'
+            """
             else:
                 print "no son amigos"
-    diccionario_amigos={"somos_nosotros":somos_nosotros,"es_amigo":es_amigo}
+                #Buscar peticion emisor=request.user.username y receptor=amigo.user.username
+                #Si la hay entonces imprimir Peticion Enviada sino Agregar amigo
+                if PeticionAmistad.objects.filter(emisor=amigo.user.username, receptor=request.user.username):
+                    peticion_enviada=True
+                    print 'Existe peticion de '+request.user.username+' a '+amigo.user.username
+                else:
+                    print 'ni son amigos ni le envio la peticion'
+            """
+                    
+    diccionario_amigos={"somos_nosotros":somos_nosotros,"es_amigo":es_amigo, 'peticion_enviada':peticion_enviada, 'peticion_recibida':peticion_recibida}
     print diccionario_amigos
     lista_dic_amigo=[]
     lista_dic_amigo.append(diccionario_amigos) #devolvemos lista con diccionario unico donde especifica si es amigo o no el perfil que visitamos
@@ -195,5 +223,42 @@ def contar_notificaciones(request):
     else:
         print "no es peticion ajax o GET"
         return HttpResponse("no es peticion ajax o GET")
-        
+
+def ver_notificaciones(request):
+    lista_peticiones=list(PeticionAmistad.objects.filter(receptor__user__username=request.user.username))
+    context={'lista_peticiones': lista_peticiones}
+    return render_to_response('notificaciones.html',context,context_instance=RequestContext(request))
+    """
+    diccionario_peticiones={"peticiones":peticiones}
+    lista_dic_peticiones=[]
+    lista_dic_peticiones.append(diccionario_peticiones)
+    """
+
+def aceptar_peticion(request):
+    if request.is_ajax():
+        if request.method=='GET':
+            print "Entramos en Ajax y GET"
+            emisor=get_object_or_404(Perfil, user__username=request.GET['nick'])
+            receptor=get_object_or_404(Perfil, user__username=request.user.username)
+            receptor.amigos.add(emisor)
+            receptor.save()
+            peticion=PeticionAmistad.objects.get(emisor=emisor, receptor=receptor)
+            peticion.delete()
+            cadena=emisor.user.first_name+" "+emisor.user.last_name+" es ahora tu amigo."
+            return HttpResponse(cadena)
+    else:
+        return HttpResponse("Error con la peticion ajax")
+
+def declinar_peticion(request):
+    if request.is_ajax():
+        if request.method=='GET':
+            emisor=get_object_or_404(Perfil, user__username=request.GET['nick'])
+            receptor=get_object_or_404(Perfil, user__username=request.user.username)
+            peticion=PeticionAmistad.objects.get(emisor=emisor, receptor=receptor)
+            peticion.delete()
+            cadena="La peticion ha sido rechazada con éxito"
+            return HttpResponse(cadena)
+    else:
+        return HttpResponse('Error con la peticion ajax')
+            
            
