@@ -1,5 +1,5 @@
 {% extends "base.html" %} {% block title %}My amazing blog{% endblock %}
-{% load staticfiles %}
+
 {% block cuerpo %} 
 <p>Welcome, {{ user.username }}. Thanks for logging in.</p>
 
@@ -15,7 +15,7 @@
 				<ul class="nav hidden-xs" id="lg-menu">
 					<li class="active"><a href="#featured"><i class="glyphicon glyphicon-list-alt"></i> Mensajes</a></li>
 					<li><a href="#stories"><i class="glyphicon glyphicon-list"></i> Grupos</a></li>
-					<li><a href="#"><i class="glyphicon glyphicon-paperclip"></i> Notificaciones <span id="notificaciones" class="badge">12</span></a></li>
+					<li><a href="{% url 'redsocial:ver_notificaciones' %}"><i class="glyphicon glyphicon-paperclip"></i> Notificaciones <span id="notificaciones" class="badge">12</span></a></li>
 					<li><a href="#"><i class="glyphicon glyphicon-refresh"></i> Refresh</a></li>
 				</ul> 
 			</div>
@@ -32,55 +32,54 @@
 							<div class="col-sm-3">
 							</div>
 							<!-- centrar la columna principal-->
-							<div class="col-sm-9">
-							
-								<h3>Peticiones de amistad</h3> <a id="limpiar_peticiones" href="#" class="btn btn-info" role="button">Eliminar peticiones</a>
-								<div id='peticion'>
-								</div>
-								
-								<div>
-								{% for n in lista_peticiones %} 
-									<div class="panel panel-default">
-										<div class="panel-heading">
-													<h1>{{n.emisor.user.first_name}} {{n.emisor.user.last_name}} quiere ser tu amigo.</h1>
-													<!--  <img src='/static/{{n.emisor.foto_portada}}'> -->
-													<a href="{% url 'redsocial:perfil' n.emisor.user.username %}" class='btn btn-default'>Ver perfil</a>
-													<!--  
-													<a id="aceptar" href="#" class="btn btn-info" role="button">Aceptar</a>
-													<a id="rechazar" href="#" class="btn btn-info" role="button">Rechazar</a>
-													-->	
+							<div class="col-sm-6">
+								<div class="well"> 
+									<form class="form-horizontal" role="form">
+										<h4>¿Qué estás pensando?</h4>
+										<div class="form-group" style="padding:14px;">
+											<textarea class="form-control" placeholder="Actualiza tu estado"></textarea>
 										</div>
-									</div>
-								{% endfor %}
+										<button class="btn btn-primary pull-right" type="button">Comentar</button>
+										<ul class="list-inline">
+											<li><a href=""><i class="glyphicon glyphicon-upload"></i></a></li>
+											<li><a href=""><i class="glyphicon glyphicon-camera"></i></a></li>
+										</ul>
+									</form>
 								</div>
-								
-								<h3>Tus notificaciones</h3> <a id="limpiar_notificaciones" href="#" class="btn btn-info" role="button">Eliminar notificaciones</a>
-								<div id="notificar">
-								
-								</div>
-								<div>
-								{% for n in lista_notificaciones %} 
-									<div class="panel panel-default">
-										<div class="panel-heading">
-													<h1>{{n.mensaje}}</h1>
-										</div>
-									</div>
+								{% for e in lista_comentarios %} 
+
+											<div class="panel panel-default">
+												<div class="panel-heading">
+													<h4>{{ e.perfil.user.username }}</h4>
+													<h4>{{ e.fecha }}</h4>
+												</div>
+												<div class="panel-body">
+													{{ e.texto }}													
+												</div>
+												<div class="collapse navbar-collapse navbar-ex1-collapse">
+													<ul class="nav navbar-nav">
+														<li><a href="#">Me gusta</a></li>
+														<li><a href="#">Comentar</a></li>	
+													</ul>
+												</div>
+												{% for r in dic.respuestas %}
+													<div class="panel-body">
+														{{ r.texto }}													
+													</div>
+												{% endfor %} 
+											</div>
 								{% endfor %}
-								</div>								
 
 							</div> <!-- fin columna principal--> 
 							<!--Creamos el margen derecho para centrar la de arriba con una columna falsa de 3 -->
-							<!--  
 							<div class="col-sm-3">
 							</div>
-							-->
 						</div><!--/row-->
 					</div><!-- /col-9 -->
 				</div><!-- /padding -->
 			</div><!-- /main -->
 
 						<!-- sidebar right-->
-						<!--  
 			<div class="column col-sm-2 col-xs-1 sidebar-offcanvas" id="sidebar2">
 				<ul class="nav">
 					<li><a href="#" data-toggle="offcanvas" class="visible-xs text-center"><i class="glyphicon glyphicon-chevron-right"></i></a></li>
@@ -89,11 +88,10 @@
 				<ul class="nav hidden-xs" id="lg-menu">
 					<li class="active"><a href="#featured"><i class="glyphicon glyphicon-list-alt"></i> Mensajes</a></li>
 					<li><a href="#stories"><i class="glyphicon glyphicon-list"></i> Grupos</a></li>
-					<li><a href="#"><i class="glyphicon glyphicon-paperclip"></i> Notificaciones</a></li>
+					<li><a href="#"><i class="glyphicon glyphicon-paperclip"></i> Saved</a></li>
 					<li><a href="#"><i class="glyphicon glyphicon-refresh"></i> Refresh</a></li>
 				</ul> 
 			</div>
-			-->
 			<!-- /sidebar right-->
 
 		</div>
@@ -102,16 +100,13 @@
 {% endblock cuerpo %}
 
 {% block js2 %}
-	<script>
+<script type="text/javascript">
 	
-	$(function(){
-		$.contar();
-		$.limpiarNotificaciones();
-		$.limpiarPeticiones();
-		
-	});
-	
-	
-	</script>
+$(function(){
+	$.buscador();
+	$.contar();
+});
+
+</script>
 
 {% endblock js2 %}

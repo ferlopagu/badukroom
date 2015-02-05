@@ -18,7 +18,7 @@
     <script type="text/javascript" src="{% static 'wgo/wgo.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'wgo/wgo.player.min.js' %}"></script>
         <!-- Include script para solucionar crsf en ajax segun la documentacion oficial -->
-    <script src="{% static 'js/principal.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/principal.js' %}"></script>
     <link type="text/css" href="{% static 'wgo/wgo.player.css' %}" rel="stylesheet" />
     
 
@@ -86,7 +86,136 @@
     
 
     
-    {% block js%}
-    {% endblock js%}
+{% block js%}
+<script type="text/javascript">
+	$.contar=function(){
+		$.get("{% url 'redsocial:contar_notificaciones' %}", function(data){
+			$('#notificaciones').text(data);
+		});
+	}
+    
+    $.aceptarPeticion=function(){
+	$('#aceptar').on('click', function(event) {
+		event.preventDefault();
+		$.post("{% url 'redsocial:aceptar_peticion' %}",{ nick: $('#nick').text() }, function(data){
+			html="<a id='eliminar' href='#' class='btn btn-info' role='button'>Eliminar amigo</a>";
+			$('#botones').html(html);
+			$("#aceptar_peticion").modal('show'); 
+		});
+	});
+}
+
+$.declinarPeticion=function(){
+	$('#rechazar').on('click', function(event){
+		event.preventDefault();
+		$.get("{% url 'redsocial:declinar_peticion' %}", {nick: $('#nick').text() }, function(data){
+			alert('Vamos a recargar porque se borró con exito');
+			location.reload(true);
+		});
+	});
+}
+
+
+$.comentar=function(){
+	$('#formulario').submit(function(event) { // catch the form's submit event
+		event.preventDefault();
+		$.ajax({ // create an AJAX call...
+			data: $(this).serialize(), // get the form data
+			type: $(this).attr('method'), // GET or POST
+			url: $(this).attr('action'), // the file to call
+			success: function(data){ // on success..
+				location.reload(true);
+			}  
+		});
+	});
+}
+
+
+$.buscador=function(){
+	$('#buscar').on('click', function(event) { // catch the form's submit event
+		event.preventDefault();
+		$.ajax({ // create an AJAX call...
+			data: {"texto":$('#buscar_texto').val()}, // get the form data
+			type: 'POST', // GET or POST
+			url: "{% url 'redsocial:buscar' %}", // the file to call
+			success: function(data){ // on success..
+				console.log(data);
+				console.log("construyendo enlaces");
+				html="";
+					for(var i=0;i<data.length; i++){
+						console.log(data[i]);
+						console.log(data[i].username);
+						html+="<a href='/redsocial/"+data[i].username+"' class='list-group-item'>"+data[i].first_name+" "+data[i].last_name+"</a>"
+					}
+				$('#list-group').html(html);
+			}  
+		});
+	});
+}
+
+$.agregar=function(){
+	$('#agregar').on('click', function(event){
+		event.preventDefault();
+		var perfil=$('#nick').text();
+		$.ajax({
+			data:{"perfil_para_agregar":perfil},
+			type:'POST',
+			url: "{% url 'redsocial:agregar_ajax' %}",
+			success: function(data){
+				var perfil=$('#nick').text();
+				html="<a id='#' href='#' class='btn btn-info' role='button'>La peticion ya ha sido enviada</a>";
+				$('#botones').html(html);
+				$("#example").modal('show'); 
+			}
+		});
+	});
+}
+
+$.eliminar=function(){
+	$('#eliminar').on('click', function(event){
+		event.preventDefault();
+		var perfil=$('#nick').text();
+		$.ajax({
+			data:{"perfil_para_eliminar":perfil},
+			type:'GET',
+			url: "{% url 'redsocial:eliminar_ajax' %}",
+			success: function(data){
+				var perfil=$('#nick').text();
+				html="<a id='agregar' href='#' class='btn btn-info' role='button'>Agregar como amigo</a>";
+				$('#botones').html(html);
+				$("#example").modal('show'); 
+			}
+		});
+	});
+}
+
+$.limpiar=function(boton){
+	$.get("{% url 'redsocial:limpiar_notificaciones' %}", {boton: boton}, function(data){
+		setTimeout(function(){location.reload()},2000);
+	});
+}
+
+$.limpiarNotificaciones=function(){
+	$('#limpiar_notificaciones').on('click', function(event){
+		event.preventDefault();
+		var boton='limpiar_notificaciones';
+		$.limpiar(boton);
+		$('#notificar').html("Se eliminaron correctamente las notificaciones");
+	});
+}
+
+$.limpiarPeticiones=function(){
+	$('#limpiar_peticiones').on('click', function(event){
+		event.preventDefault();
+		var boton='limpiar_peticiones';
+		$.limpiar(boton);
+		$('#peticion').html("Se eliminaron correctamente las peticiones");
+	});
+}
+</script>
+{% endblock js%}
+    
+{% block js2%}
+{% endblock js2%}
 </body>
 </html>
