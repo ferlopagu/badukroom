@@ -6,8 +6,6 @@ from pip.cmdoptions import editable
 from django.template.defaultfilters import default
 # Create your models here.
 
-
-
 class Comentario(models.Model):
     fecha=models.DateTimeField()
     perfil=models.ForeignKey(Perfil)
@@ -31,3 +29,7 @@ class PeticionAmistad(models.Model):
     receptor=models.ForeignKey(Perfil, related_name='receiver')
     es_aceptada=models.BooleanField(default=False, editable=True)
     es_rechazada=models.BooleanField(default=False, editable=True)
+
+class Notificacion(models.Model):
+    receptor=models.ForeignKey(Perfil)
+    mensaje=models.CharField(max_length=300)

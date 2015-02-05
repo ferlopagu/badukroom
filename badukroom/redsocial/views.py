@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import login_required
 from django.template.context import RequestContext
-from redsocial.models import Comentario, Respuesta, PeticionAmistad
+from redsocial.models import Comentario, Respuesta, PeticionAmistad, Notificacion
 from login.models import Perfil
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
@@ -94,7 +94,7 @@ def perfil(request, username):
         for amigo in p.amigos.all(): 
             print "amigo:"+amigo.__unicode__()
             if amigo.user.username == request.user.username:
-                print request.user.username+"es amigo de"+amigo.user.username
+                print request.user.username+" es amigo de "+amigo.user.username
                 es_amigo=True
         if es_amigo==False:
             """ si no es amigo tres casos:
@@ -214,10 +214,25 @@ def agregar_ajax(request):
     else:
         print "fue un fracaso la peticion ajax"
 
+def eliminar_ajax(request):
+    if request.is_ajax():
+        if request.method=='GET':
+            username_amigo=request.GET['perfil_para_eliminar']
+            yo=get_object_or_404(Perfil, user__username=request.user.username)
+            amigo=get_object_or_404(Perfil, user__username=username_amigo)
+            yo.amigos.remove(amigo)
+            yo.save()
+            print "eliminado con exito"
+            return HttpResponse("Eliminado con éxito")
+    else:
+        return HttpResponse("Problema con peticion ajax")
+
 def contar_notificaciones(request):
     if request.is_ajax():
         if request.method=='GET':
-            recuento = PeticionAmistad.objects.filter(receptor__user__username=request.user.username).count()
+            recuento_peticiones = PeticionAmistad.objects.filter(receptor__user__username=request.user.username).count()
+            recuento_notificaciones=Notificacion.objects.filter(receptor__user__username=request.user.username).count()
+            recuento=recuento_notificaciones+recuento_peticiones
             print "Recuento: "+recuento.__str__()
             return HttpResponse(recuento)
     else:
@@ -226,24 +241,25 @@ def contar_notificaciones(request):
 
 def ver_notificaciones(request):
     lista_peticiones=list(PeticionAmistad.objects.filter(receptor__user__username=request.user.username))
-    context={'lista_peticiones': lista_peticiones}
+    lista_notificaciones=list(Notificacion.objects.filter(receptor__user__username=request.user.username))
+    context={'lista_peticiones': lista_peticiones, 'lista_notificaciones': lista_notificaciones}
+    print context
     return render_to_response('notificaciones.html',context,context_instance=RequestContext(request))
-    """
-    diccionario_peticiones={"peticiones":peticiones}
-    lista_dic_peticiones=[]
-    lista_dic_peticiones.append(diccionario_peticiones)
-    """
+
 
 def aceptar_peticion(request):
     if request.is_ajax():
-        if request.method=='GET':
+        if request.method=='POST':
             print "Entramos en Ajax y GET"
-            emisor=get_object_or_404(Perfil, user__username=request.GET['nick'])
-            receptor=get_object_or_404(Perfil, user__username=request.user.username)
-            receptor.amigos.add(emisor)
+            emisor=get_object_or_404(Perfil, user__username=request.POST['nick']) #es el emisor de la peticion de amistad
+            receptor=get_object_or_404(Perfil, user__username=request.user.username) #es el receptor de la peticion de amistad
+            receptor.amigos.add(emisor) #con add en uno al otro ya es mutuo
             receptor.save()
+            mensaje=receptor.user.first_name+" "+receptor.user.last_name+" acepto tu peticion de amistad"
+            notificacion=Notificacion(receptor=emisor, mensaje=mensaje)
+            notificacion.save() #creamos notificacion que visualizara el emisor de la peticion de amistad de que el receptor la acepto
             peticion=PeticionAmistad.objects.get(emisor=emisor, receptor=receptor)
-            peticion.delete()
+            peticion.delete() #borramos la peticion de amistad
             cadena=emisor.user.first_name+" "+emisor.user.last_name+" es ahora tu amigo."
             return HttpResponse(cadena)
     else:
@@ -260,5 +276,17 @@ def declinar_peticion(request):
             return HttpResponse(cadena)
     else:
         return HttpResponse('Error con la peticion ajax')
-            
+
+def limpiar_notificaciones(request):
+    if request.is_ajax():
+        if request.method=='GET':
+            boton = request.GET['boton']
+            receptor= get_object_or_404(Perfil, user__username=request.user.username)
+            if boton=='limpiar_notificaciones':
+                Notificacion.objects.filter(receptor=receptor).delete()
+            elif boton=='limpiar_peticiones':
+                PeticionAmistad.objects.filter(receptor=receptor).delete()
+            return HttpResponse("Se borraron correctamente.")
+    else:
+        return HttpResponse('Error en la peticion Ajax')
            
