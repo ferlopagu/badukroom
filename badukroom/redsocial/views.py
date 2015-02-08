@@ -14,6 +14,9 @@ from django.http.response import HttpResponseRedirect
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 import re
+from principal.metodosAux import informacion_partida, informacion_partida2
+from badukroom.settings import BASE_DIR
+from principal.models import Partida, Jugador
 # Create your views here.
 #@login_required(login_url='/login')
 def perfil(request, username):
@@ -152,16 +155,53 @@ def home(request):
 def crea_comentario(request):
     if request.is_ajax():
         #formulario=ComentarioForm(texto=request.POST['texto'])
-        form = ComentarioForm(request.POST)
+        print request.POST
+        print "request.Files"
+        print request.FILES
+        form = ComentarioForm(request.POST, request.FILES)
         if form.is_valid():
+            print form
             #form.save()
-            comentario=form.save(commit=False)
-            comentario.fecha=datetime.now()
+            #comentario=form.save(commit=False)
+            
+            fecha=datetime.now()
             perfil=Perfil.objects.get(user=request.user)
-            comentario.perfil=perfil
+            
+            path_fichero=BASE_DIR+"/static/sgf/"+request.FILES['fichero'].__str__()
+            print "path fichero:"+path_fichero
+
+            """ 
+            for chunk in request.FILES['fichero'].chunks():
+                print chunk
+            """
+            """ Estamos leyendo la partida y sacando la informacion util para crearla"""
+            lineas=request.FILES['fichero'].chunks()
+            diccionario_informacion=informacion_partida2(lineas, path_fichero)
+            print diccionario_informacion 
+            jugador_negro=Jugador(nombre=diccionario_informacion['black'])
+            jugador_negro.save()
+            print 'jugador negro guardado con exito'
+            jugador_blanco=Jugador(nombre=diccionario_informacion['blanco'])
+            jugador_blanco.save()
+            partida = Partida(fecha=diccionario_informacion['fecha'], jugador_negro=jugador_negro, 
+                              jugador_blanco=jugador_blanco, resultado=diccionario_informacion['result'], 
+                              fichero=request.FILES['fichero'], path=diccionario_informacion['path'])
+            partida.save()
+            print partida.__unicode__()
+            print 'partida salvada con exito'
+            """ Fin crear la partida """
+            perfil=perfil
+            partida=partida
+            texto=form.cleaned_data['texto']
+            comentario=Comentario(fecha=fecha, perfil=perfil, texto=texto, partida=partida)
             comentario.save()
+            print 'comentario guardado con exito'
             comentarios=list(Comentario.objects.values())
             return JsonResponse(comentarios, safe=False)
+        else:
+            print "el formulario no es valido"
+            print request.POST
+            print request.FILES
     else:
         print "ENTRAMOS EN ELSE AL NO SER AJAX"
         return HttpResponseRedirect(request.META['HTTP_REFERER'])

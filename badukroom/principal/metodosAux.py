@@ -1,6 +1,7 @@
 
 '''
 Created on 25/12/2014
+datetime.date.today()
 
 @author: fla2727
 '''
@@ -97,3 +98,93 @@ cadena="Pris"
 lista_perfiles=Perfil.objects.filter(user__username__iregex=cadena) #cambiar username por el campo que queramos filtrar con la expresion regular por ejemplo first name
 print lista_perfiles
 """
+
+
+def informacion_partida(path):
+#fichero = pathFile("../static/sgf")
+    """ LEEMOS EL FICHERO"""
+    fileobj = open(path, "rb")
+    lines = fileobj.readlines()
+    fileobj.close()
+    pw=""
+    pb=""
+    date=""
+    result=""
+    """Recorremos las lineas para rellenar la informacion de cada partida"""
+    for line in lines:
+        #print line
+        if pw=="" or pw==None:
+            mo = re.search("PW\[(\w*\s?\w*)\]", line)
+            if mo:
+                for e in mo.groups():
+                    pw=e
+            #print "pw: "+str(pw)+"\n"+line
+        if pb=="" or pb==None:
+            #mo = re.search("PB\[(\w*)\]", line)
+            mo = re.search("PB\[(\w*\s?\w*)\]", line)
+            if mo:
+                for e in mo.groups():
+                    pb=e
+        if date=="" or date==None:
+            mo = re.search("DT\[(\d+-\d+-\d+)]", line)
+            if mo:
+                for e in mo.groups():
+                    date=e
+        if result=="" or result==None:
+            #mo = re.search("RE\[(\w\+.*)\]", line)
+            mo = re.search("RE\[(\w*\+\w*\W?\w*?)\]", line)
+            if mo:
+                for e in mo.groups():
+                    result=e
+    dict_game={}
+    dict_game["blanco"]=pw
+    dict_game["black"]=pb
+    dict_game["fecha"]=date
+    dict_game["result"]=result
+    dict_game["path"]=path
+    print dict_game
+    return dict_game
+
+def informacion_partida2(lineas, path):
+    """Recorremos las lineas para rellenar la informacion de cada partida"""
+    pw=""
+    pb=""
+    date=""
+    result=""
+    for line in lineas:
+        #print line
+        if pw=="" or pw==None:
+            mo = re.search("PW\[(\w*\s?\w*)\]", line)
+            if mo:
+                for e in mo.groups():
+                    pw=e
+            #print "pw: "+str(pw)+"\n"+line
+        if pb=="" or pb==None:
+            #mo = re.search("PB\[(\w*)\]", line)
+            mo = re.search("PB\[(\w*\s?\w*)\]", line)
+            if mo:
+                for e in mo.groups():
+                    pb=e
+        if date=="" or date==None:
+            mo = re.search("DT\[(\d+-\d+-\d+)]", line)
+            if mo:
+                for e in mo.groups():
+                    date=e
+        if result=="" or result==None:
+            #mo = re.search("RE\[(\w\+.*)\]", line)
+            mo = re.search("RE\[(\w*\+\w*\W?\w*?)\]", line)
+            if mo:
+                for e in mo.groups():
+                    result=e
+    dict_game={}
+    dict_game["blanco"]=pw
+    dict_game["black"]=pb
+    dict_game["fecha"]=date
+    dict_game["result"]=result
+    dict_game["path"]=path
+    print dict_game
+    return dict_game
+
+
+#informacion_partida("../static/sgf/gresko-ersev.sgf")
+#informacion_partida('../static/sgf/wilwal6re-ersev2.sgf')

@@ -70,9 +70,8 @@
 </div>
 
 <div class="well">
-	<form id='formulario' method="post"
-		action="{% url 'redsocial:creaComentario' %}"
-		enctype="multipart/form-data">
+
+	<form id='formulario' method="post" action="{% url 'redsocial:creaComentario' %}" enctype="multipart/form-data">
 		{% csrf_token %} {{formulario.as_p}}
 		<p>
 			<input id='enviar' type='submit' value='enviar' />
@@ -82,21 +81,43 @@
 
 {% for e in lista_diccionario_comentarios %}
 	{% for dic in e.comentarios %}
+		{%for e in lista_dic_imagenes %} 
 		<div class="panel panel-default">
 			<div class="panel-heading">
+				<img src='/static/{{e.perfil}}' width="40px" height="40px">
 				<h4>{{ dic.comentario.perfil.user.username }}</h4>
+				<h5>{{ dic.comentario.fecha}}</h5>
 			</div>
-			<div class="panel-body">{{ dic.comentario.texto }}</div>
+			<div class="panel-body">
+					{{ dic.comentario.texto }}
+					<div data-wgo="/static/{{dic.comentario.partida.path}}">
+							Sorry, your browser doesn't support WGo.js. Download SGF <a
+							href="/static/{{dic.comentario.partida.path}}">directly</a>.
+					</div>
+			</div>
+			<a  href="/static/{{dic.comentario.partida.path}}" class="btn btn-info" role="button">Descargar</a>
 			<div class="collapse navbar-collapse navbar-ex1-collapse">
 				<ul class="nav navbar-nav">
 					<li><a href="#">Me gusta</a></li>
-					<li><a href="#">Comentar</a></li>
+					<li><a id="responder" href="#">Responder</a></li>
 				</ul>
 			</div>
 			{% for r in dic.respuestas %}
 				<div class="panel-body">{{ r.texto }}</div>
 			{% endfor %}
+			<div>
+				
+				<img src='/static/{{e.perfil}}' width="40px" height="40px">
+				<form id='formulario' method="post" action="{% url 'redsocial:creaComentario' %}" enctype="multipart/form-data">
+							{% csrf_token %} {{formulario.as_p}}
+					<p>
+						<input id='enviar' type='submit' value='enviar' />
+					</p>
+				</form>
+				
+			</div>
 		</div>
+		{% endfor %} 
 	{% endfor %}
 {% endfor %}
 

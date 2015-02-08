@@ -13,6 +13,8 @@
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
 	<!-- Bootstrap -->
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <!-- Modificaciones css bootstrap -->
+    <link href="{% static 'css/prueba.css' %}" rel="stylesheet">
     
         <!-- WGO.js -->
     <script type="text/javascript" src="{% static 'wgo/wgo.min.js' %}"></script>
@@ -26,11 +28,64 @@
 <body>
 	<div id="menu_principal">
 		{% block menu_principal %}
-		<h1>BADUKROOM</h1>
-
+		
+				<nav class="navbar navbar-inverse navbar-fixed-top">
+			<div class="container">
+				<div class="navbar-header">
+				   <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+				        <span class="icon-bar"></span>
+				        <span class="icon-bar"></span>
+				        <span class="icon-bar"></span>                        
+				    </button>
+					<a class="navbar-brand" href="{% url 'redsocial:home' %}">BadukRoom</a>
+				</div>
+				<div class="collapse navbar-collapse" id="myNavbar" >
+					<div>
+						<ul class="nav navbar-nav">
+						 	<li><a href="{% url 'redsocial:perfil' user.username %}">Perfil</a></li> 
+							<li><a href="#">Grupos</a></li>
+							<li><a href="{% url 'principal:index' %}">Partidas</a></li>
+							<form class="navbar-form navbar-right" role="search" method="get" action="{% url 'redsocial:buscar' %}">
+								<div class="form-group">
+									<input id='buscar_texto' type="text" class="form-control" placeholder="Amigos, Partidas...">
+								</div>
+								<button id='buscar' type="submit" class="btn btn-default">Buscar</button>
+							</form>
+						</ul>
+					</div>
+					
+					<div>
+						<ul class="nav navbar-nav  navbar-right" >
+							<li><img src='/static/imagenes/1.baduk.jpg' width="40px" height="40px"></li>
+							<li><a href="#">{{ user.first_name }}</a></li>
+							<li class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown">Más Opciones <b class="caret"></b></a>
+								<ul class="dropdown-menu">
+									<li><a href="#">Amigos</a></li>
+									<li><a href="#">Configuracion</a></li>
+									<li><a href="#">Ayuda</a></li>
+									<li><a href="{% url 'logout:logout_view' %}">Salir</a></li>
+								</ul>
+							</li>
+						</ul>
+	
+					</div>
+				</div>
+			</div>
+			
+		</nav>
+		
+		
+		
+		
+		
+		
+		
+		
+<!--  
 		<nav class="navbar navbar-inverse" role="navigation">
 
-			<!-- Brand and toggle get grouped for better mobile display -->
+			 Brand and toggle get grouped for better mobile display 
 			<div class="navbar-header">
 				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
 					<span class="sr-only">Toggle navigation</span>
@@ -40,10 +95,10 @@
 				</button>
 				<a class="navbar-brand" href="{% url 'redsocial:home' %}">Tablón</a>
 			</div>
-			<!-- Collect the nav links, forms, and other content for toggling -->
+			 Collect the nav links, forms, and other content for toggling 
 			<div class="collapse navbar-collapse navbar-ex1-collapse">
 				<ul class="nav navbar-nav">
-						<!-- % url 'redsocial:inicio' user.username % -->
+						 url 'redsocial:inicio' user.username % 
 					  <li class="active"><a href="{% url 'redsocial:perfil' user.username %}">Perfil</a></li> 
 					<li><a href="#">Grupos</a></li>
 				</ul>
@@ -70,11 +125,13 @@
 						</ul>
 					</li>
 				</ul>
-			</div><!-- /.navbar-collapse -->
+			</div>
+			/.navbar-collapse 
 			<div class="list-group" id="list-group">
   					
 				</div>
 		</nav>
+-->
 		{% endblock %}
 	</div>
 
@@ -119,10 +176,21 @@ $.declinarPeticion=function(){
 $.comentar=function(){
 	$('#formulario').submit(function(event) { // catch the form's submit event
 		event.preventDefault();
+		var form= new FormData(this);
+		console.log(form);
 		$.ajax({ // create an AJAX call...
-			data: $(this).serialize(), // get the form data
+			/*
+			
 			type: $(this).attr('method'), // GET or POST
+			contentType:$(this).attr("enctype"), 
 			url: $(this).attr('action'), // the file to call
+			data: $(this).serialize(), // get the form data
+			*/
+			url: $(this).attr('action'),
+			type: $(this).attr('method'),
+		    data: new FormData(this),
+		    processData: false,
+		    contentType: false,
 			success: function(data){ // on success..
 				location.reload(true);
 			}  

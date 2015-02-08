@@ -29,6 +29,7 @@ class Partida(models.Model):
         unique_together=('jugador_negro', 'jugador_blanco','fecha')
     
     def __unicode__(self):
+    #pass
         return self.jugador_blanco.__unicode__()+" - "+self.jugador_negro.__unicode__()+" ["+unicode(self.fecha)+"]"+" "+self.path
 
     def save(self, *args, **kwargs):
