@@ -10,7 +10,8 @@ class Comentario(models.Model):
     fecha=models.DateTimeField()
     perfil=models.ForeignKey(Perfil)
     texto=models.CharField(max_length=2000)
-    fichero=models.FileField(upload_to=MEDIA_ROOT+'sgf', blank=True)
+    #fichero=models.FileField(upload_to=MEDIA_ROOT+'sgf')
+    partida=models.ForeignKey(Partida)
     #respuestas=models.ManyToManyField(Respuesta, blank=True)
     
     def __unicode__(self):
