@@ -22,4 +22,4 @@ class RespuestaForm(ModelForm):
 
 class ComentarioForm(forms.Form):
     texto=forms.CharField(label="Tu comentario", max_length=2000)
-    fichero=forms.FileField(label="Sgf")
+    fichero=forms.FileField(label="Sgf", required=False)

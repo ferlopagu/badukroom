@@ -15,7 +15,7 @@
 									</form>
 								</div>
 								{% for e in lista_comentarios %} 
-
+										{% if e.perfil.user.username == user.username or e.perfil.user.username != user.username and e.grupo == Null %}
 											<div class="panel panel-default">
 												<div class="panel-heading">
 													<h4>{{ e.perfil.user.username }}</h4>
@@ -36,6 +36,7 @@
 													</div>
 												{% endfor %} 
 											</div>
+										{% endif %}
 								{% endfor %} 
 
 {% endblock columna_principal %}

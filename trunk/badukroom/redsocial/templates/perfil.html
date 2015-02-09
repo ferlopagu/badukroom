@@ -90,12 +90,25 @@
 			</div>
 			<div class="panel-body">
 					{{ dic.comentario.texto }}
+										{% if dic.comentario.partida.path != Null %}
+					<div data-wgo="/static/{{dic.comentario.partida.path}}">
+							Sorry, your browser doesn't support WGo.js. Download SGF <a
+							href="/static/{{dic.comentario.partida.path}}">directly</a>.
+					</div>
+					
+					<div>
+					<a  href="/static/{{dic.comentario.partida.path}}" class="btn btn-info" role="button">Descargar</a>
+					</div>
+					{% endif %}
+			</div>
+					<!--  
 					<div data-wgo="/static/{{dic.comentario.partida.path}}">
 							Sorry, your browser doesn't support WGo.js. Download SGF <a
 							href="/static/{{dic.comentario.partida.path}}">directly</a>.
 					</div>
 			</div>
 			<a  href="/static/{{dic.comentario.partida.path}}" class="btn btn-info" role="button">Descargar</a>
+			-->
 			<div class="collapse navbar-collapse navbar-ex1-collapse">
 				<ul class="nav navbar-nav">
 					<li><a href="#">Me gusta</a></li>

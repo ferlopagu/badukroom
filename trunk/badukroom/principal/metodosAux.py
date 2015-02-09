@@ -8,8 +8,17 @@ datetime.date.today()
 import os
 import re
 from principal.models import Jugador
-from login.models import Perfil
+#from login.models import Perfil
+import datetime
+from datetime import date
+import time
+import locale
+from django.conf.urls import url
+from redsocial.models import Grupo
+from django.shortcuts import get_object_or_404
 
+
+#from datetime import datetime
 """METODO PARA AVERIGUAR PATH DE CADA FICHERO """
 def pathFile(path): #example--> path="Correos",    dir="Correos/"
     ficheros=[]
@@ -188,3 +197,133 @@ def informacion_partida2(lineas, path):
 
 #informacion_partida("../static/sgf/gresko-ersev.sgf")
 #informacion_partida('../static/sgf/wilwal6re-ersev2.sgf')
+
+
+#print datetime.date.today( )
+#print datetime.datetime.now()
+
+def fue_comentado(fecha):
+    locale.setlocale(locale.LC_TIME, "es_ES.UTF-8")
+    #diccionario_meses={"01":"enero", "02":"febrero", "03":"marzo", "04":"abril", "05":"mayo", "06":"junio", "07":"julio", "08":"agosto","09":"septiembre", "10":"octubre", "11":"noviembre", "12":"diciembre"}
+    res=""
+    ahora= datetime.datetime.now()
+    ahora_cadena=datetime.datetime.now().strftime("%d de %B a la(s) %H:%M")
+    diferencia= ahora -fecha
+    #creamos tupla (horas, segundos)
+    tupla=divmod(diferencia.total_seconds(), 3600)
+    #comprobamos que el numero de horas es mayor que 24
+    if tupla[0] > 24:
+        res=ahora_cadena
+    else:
+        if tupla[0]>=0:
+            res= "hace "+str(int(tupla[0]))+" hora(s)"
+        else:
+            #al ser igual que cero, tupla[1] almacena los segundos que dividido entre 60 nos devuelve los minutos y segundos restantes
+            minutos_segundos=divmod(tupla[1], 60)
+            if minutos_segundos[0]>0:
+                res = "hace "+str(int(minutos_segundos[0]))+ " minutos"
+            else: 
+                res= "hace "+str(int(minutos_segundos[1]))+ "segundos"
+    print "RES: "+res
+    return res
+            #almacena
+        
+        #tupla=divmod(tupla[0], )
+
+#fecha=datetime.datetime(2015, 2, 8, 21, 57, 42)
+#fue_comentado(fecha)
+
+#locale.setlocale(locale.LC_TIME, "es_ES.UTF-8") 
+#diccionario_meses={"01":"enero", "02":"febrero", "03":"marzo", "04":"abril", "05":"mayo", "06":"junio", "07":"julio", "08":"agosto"
+#                    ,"09":"septiembre", "10":"octubre", "11":"noviembre", "12":"diciembre"}
+#print datetime.datetime.now().strftime("%d de %B a la(s) %H:%M")
+#print datetime.datetime.now().strftime("%m")
+ahora = datetime.datetime.now().strftime("%y-%m-%d-%H:%M:%S")
+#print "ahora: "+str(ahora)
+dia1= datetime.datetime(2015, 2, 8, 18, 17, 42)
+dia2= datetime.datetime(2015, 2, 8, 18, 57, 42)
+elapsedTime = dia2 - dia1
+#print divmod(elapsedTime.total_seconds(), 86400)
+#print divmod(elapsedTime.total_seconds(), 3600)
+#print divmod(elapsedTime.total_seconds(), 60)
+#tupla=divmod(elapsedTime.total_seconds(), 3600)
+#print tupla[0]
+#print tupla[1]
+#print dia1
+#print dia2
+#segundos_ahora=datetime.datetime.now().strftime("%s")
+#meses_ahora=datetime.datetime.now().strftime("%s")
+#print "fecha en meses: "+str(meses_ahora)
+#segundos_dia1= dia1.strftime("%s")
+#segundos_dia= dia2.strftime("%s")
+#print "Diferencia: "+str(int(segundos_dia) - int(segundos_dia1))
+#print dia2.strftime("%s")
+#print "dia: "+str(dia2)
+
+#print "RES: "+str(  int(segundos_ahora)- int(segundos_dia)  )
+#ayer = hoy - datetime.timedelta(hours=1)
+#res= hoy-dia2
+"""
+print res
+print "el comentario se realizo hace "+str(res)
+
+
+print "Time in seconds since the epoch: %s" %time.time()
+print "Current date and time: " , datetime.datetime.now()
+print "Or like this: " ,datetime.datetime.now().strftime("%y-%m-%d-%H-%M")
+print "Current year: ", datetime.date.today().strftime("%Y")
+print "Month of year: ", datetime.date.today().strftime("%B")
+print "Week number of the year: ", datetime.date.today().strftime("%W")
+print "Weekday of the week: ", datetime.date.today().strftime("%w")
+print "Day of year: ", datetime.date.today().strftime("%j")
+print "Day of the month : ", datetime.date.today().strftime("%d")
+print "Day of week: ", datetime.date.today().strftime("%A")
+"""
+
+
+#/redsocial/grupo/1/
+"""
+def estamos_en_grupo1(url):
+    print url
+    res_url=[]
+    print res_url
+    mo = re.search("/redsocial/grupo/(.+)", url)
+    if mo:
+        res_url.append(True)
+        res_url.append(mo.group(1))
+    else:
+        res_url.append(False)
+    #print res_url
+    return res_url
+
+#estamos_en_grupo("/redsocial/grupo/1")
+
+def devuelve_grupo(g_id):
+    g = get_object_or_404(Grupo, pk=g_id)
+    #int g.__unicode__()
+    return g
+#devuelve_grupo(1)
+
+def devuelve_grupo2(url):
+    g_id=int(estamos_en_grupo1(url))
+    g=devuelve_grupo(g_id)
+    #print g
+    return g
+"""
+def estamos_en_grupo(url):
+    mo = re.search("/redsocial/grupo/(.+)/", url)
+    resultado=[]
+    if mo:
+        g_id=int(mo.group(1))
+        g = get_object_or_404(Grupo, pk=g_id)
+        resultado.append(True)
+        resultado.append(g)
+        print resultado[0]
+        print resultado[1]
+    else:
+        resultado.append(False)
+        print resultado[0]
+    return resultado
+        
+estamos_en_grupo("/redsocial/grupo/1/")
+estamos_en_grupo("/redsocial/fla2727/")

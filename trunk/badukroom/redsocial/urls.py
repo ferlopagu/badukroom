@@ -4,7 +4,7 @@ Created on 21/01/2015
 @author: fla2727
 '''
 from django.conf.urls import patterns, url
-from redsocial.views import perfil, home, crea_comentario, buscador, agregar_ajax, contar_notificaciones, ver_notificaciones, aceptar_peticion, declinar_peticion, limpiar_notificaciones, eliminar_ajax
+from redsocial.views import perfil, home, crea_comentario, buscador, agregar_ajax, contar_notificaciones, ver_notificaciones, aceptar_peticion, declinar_peticion, limpiar_notificaciones, eliminar_ajax, grupo
 #from django.views.generic.base import TemplateView
 
 #url(r'crea_comentario/$', crea_comentario.as_view(template_name="inicio"))
@@ -19,5 +19,6 @@ urlpatterns = patterns ('' ,
     url(r'^aceptar_peticion/', aceptar_peticion, name='aceptar_peticion'),
     url(r'^declinar_peticion/', declinar_peticion, name='declinar_peticion'),
     url(r'^limpiar_notificaciones/', limpiar_notificaciones, name='limpiar_notificaciones'),
+    url(r'^grupo/(?P<grupo_id>\d+)/$', grupo, name='grupo'),
     url(r'^(?P<username>\w+)/$', perfil, name='perfil'),     
 )
