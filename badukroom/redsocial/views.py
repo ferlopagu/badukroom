@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import login_required
 from django.template.context import RequestContext
-from redsocial.models import Comentario, Respuesta, PeticionAmistad, Notificacion
+from redsocial.models import Comentario, Respuesta, PeticionAmistad, Notificacion, Grupo
 from login.models import Perfil
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
@@ -14,7 +14,7 @@ from django.http.response import HttpResponseRedirect
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 import re
-from principal.metodosAux import informacion_partida, informacion_partida2
+from principal.metodosAux import informacion_partida, informacion_partida2, estamos_en_grupo
 from badukroom.settings import BASE_DIR
 from principal.models import Partida, Jugador
 # Create your views here.
@@ -43,17 +43,19 @@ def perfil(request, username):
     
     diccionario_perfil_comentarios={}
     diccionario_perfil_comentarios["perfil"]=p 
-    comentarios=Comentario.objects.filter(perfil=p)
+    comentarios=Comentario.objects.filter(perfil=p).order_by('fecha').reverse()
     lista_diccionario_comentarios_respuestas=[] #va a almacenar una lista del diccionario siguiente
     for c in comentarios:
-        diccionario_comentarios_respuestas={}# diccionario = {'comentario': r1, 'respuestas': [r1,r2,r3]}
-        diccionario_comentarios_respuestas['comentario']=c
-        resp=Respuesta.objects.filter(comentario=c)
-        respuestas=[]
-        for r in resp:
-            respuestas.append(r)
-        diccionario_comentarios_respuestas['respuestas']=respuestas
-        lista_diccionario_comentarios_respuestas.append(diccionario_comentarios_respuestas)
+        if c.grupo == None:
+            print "Es nulo"
+            diccionario_comentarios_respuestas={}# diccionario = {'comentario': r1, 'respuestas': [r1,r2,r3]}
+            diccionario_comentarios_respuestas['comentario']=c
+            resp=Respuesta.objects.filter(comentario=c)
+            respuestas=[]
+            for r in resp:
+                respuestas.append(r)
+            diccionario_comentarios_respuestas['respuestas']=respuestas
+            lista_diccionario_comentarios_respuestas.append(diccionario_comentarios_respuestas)
     diccionario_perfil_comentarios['comentarios']=lista_diccionario_comentarios_respuestas
     lista_diccionarios_def.append(diccionario_perfil_comentarios)
     
@@ -158,50 +160,87 @@ def crea_comentario(request):
         print request.POST
         print "request.Files"
         print request.FILES
-        form = ComentarioForm(request.POST, request.FILES)
-        if form.is_valid():
+        print request.POST
+        print request.POST['url']
+        if 'fichero' in request.FILES: #comprobamos que tenga fichero
+            form = ComentarioForm(request.POST, request.FILES)
+            if form.is_valid():
+                print form
+                print "Path_info: "+request.path_info
+                #form.save()
+                #comentario=form.save(commit=False)
+                
+                fecha=datetime.now()
+                perfil=Perfil.objects.get(user=request.user)
+                
+                path_fichero=BASE_DIR+"/static/sgf/"+request.FILES['fichero'].__str__()
+                print "path fichero:"+path_fichero
+    
+                """ 
+                for chunk in request.FILES['fichero'].chunks():
+                    print chunk
+                """
+                """ Estamos leyendo la partida y sacando la informacion util para crearla"""
+                lineas=request.FILES['fichero'].chunks()
+                diccionario_informacion=informacion_partida2(lineas, path_fichero)
+                print diccionario_informacion 
+                jugador_negro=Jugador(nombre=diccionario_informacion['black'])
+                jugador_negro.save()
+                print 'jugador negro guardado con exito'
+                jugador_blanco=Jugador(nombre=diccionario_informacion['blanco'])
+                jugador_blanco.save()
+                partida = Partida(fecha=diccionario_informacion['fecha'], jugador_negro=jugador_negro, 
+                                  jugador_blanco=jugador_blanco, resultado=diccionario_informacion['result'], 
+                                  fichero=request.FILES['fichero'], path=diccionario_informacion['path'])
+                partida.save()
+                print partida.__unicode__()
+                print 'partida salvada con exito'
+                """ Fin crear la partida """
+                perfil=perfil
+                partida=partida
+                texto=form.cleaned_data['texto']
+                """Comprobamos si estamos en un grupo"""
+                url=request.POST['url']
+                lista=estamos_en_grupo(url)
+                if lista[0]==True:
+                    g=lista[1]
+                    comentario=Comentario(fecha=fecha, perfil=perfil, texto=texto, partida=partida, grupo=g)
+                else:
+                    comentario=Comentario(fecha=fecha, perfil=perfil, texto=texto, partida=partida)
+                """Fin comprobar si es un grupo"""
+                comentario.save()
+                print 'comentario guardado con exito'
+                comentarios=list(Comentario.objects.values())
+                return JsonResponse(comentarios, safe=False)
+            else:
+                print "el formulario no es valido"
+                print request.POST
+                print request.FILES
+        else:#no adjuntamos fichero
+            form = ComentarioForm(request.POST)
             print form
-            #form.save()
-            #comentario=form.save(commit=False)
-            
-            fecha=datetime.now()
-            perfil=Perfil.objects.get(user=request.user)
-            
-            path_fichero=BASE_DIR+"/static/sgf/"+request.FILES['fichero'].__str__()
-            print "path fichero:"+path_fichero
-
-            """ 
-            for chunk in request.FILES['fichero'].chunks():
-                print chunk
-            """
-            """ Estamos leyendo la partida y sacando la informacion util para crearla"""
-            lineas=request.FILES['fichero'].chunks()
-            diccionario_informacion=informacion_partida2(lineas, path_fichero)
-            print diccionario_informacion 
-            jugador_negro=Jugador(nombre=diccionario_informacion['black'])
-            jugador_negro.save()
-            print 'jugador negro guardado con exito'
-            jugador_blanco=Jugador(nombre=diccionario_informacion['blanco'])
-            jugador_blanco.save()
-            partida = Partida(fecha=diccionario_informacion['fecha'], jugador_negro=jugador_negro, 
-                              jugador_blanco=jugador_blanco, resultado=diccionario_informacion['result'], 
-                              fichero=request.FILES['fichero'], path=diccionario_informacion['path'])
-            partida.save()
-            print partida.__unicode__()
-            print 'partida salvada con exito'
-            """ Fin crear la partida """
-            perfil=perfil
-            partida=partida
-            texto=form.cleaned_data['texto']
-            comentario=Comentario(fecha=fecha, perfil=perfil, texto=texto, partida=partida)
-            comentario.save()
-            print 'comentario guardado con exito'
-            comentarios=list(Comentario.objects.values())
-            return JsonResponse(comentarios, safe=False)
-        else:
-            print "el formulario no es valido"
-            print request.POST
-            print request.FILES
+            if form.is_valid():
+                print "Path_info: "+request.path_info
+                print "JEJEJEJEJEJ"
+                fecha=datetime.now()
+                print "FEcha: "+fecha.__str__()
+                perfil=Perfil.objects.get(user=request.user)
+                texto=form.cleaned_data['texto']
+                """Comprobamos si estamos en un grupo"""
+                url=request.POST['url']
+                lista=estamos_en_grupo(url)
+                if lista[0]==True:
+                    g=lista[1]
+                    comentario=Comentario(fecha=fecha, perfil=perfil, texto=texto, grupo=g)
+                else:
+                    comentario=Comentario(fecha=fecha, perfil=perfil, texto=texto)
+                """Fin comprobar si es un grupo"""
+                comentario.save()
+                print "comentario guardado con exito"
+                comentarios=list(Comentario.objects.values())
+                return JsonResponse(comentarios, safe=False)
+            else:
+                print "no se contenia fichero pero el formulario no era valido"
     else:
         print "ENTRAMOS EN ELSE AL NO SER AJAX"
         return HttpResponseRedirect(request.META['HTTP_REFERER'])
@@ -330,3 +369,32 @@ def limpiar_notificaciones(request):
     else:
         return HttpResponse('Error en la peticion Ajax')
            
+def grupo(request, grupo_id):
+    print request.user
+    lista_diccionarios_def=[]
+    g = get_object_or_404(Grupo, pk=grupo_id)
+    print g.__unicode__()
+    diccionario_grupo_comentarios={}
+    diccionario_grupo_comentarios["grupo"]=g 
+    comentarios=Comentario.objects.filter(grupo=g)
+    print comentarios
+    lista_diccionario_comentarios_respuestas=[] #va a almacenar una lista del diccionario siguiente
+    for c in comentarios:
+        diccionario_comentarios_respuestas={}# diccionario = {'comentario': r1, 'respuestas': [r1,r2,r3]}
+        diccionario_comentarios_respuestas['comentario']=c
+        resp=Respuesta.objects.filter(comentario=c)
+        respuestas=[]
+        for r in resp:
+            respuestas.append(r)
+        diccionario_comentarios_respuestas['respuestas']=respuestas
+        lista_diccionario_comentarios_respuestas.append(diccionario_comentarios_respuestas)
+    diccionario_grupo_comentarios['comentarios']=lista_diccionario_comentarios_respuestas
+    lista_diccionarios_def.append(diccionario_grupo_comentarios)
+    print lista_diccionarios_def
+    
+    """ add form comentar"""
+    formulario=ComentarioForm()
+    
+    context = {'lista_diccionario_comentarios': lista_diccionarios_def, 'formulario':formulario}
+    return render_to_response('grupo.html',context,context_instance=RequestContext(request))
+    

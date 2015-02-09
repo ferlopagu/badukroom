@@ -177,7 +177,9 @@ $.comentar=function(){
 	$('#formulario').submit(function(event) { // catch the form's submit event
 		event.preventDefault();
 		var form= new FormData(this);
-		console.log(form);
+		var x = location.pathname;
+		form.append("url",x);
+		console.log(x);
 		$.ajax({ // create an AJAX call...
 			/*
 			
@@ -188,7 +190,8 @@ $.comentar=function(){
 			*/
 			url: $(this).attr('action'),
 			type: $(this).attr('method'),
-		    data: new FormData(this),
+		    //data: new FormData(this),
+		    data: form,
 		    processData: false,
 		    contentType: false,
 			success: function(data){ // on success..
