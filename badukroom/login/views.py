@@ -34,11 +34,13 @@ def login_view(request):
                     return render_to_response('nousuario.html', context_instance=RequestContext(request))
         elif 'registrar' in request.POST:
             if user_form.is_valid() and perfil_form.is_valid():
+                print "userform y perfilform son validos"
                 user=user_form.save() #guardamos el usuario
                 perfil=perfil_form.save(commit=False) #tenemos que add el usuario
                 perfil.user=user #add el usuario al perfil
                 perfil.save() #guardamos el perfil
-                return HttpResponseRedirect('/login')
+                
+                return HttpResponseRedirect('/')
         else:
             return HttpResponseRedirect('/quedise')
             
