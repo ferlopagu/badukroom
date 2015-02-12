@@ -10,7 +10,7 @@
 	<div class="box">
 		<div class="row row-offcanvas row-offcanvas-left">
 			<!-- sidebar left-->
-			<div class="column col-sm-2 col-xs-1 sidebar-offcanvas" id="sidebar1">
+			<div class="column col-md-2 col-sm-1 col-xs-1 sidebar-offcanvas" id="sidebar1">
 				<ul class="nav">
 					<li><a href="#" data-toggle="offcanvas" class="visible-xs text-center"><i class="glyphicon glyphicon-chevron-right"></i></a></li>
 				</ul>
@@ -25,32 +25,23 @@
 			<!-- /sidebar left-->
 
 			<!-- main right col -->
-			<div class="column col-sm-8 col-xs-12" id="main">
+			<div class="column col-md-8 col-sm-10 col-xs-12" id="main">
 				<div class="padding">
 					<div class="full col-sm-12">
 						<!-- content -->                      
 						<div class="row">
-							<!-- main col left -->
-							<!-- Creamos una columna de tamaño 3 sin utilizar -->
-							<div class="col-sm-3">
-							</div>
 							<!-- centrar la columna principal-->
-							<div class="col-sm-6">
+							<div class="col-md-12 col-sm-10">
 								{% block columna_principal %}
 								
 								{% endblock columna_principal %}
-
-							</div> <!-- fin columna principal--> 
-							<!--Creamos el margen derecho para centrar la de arriba con una columna falsa de 3 -->
-							<div class="col-sm-3">
-							</div>
 						</div><!--/row-->
 					</div><!-- /col-9 -->
 				</div><!-- /padding -->
 			</div><!-- /main -->
 
 						<!-- sidebar right-->
-			<div class="column col-sm-2 col-xs-1 sidebar-offcanvas" id="sidebar2">
+			<div class="column col-md-2 col-sm-2 col-xs-1 sidebar-offcanvas" id="sidebar2">
 				<ul class="nav">
 					<li><a href="#" data-toggle="offcanvas" class="visible-xs text-center"><i class="glyphicon glyphicon-chevron-right"></i></a></li>
 				</ul>
