@@ -58,32 +58,49 @@ def perfil(request, username):
             lista_diccionario_comentarios_respuestas.append(diccionario_comentarios_respuestas)
     diccionario_perfil_comentarios['comentarios']=lista_diccionario_comentarios_respuestas
     lista_diccionarios_def.append(diccionario_perfil_comentarios)
+    print lista_diccionarios_def
     
     
     #Paso 7
+    
     """
     Almacenar un string con el path de la imagen principal el cual no estamos almacenando en la base de datos como si hacemos en el modelo Partida
-    """
+    
     path_perfil=p.foto_principal.name.__str__()
-    m1 = re.match(".*/(imagenes/.*)", path_perfil)
-    print path_perfil
-    print m1.group(1)
-    perfil= m1.group(1)
-    
     path_portada=p.foto_portada.name.__str__() #es posible hacerlo asi supuestamente p.foto_portada.url
-    m2 = re.match(".*/(imagenes/.*)", path_portada)
-    portada=m2.group(1)
-    
-    dic_imagenes={'perfil':perfil,'portada':portada}
+    m1 = re.match(".*/(imagenes/.*)", path_perfil)
+    m2 = re.match(".*/(imagenes/.*)", path_portada) 
+    dic_imagenes={}
+    print path_perfil
+    if m1 or m2:
+        print m1.group(1)
+        perfil= m1.group(1)
+        portada=m2.group(1)
+        dic_imagenes={'perfil':perfil,'portada':portada}
+    else:
+        dic_imagenes={'perfil':"",'portada':""}
+  
     print dic_imagenes
     lista_dic_imagenes=[]
     lista_dic_imagenes.append(dic_imagenes)
+    """
     """fin almacenar"""
     
-    #Paso 8
-    """ add form comentar"""
-    formulario=ComentarioForm()
+    #Paso 7 devolver imagenes de portada y perfil
+    perfil=p.path_principal
+    print "Contenido p.path_principal: "+perfil
+    portada=p.path_portada
+    print "Contenido p.path_portada: "+portada
+    if perfil=="imagenes/" or perfil=="imagenes/None":
+        perfil="imagenes/sin_foto.jpg"
+    if portada=="imagenes/" or portada=="imagenes/None":
+        portada="imagenes/sin_portada.jpg"
+    dic_imagenes={'perfil':perfil,'portada':portada}
+    lista_dic_imagenes=[]
+    lista_dic_imagenes.append(dic_imagenes)
+    
 
+    
     #Paso 9
     """comprobamos si el perfil que visualizamos somos nosotros, es un amigo o desconocido """
     somos_nosotros=False
@@ -135,7 +152,17 @@ def perfil(request, username):
     lista_dic_amigo.append(diccionario_amigos) #devolvemos lista con diccionario unico donde especifica si es amigo o no el perfil que visitamos
     
     
-    context = {'lista_diccionario_comentarios': lista_diccionarios_def, 'formulario':formulario, 'lista_dic_imagenes':lista_dic_imagenes, 'lista_dic_amigo':lista_dic_amigo}
+    
+    if somos_nosotros==False:
+        formulario_respuesta=ComentarioForm()
+        print "Somos nosotros es false no devolvemos formulario de comentar"
+        context = {'lista_diccionario_comentarios': lista_diccionarios_def, 'formulario_respuesta':formulario_respuesta,'lista_dic_imagenes':lista_dic_imagenes, 'lista_dic_amigo':lista_dic_amigo}
+    else:
+        #Paso 8
+        """ add form comentar"""
+        formulario_respuesta=ComentarioForm()
+        formulario=ComentarioForm()
+        context = {'lista_diccionario_comentarios': lista_diccionarios_def, 'formulario':formulario,'formulario_respuesta':formulario_respuesta, 'lista_dic_imagenes':lista_dic_imagenes, 'lista_dic_amigo':lista_dic_amigo}
     return render_to_response('perfil.html',context,context_instance=RequestContext(request))
 
 @login_required(login_url='/login')
@@ -144,12 +171,35 @@ def home(request):
     username=request.user.username
     lista_comentarios=[]
     p = get_object_or_404(Perfil, user__username=username)
-    for amigo in p.amigos.all():
-        comentarios=Comentario.objects.filter(Q(perfil=amigo)|Q(perfil=p)).order_by('fecha').reverse()
+    if p.amigos.all(): #si tiene amigos devolvemos los de sus amigos los suyos y actualizaciones en sus grupos
+        print "TIENE AMIGOS"
+        for amigo in p.amigos.all():
+            comentarios=Comentario.objects.filter(Q(perfil=amigo)|Q(perfil=p)|Q(grupo__miembros__user__username=p.user.username)).order_by('fecha').reverse()
+            for c in comentarios:
+                lista_comentarios.append(c)
+    else:#si no tiene amigos devolvemos los suyos y las actualizaciones en sus grupos
+        comentarios=Comentario.objects.filter(Q(perfil=p)| Q(grupo__miembros__user__username=p.user.username)).order_by('fecha').reverse()
         for c in comentarios:
             lista_comentarios.append(c)
+        print "NO TIENE AMIGOS"
     print lista_comentarios
-    context = {'lista_comentarios': lista_comentarios}
+    
+    lista_diccionario_comentarios_respuestas=[]
+    for c in lista_comentarios:
+        diccionario_comentarios_respuestas={}
+        print "Comentario: "+c.__unicode__()
+        # diccionario = {'comentario': r1, 'respuestas': [r1,r2,r3]}
+        diccionario_comentarios_respuestas['comentario']=c
+        resp=list(Respuesta.objects.filter(comentario=c))
+        print resp
+        diccionario_comentarios_respuestas['respuestas']=resp
+        lista_diccionario_comentarios_respuestas.append(diccionario_comentarios_respuestas)
+
+    print "Lista comentarios y respuestas: "
+    print lista_diccionario_comentarios_respuestas
+    
+    #context = {'lista_comentarios': lista_comentarios}
+    context = {'lista_dic_commentarios_respuestas': lista_diccionario_comentarios_respuestas}
     return render_to_response('home.html',context,context_instance=RequestContext(request))
 
 
@@ -252,16 +302,96 @@ def crea_comentario(request):
         #context = {'formulario':formulario, 'comentarios':comentarios}
         #return render_to_response('comentar.html',context,context_instance=RequestContext(request))
 
+def responder(request):
+    if request.is_ajax():
+        #formulario=ComentarioForm(texto=request.POST['texto'])
+        print request.POST
+        print "request.Files"
+        print request.FILES
+        print request.POST
+        print request.POST['url']
+        print "Id del comentario al que add la respuesta: "+request.POST["id_comentario"]
+        id_comentario=int(request.POST["id_comentario"])
+        if 'fichero' in request.FILES: #comprobamos que tenga fichero
+            form = ComentarioForm(request.POST, request.FILES)
+            if form.is_valid():
+                print form
+                print "Path_info: "+request.path_info
+                #form.save()
+                #comentario=form.save(commit=False)
+                
+                fecha=datetime.now()
+                perfil=Perfil.objects.get(user=request.user)
+                
+                path_fichero=BASE_DIR+"/static/sgf/"+request.FILES['fichero'].__str__()
+                print "path fichero:"+path_fichero
+    
+                """ 
+                for chunk in request.FILES['fichero'].chunks():
+                    print chunk
+                """
+                """ Estamos leyendo la partida y sacando la informacion util para crearla"""
+                lineas=request.FILES['fichero'].chunks()
+                diccionario_informacion=informacion_partida2(lineas, path_fichero)
+                print diccionario_informacion 
+                jugador_negro=Jugador(nombre=diccionario_informacion['black'])
+                jugador_negro.save()
+                print 'jugador negro guardado con exito'
+                jugador_blanco=Jugador(nombre=diccionario_informacion['blanco'])
+                jugador_blanco.save()
+                partida = Partida(fecha=diccionario_informacion['fecha'], jugador_negro=jugador_negro, 
+                                  jugador_blanco=jugador_blanco, resultado=diccionario_informacion['result'], 
+                                  fichero=request.FILES['fichero'], path=diccionario_informacion['path'])
+                partida.save()
+                print partida.__unicode__()
+                print 'partida salvada con exito'
+                """ Fin crear la partida """
+                perfil=perfil
+                partida=partida
+                texto=form.cleaned_data['texto']
+                comentario=Comentario.objects.get(id=id_comentario)
+                print "Comentario al que respondemos: "+comentario.__unicode__()
+                respuesta=Respuesta(fecha=fecha, perfil=perfil, texto=texto, partida=partida, comentario=comentario)
+                respuesta.save()
+                print 'respuesta guardada con exito'
+                comentarios=list(Comentario.objects.values())
+                return JsonResponse(comentarios, safe=False)
+            else:
+                print "el formulario no es valido"
+                print request.POST
+                print request.FILES
+        else:#no adjuntamos fichero
+            form = ComentarioForm(request.POST)
+            print form
+            if form.is_valid():
+                print "Path_info: "+request.path_info
+                print "JEJEJEJEJEJ"
+                fecha=datetime.now()
+                print "FEcha: "+fecha.__str__()
+                perfil=Perfil.objects.get(user=request.user)
+                texto=form.cleaned_data['texto']
+                comentario=Comentario.objects.get(id=id_comentario)
+                print "Comentario al que respondemos: "+comentario.__unicode__()
+                respuesta=Respuesta(fecha=fecha, perfil=perfil, texto=texto, comentario=comentario)
+                respuesta.save()
+                print "Respuesta guardada con exito"
+                comentarios=list(Comentario.objects.values())
+                return JsonResponse(comentarios, safe=False)
+            else:
+                print "no se contenia fichero pero el formulario no era valido"
+    else:
+        print "ENTRAMOS EN ELSE AL NO SER AJAX"
+        return HttpResponseRedirect(request.META['HTTP_REFERER'])
+
 def buscador(request):
     if request.is_ajax():
-        if request.method=='POST':
-            print "Esto contiene request.POST: "+request.POST['texto']
-            cadena=request.POST['texto']
+        if request.method=='GET':
+            print "Esto contiene request.GET: "+request.GET['texto']
+            cadena=request.GET['texto']
             lista_perfiles=list(Perfil.objects.values('user').filter(Q(user__first_name__iregex=cadena) | Q(user__last_name__iregex=cadena))) #cambiar username por first_name o last_name
             print lista_perfiles
             for p in lista_perfiles:
                 lista_user=list(User.objects.values('first_name', 'last_name', 'username').filter(id=p['user']))
-            
             print lista_user
             return JsonResponse(lista_user, safe=False)
             """
@@ -272,6 +402,7 @@ def buscador(request):
         else:
             render("Hubo un problema en su peticion")
     else:
+        
         
         return HttpResponseRedirect(request.META['HTTP_REFERER'])
 
@@ -376,7 +507,7 @@ def grupo(request, grupo_id):
     print g.__unicode__()
     diccionario_grupo_comentarios={}
     diccionario_grupo_comentarios["grupo"]=g 
-    comentarios=Comentario.objects.filter(grupo=g)
+    comentarios=Comentario.objects.filter(grupo=g).order_by('fecha').reverse()
     print comentarios
     lista_diccionario_comentarios_respuestas=[] #va a almacenar una lista del diccionario siguiente
     for c in comentarios:
@@ -397,4 +528,13 @@ def grupo(request, grupo_id):
     
     context = {'lista_diccionario_comentarios': lista_diccionarios_def, 'formulario':formulario}
     return render_to_response('grupo.html',context,context_instance=RequestContext(request))
+
+def lista_grupos(request):
+    p=get_object_or_404(Perfil, user__username=request.user.username)
+    print p
+    grupos=list(Grupo.objects.values('titulo','descripcion','pk').filter(miembros__user__username=p.user.username))
+    print grupos
+    context = {'lista_grupos': grupos}
+    return render_to_response('lista_grupos.html',context,context_instance=RequestContext(request))
+    
     

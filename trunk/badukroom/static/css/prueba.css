@@ -4,3 +4,16 @@
 { 
 	padding: 60px; 
 }
+
+.navbar-collapse.collapse{
+	border-bottom: 1px solid rgb(221, 221, 221);
+}
+
+#div_body_respuesta{
+	background-color: aliceblue;
+}
+
+#div_respuesta{
+	padding-top: 5px;
+	background-color: aliceblue;
+}
