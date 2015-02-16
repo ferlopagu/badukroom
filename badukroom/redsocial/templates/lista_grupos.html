@@ -1,0 +1,19 @@
+{% extends "base_perfil_home.html" %}
+{% load staticfiles %}
+{% block columna_principal %}
+<h2>Mis grupos</h2>
+<div class="list-group" id="list-group">
+{% for e in lista_grupos %}
+	<a href="/redsocial/grupo/{{e.pk}}" class='list-group-item'>{{e.titulo}}</a>						
+{% endfor %} 
+</div>
+{% endblock columna_principal %}
+
+{% block js2 %}
+<script type="text/javascript">	
+	$(function(){
+		$.buscador();
+		$.contar();
+	});
+</script>
+{% endblock js2 %}

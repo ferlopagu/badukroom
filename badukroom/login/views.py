@@ -18,7 +18,7 @@ def login_view(request):
     if request.method=='POST':
         formulario_login=AuthenticationForm(request.POST)
         user_form=UserForm(request.POST)
-        perfil_form=PerfilForm(request.POST)
+        perfil_form=PerfilForm(request.POST, request.FILES)
         if 'entrar' in request.POST:
             if formulario_login.is_valid:
                 usuario=request.POST['username']

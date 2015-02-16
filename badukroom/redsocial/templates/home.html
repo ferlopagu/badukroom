@@ -14,15 +14,26 @@
 										</ul>
 									</form>
 								</div>
-								{% for e in lista_comentarios %} 
-										{% if e.perfil.user.username == user.username or e.perfil.user.username != user.username and e.grupo == Null %}
-											<div class="panel panel-default">
+
+								{% for d in lista_dic_commentarios_respuestas %} 
+									<div class="panel panel-default">
 												<div class="panel-heading">
-													<h4>{{ e.perfil.user.username }}</h4>
-													<h4>{{ e.fecha }}</h4>
+													<img src='/static/{{d.comentario.perfil.path_principal}}' width="40px" height="40px">
+													<h4>{{ d.comentario.perfil.user.username }}</h4>
+													<h4>{{ d.comentario.fecha }}</h4>
 												</div>
 												<div class="panel-body">
-													{{ e.texto }}													
+													{{ d.comentario.texto }}
+													{% if d.comentario.partida.path != Null %}
+														<div data-wgo="/static/{{d.comentario.partida.path}}">
+																Sorry, your browser doesn't support WGo.js. Download SGF <a
+																href="/static/{{d.comentario.partida.path}}">directly</a>.
+														</div>
+														
+														<div>
+														<a  href="/static/{{dic.comentario.partida.path}}" class="btn btn-info" role="button">Descargar</a>
+														</div>
+													{% endif %}													
 												</div>
 												<div class="collapse navbar-collapse navbar-ex1-collapse">
 													<ul class="nav navbar-nav">
@@ -30,14 +41,47 @@
 														<li><a href="#">Comentar</a></li>	
 													</ul>
 												</div>
-												{% for r in dic.respuestas %}
+												{% for r in d.respuestas %}
 													<div class="panel-body">
-														{{ r.texto }}													
+													<img src='/static/{{r.perfil.path_principal}}' width="40px" height="40px">
+														{{r.perfil.user.first_name}} {{r.perfil.user.last_name}} {{ r.texto }}	
+														<p>{{r.fecha}}</p>	
+														{% if r.partida.path != Null %}
+															<a id="visualizar" class="btn btn-info" >Visualizar SGF</a>
+															<div id='modal'>
+																<div id="partida" class="modal" role="dialog" >
+																	<div class="modal-dialog modal-lg" >
+																		<div class="modal-content">
+																			<div class="modal-header">
+																				<h5>Visualizando</h5>
+																			</div>
+																			<div class="modal-body" style="height: 800px">
+																				<div data-wgo="/static/{{r.partida.path}}" data-wgo-board="stoneHandler: WGo.Board.drawHandlers.SHELL" style="width: 700px">
+																						Sorry, your browser doesn't support WGo.js. Download SGF <a
+																						href="/static/{{r.partida.path}}">directly</a>.
+																				</div>
+																			</div>
+																			<div class="modal-footer">
+																				<button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
+																			</div>
+																		</div>
+																	</div>
+																</div>
+															</div>
+															<div data-wgo="/static/{{r.partida.path}}">
+																	Sorry, your browser doesn't support WGo.js. Download SGF <a
+																	href="/static/{{r.partida.path}}">directly</a>.
+															</div>
+															
+															<div>
+															<a  href="/static/{{dic.comentario.partida.path}}" class="btn btn-info" role="button">Descargar</a>
+															</div>
+														{% endif %}											
 													</div>
 												{% endfor %} 
 											</div>
-										{% endif %}
 								{% endfor %} 
+								
 
 {% endblock columna_principal %}
 
@@ -46,6 +90,7 @@
 	$(function(){
 		$.buscador();
 		$.contar();
+		$.visualizarSGF();
 	});
 </script>
 {% endblock js2 %}

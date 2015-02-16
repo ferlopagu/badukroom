@@ -38,7 +38,7 @@ class PerfilForm(ModelForm):
     #fecha_nacimiento=forms.DateField(label="Fecha nacimiento (Ej: 12/02/1992)",required=True) #vamos a excluir fecha de nacimiento por defecto y redifinirla para modificar el label
     class Meta:
         model=Perfil
-        exclude=['user','amigos']
+        exclude=['user','amigos','path_portada','path_principal']
         #exclude =['user','fecha_nacimiento']
     """
     def save(self, commit=True):

@@ -5,8 +5,8 @@
 
 <div class="jumbotron">
 	{%for e in lista_dic_imagenes %} 
-	<img src='/static/{{e.perfil}}'>
-	<img src="/static/{{e.portada}}"> 
+	<img src='{% static e.perfil %}'>
+	<img src="{% static e.portada %}"> 
 	{% endfor %} 
 	
 	{% for e in lista_diccionario_comentarios %}
@@ -112,19 +112,32 @@
 			<div class="collapse navbar-collapse navbar-ex1-collapse">
 				<ul class="nav navbar-nav">
 					<li><a href="#">Me gusta</a></li>
-					<li><a id="responder" href="#">Responder</a></li>
+					<li><a id="#" href="#">Responder</a></li>
 				</ul>
 			</div>
 			{% for r in dic.respuestas %}
-				<div class="panel-body">{{ r.texto }}</div>
+				<div class="panel-body" id="div_body_respuesta">
+				<img src='{% static r.perfil.path_principal %}' width="40px" height="40px">
+				{{ r.texto }}
+				{% if r.partida.path != Null %}
+					<div data-wgo="/static/{{r.partida.path}}">
+							Sorry, your browser doesn't support WGo.js. Download SGF <a
+							href="/static/{{dic.comentario.partida.path}}">directly</a>.
+					</div>
+					
+					<div>
+					<a  href="/static/{{r.partida.path}}" class="btn btn-info" role="button">Descargar</a>
+					</div>
+					{% endif %}
+				</div>
 			{% endfor %}
-			<div>
-				
-				<img src='/static/{{e.perfil}}' width="40px" height="40px">
-				<form id='formulario' method="post" action="{% url 'redsocial:creaComentario' %}" enctype="multipart/form-data">
-							{% csrf_token %} {{formulario.as_p}}
+			<div id="div_respuesta">
+				<img src='{% static user.perfil.path_principal %}' width="40px" height="40px">
+				<!--  <img src='/static/{{e.perfil}}' width="40px" height="40px"> -->
+				<form id='formulario_respuesta' method="post" action="{% url 'redsocial:responder' %}" enctype="multipart/form-data">
+							{% csrf_token %} {{formulario_respuesta.as_p}}
 					<p>
-						<input id='enviar' type='submit' value='enviar' />
+						<input class="{{dic.comentario.id}}" id='responder' type='submit' value='Responder' />
 					</p>
 				</form>
 				
@@ -150,6 +163,7 @@ $(function(){
 	$.aceptarPeticion();
 	$.agregar();
 	$.eliminar();
+	$.responder();
 });
 
 </script>

@@ -43,20 +43,22 @@
 					<div>
 						<ul class="nav navbar-nav">
 						 	<li><a href="{% url 'redsocial:perfil' user.username %}">Perfil</a></li> 
-							<li><a href="#">Grupos</a></li>
+							<li><a href="{% url 'redsocial:lista_grupos' %}">Grupos</a></li>
 							<li><a href="{% url 'principal:index' %}">Partidas</a></li>
 							<form class="navbar-form navbar-right" role="search" method="get" action="{% url 'redsocial:buscar' %}">
 								<div class="form-group">
-									<input id='buscar_texto' type="text" class="form-control" placeholder="Amigos, Partidas...">
+									<input id='buscar_texto' type="text" class="form-control" placeholder="Amigos, Grupos, Partidas...">
 								</div>
-								<button id='buscar' type="submit" class="btn btn-default">Buscar</button>
+								<!--  <button id='buscar' type="submit" class="btn btn-default">Buscar</button> -->
+								<a href="{% url 'redsocial:buscar' %}" class="btn btn-default" id='buscar' >Buscar</a>
 							</form>
 						</ul>
 					</div>
 					
 					<div>
 						<ul class="nav navbar-nav  navbar-right" >
-							<li><img src='/static/imagenes/1.baduk.jpg' width="40px" height="40px"></li>
+							<!--  <li><img src='/static/imagenes/1.baduk.jpg' width="40px" height="40px"></li> -->
+							<li><img src='{% static user.perfil.path_principal %}' width="40px" height="40px"></li> 
 							<li><a href="#">{{ user.first_name }}</a></li>
 							<li class="dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown">Más Opciones <b class="caret"></b></a>
@@ -145,13 +147,15 @@
     
 {% block js%}
 <script type="text/javascript">
-	$.contar=function(){
-		$.get("{% url 'redsocial:contar_notificaciones' %}", function(data){
+$.contar=function(){
+	$.get("{% url 'redsocial:contar_notificaciones' %}", function(data){
+		if(data!=0){
 			$('#notificaciones').text(data);
-		});
-	}
+		}
+	});
+}
     
-    $.aceptarPeticion=function(){
+$.aceptarPeticion=function(){
 	$('#aceptar').on('click', function(event) {
 		event.preventDefault();
 		$.post("{% url 'redsocial:aceptar_peticion' %}",{ nick: $('#nick').text() }, function(data){
@@ -174,6 +178,7 @@ $.declinarPeticion=function(){
 
 
 $.comentar=function(){
+	console.log("Entramos en comentar");
 	$('#formulario').submit(function(event) { // catch the form's submit event
 		event.preventDefault();
 		var form= new FormData(this);
@@ -195,19 +200,58 @@ $.comentar=function(){
 		    processData: false,
 		    contentType: false,
 			success: function(data){ // on success..
-				location.reload(true);
+				//location.reload(true);
+				alert("Se ha comentado con exito");
 			}  
 		});
 	});
 }
 
+$.responder=function(){
+	console.log("Entramos en responder");
+	$('#formulario_respuesta').submit(function(event) { // catch the form's submit event
+		event.preventDefault();
+		var form= new FormData(this);
+		var x = location.pathname;
+		form.append("url",x);
+		form.append("id_comentario",$('#responder').attr('class'));
+		console.log(x);
+		alert($('#responder').attr('class'));
+		var dic={"form":form, 'id':$('#responder').attr('class')};
+		alert(dic);
+		$.ajax({ // create an AJAX call...
+			/*
+			
+			type: $(this).attr('method'), // GET or POST
+			contentType:$(this).attr("enctype"), 
+			url: $(this).attr('action'), // the file to call
+			data: $(this).serialize(), // get the form data
+			*/
+			url: $(this).attr('action'),
+			type: $(this).attr('method'),
+		    //data: new FormData(this),
+		    data: form,
+		    processData: false,
+		    contentType: false,
+			success: function(data){ // on success..
+				alert("la funcion se ha ejecutado correctamente");
+			}  
+		});
+	});
+}
+
+//$('#buscar').on('click',function(event)  // catch the form's submit event
 
 $.buscador=function(){
-	$('#buscar').on('click', function(event) { // catch the form's submit event
-		event.preventDefault();
+	//click
+	//$('#buscar').on('click',function(event)
+	console.log("Buscamos1");
+	$('#buscar_texto').change(function(event){
+		//event.preventDefault();
+		console.log("Buscamos2");
 		$.ajax({ // create an AJAX call...
 			data: {"texto":$('#buscar_texto').val()}, // get the form data
-			type: 'POST', // GET or POST
+			type: 'GET', // GET or POST
 			url: "{% url 'redsocial:buscar' %}", // the file to call
 			success: function(data){ // on success..
 				console.log(data);
@@ -222,6 +266,13 @@ $.buscador=function(){
 			}  
 		});
 	});
+	/*
+	$('#buscar').on('click',function(event){
+		$.get("{% url 'redsocial:buscar' %}", {"texto": $('#buscar_texto').val()}, function(data){
+			window.location.replace("http://localhost/redsocial/busqueda.html");
+		});
+	});
+	*/
 }
 
 $.agregar=function(){
@@ -281,6 +332,14 @@ $.limpiarPeticiones=function(){
 		var boton='limpiar_peticiones';
 		$.limpiar(boton);
 		$('#peticion').html("Se eliminaron correctamente las peticiones");
+	});
+}
+
+$.visualizarSGF=function(){
+	$('#visualizar').on('click', function(event) {
+		alert("Estoy pulsando en visualizar");
+		event.preventDefault();
+		$("#partida").modal('show'); 
 	});
 }
 </script>

@@ -1,2 +1,51 @@
 @CHARSET "UTF-8";
 
+#div_superior_login{
+	background-color: black;
+}
+
+#formulario_login{
+	float: right;
+
+}
+
+#h5_badukroomn{
+	color: white;
+}
+
+body {
+    background: dimgrey;
+}
+
+#div_descripcion{
+	background-color: dimgrey;
+}
+
+#div_registro{
+	background-color: rgb(216, 206, 192);
+	border-radius: 20px;
+	margin-top: 10px;
+}
+
+h1, h2, h3, h4, h5{
+	color: white;
+}
+
+#regis{
+	color:black;
+}
+/*
+div[class="form-group has-success form-group-sm"]{
+	display: table-cell;	
+}
+
+*/
+.col-md-4{
+	padding-left: 40px;
+width: 200px;
+}
+/*
+div[class="form-group"]{
+	padding-top: 30px;
+}
+*/
