@@ -246,7 +246,7 @@ $.buscador=function(){
 	//click
 	//$('#buscar').on('click',function(event)
 	console.log("Buscamos1");
-	$('#buscar_texto').change(function(event){
+	$('#buscar_texto').keydown(function(event){ //probar con keydown
 		//event.preventDefault();
 		console.log("Buscamos2");
 		$.ajax({ // create an AJAX call...
