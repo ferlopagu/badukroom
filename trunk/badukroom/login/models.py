@@ -11,10 +11,13 @@ class Perfil(models.Model):
     fecha_nacimiento=models.DateField(help_text="Formato: dd/mm/yyyy")
     rango = models.CharField(max_length=50, choices=rango)
     jugadores_favoritos=models.ManyToManyField(Jugador,  blank=True)
-    foto_principal=models.ImageField( blank=True, upload_to=MEDIA_ROOT+'imagenes')
-    path_principal = models.CharField(max_length=70, default='imagenes/'+foto_principal.name.__str__(),  blank=True)
-    foto_portada=models.ImageField( blank=True, upload_to=MEDIA_ROOT+'imagenes')
-    path_portada = models.CharField(max_length=70, default='imagenes/'+foto_portada.name.__str__(),  blank=True)
+    foto_principal=models.ImageField( blank=True, upload_to=MEDIA_ROOT+'imagenes', default=MEDIA_ROOT+"/imagenes/sin_foto.jpg")
+    #path_principal=models.FilePathField(path=MEDIA_ROOT+'imagenes')
+    #default=MEDIA_ROOT+'imagenes/'+foto_principal.name.__str__()
+    path_principal = models.CharField(max_length=70, default='imagenes/sin_foto.jpg', blank=True)
+    foto_portada=models.ImageField( blank=True, upload_to=MEDIA_ROOT+'imagenes', default=MEDIA_ROOT+"/imagenes/sin_portada.jpg")
+    path_portada = models.CharField(max_length=70, default='imagenes/sin_portada.jpg' ,blank=True)
+    #path_portada=models.FilePathField(path=MEDIA_ROOT+'imagenes')
     amigos=models.ManyToManyField('self',  blank=True)
     
     def __unicode__(self):
@@ -23,4 +26,12 @@ class Perfil(models.Model):
     def save(self, *args, **kwargs):
         self.path_principal = 'imagenes/'+self.foto_principal.name.__str__() #Sobreescribimos el save para que actualice el path con el nombre del fichero
         self.path_portada = 'imagenes/'+self.foto_portada.name.__str__() 
+        #super(Perfil, self).save()
         super(Perfil, self).save(*args, **kwargs)
+    
+    def delete(self, *args, **kwargs):
+        user=self.user
+        self.foto_portada.delete()
+        self.foto_principal.delete()
+        super(Perfil, self).delete(*args, **kwargs)
+        user.delete() #al borrar el perfil borramos tambien el usuario

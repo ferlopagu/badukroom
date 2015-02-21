@@ -4,12 +4,9 @@
 								<div class="list-group">
   					
 								
-									<h2>Personas</h2>
-									{% if lista_perfiles|length == 0 %}
-										<h4>No se encuentran resultados en personas </h4>
-									{% endif %}
-									{% for p in lista_perfiles %}
-										<div class="panel panel-default">
+									<h2>Amigos</h2>
+									{% for p in lista_amigos %}
+										<div class="panel panel-default" style="display: inline-table">
 											<div class='panel-heading'>
 												<img src='/static/{{p.path_principal}}' width="40px" height="40px">
 												<a href="/redsocial/{{p.user.username}}">{{ p.user.first_name }} {{p.user.last_name}}</a>
@@ -26,22 +23,6 @@
 										</div>
 									
 									 <!--  <ul><li><img src='/static/{{p.path_principal}}' width='40px' height='40px'><a href="/redsocial/{{p.user.username}}">{{ p.user.first_name }} {{p.user.last_name}}</a></li></ul> -->
-									{% endfor %}
-									<hr>
-									<h2>Grupos</h2>
-									{% if lista_grupos|length == 0 %}
-										<h4>No se encuentran resultados en grupos </h4>
-									{% endif %}
-									{% for g in lista_grupos %}
-										<div class="panel panel-default">
-											<div class='panel-heading'>
-												<a href="/redsocial/grupo/{{g.id}}">{{ g.titulo}}</a>
-											</div>
-											<div class="panel-body">
-												<p>{{g.descripcion}}</p>
-											</div>
-										</div>
-									{% endfor %}
-									{%endblock columna_principal%}
-									
+									{% endfor %}	
 								</div>
+								{%endblock%}

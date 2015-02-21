@@ -5,7 +5,7 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>{% block title %}Base.html{% endblock %}</title>
+	<title>{% block title %}BadukRoom{% endblock %}</title>
 
 	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="{% static 'js/jquery.min.js' %}"></script>
@@ -26,10 +26,19 @@
 
 </head>
 <body>
+<!-- 	{# Load CSS and JavaScript #} 
+	
+	{ bootstrap_javascript }  -->
 	<div id="menu_principal">
+	{# Load the tag library #} 
+	{% load bootstrap3 %} 
+	
+
+	{# Display django.contrib.messages as Bootstrap alerts #} 
+	{% bootstrap_messages %}
 		{% block menu_principal %}
 		
-				<nav class="navbar navbar-inverse navbar-fixed-top">
+		<nav class="navbar navbar-inverse navbar-fixed-top">
 			<div class="container">
 				<div class="navbar-header">
 				   <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
@@ -45,13 +54,32 @@
 						 	<li><a href="{% url 'redsocial:perfil' user.username %}">Perfil</a></li> 
 							<li><a href="{% url 'redsocial:lista_grupos' %}">Grupos</a></li>
 							<li><a href="{% url 'principal:index' %}">Partidas</a></li>
-							<form class="navbar-form navbar-right" role="search" method="get" action="{% url 'redsocial:buscar' %}">
-								<div class="form-group">
-									<input id='buscar_texto' type="text" class="form-control" placeholder="Amigos, Grupos, Partidas...">
+							<li>
+							<!--  
+								<form class="navbar-form navbar-right" role="search" method="get" action="{% url 'redsocial:buscar' %}">
+									<div class="form-group">
+										<input id='buscar_texto' type="text" class="form-control" placeholder="Amigos, Grupos, Partidas...">
+									</div>
+									<button id='buscar' type="submit" class="btn btn-default" id=''>Buscar</button> 
+									<-- <a href="{% url 'redsocial:buscar' %}" class="btn btn-default" id='buscar' >Buscar</a>  --
+								</form>
+							-->
+							{%block formula%}
+								<form id='formulario_busqueda' class="navbar-form navbar-right" method="POST" autocomplete="off"
+									action="{% url 'redsocial:buscar' %}">
+									{% csrf_token %} 
+									<input id='buscar_texto' name='buscar_texto' type="text" class="form-control" placeholder="Amigos, Grupos, Partidas...">
+									{% buttons %}
+									<button id='buscar' type="submit" class="btn btn-primary">{% bootstrap_icon "star" %} Buscar</button>
+									{% endbuttons %}
+									{% endblock formula %}
+								</form>
+								
+								<div class="list-group" id="list-group">
+  					
 								</div>
-								<!--  <button id='buscar' type="submit" class="btn btn-default">Buscar</button> -->
-								<a href="{% url 'redsocial:buscar' %}" class="btn btn-default" id='buscar' >Buscar</a>
-							</form>
+								
+							</li>
 						</ul>
 					</div>
 					
@@ -61,22 +89,22 @@
 							<li><img src='{% static user.perfil.path_principal %}' width="40px" height="40px"></li> 
 							<li><a href="#">{{ user.first_name }}</a></li>
 							<li class="dropdown">
-								<a href="#" class="dropdown-toggle" data-toggle="dropdown">Más Opciones <b class="caret"></b></a>
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown">Más Opciones <span class="caret"></span></a>
 								<ul class="dropdown-menu">
 									<li><a href="#">Amigos</a></li>
 									<li><a href="#">Configuracion</a></li>
 									<li><a href="#">Ayuda</a></li>
 									<li><a href="{% url 'logout:logout_view' %}">Salir</a></li>
 								</ul>
-							</li>
+							</li>					
 						</ul>
-	
 					</div>
 				</div>
+
 			</div>
-			
+							
 		</nav>
-		
+
 		
 		
 		
@@ -138,6 +166,8 @@
 	</div>
 
 	<div id="cuerpo">
+
+	
 		{% block cuerpo %} {% endblock cuerpo%}
 	</div>
 
@@ -243,10 +273,14 @@ $.responder=function(){
 //$('#buscar').on('click',function(event)  // catch the form's submit event
 
 $.buscador=function(){
+	//esta funcion no se usa pero la dejo aqui para luego cambiarla en home y perfil
+}
+
+//$.buscador=function(){
 	//click
 	//$('#buscar').on('click',function(event)
 	console.log("Buscamos1");
-	$('#buscar_texto').keydown(function(event){ //probar con keydown
+	$('#buscar_texto').keyup(function(event){ //probar con keydown      //El problema venia de tener el keyup metido dentro de una funcion...
 		//event.preventDefault();
 		console.log("Buscamos2");
 		$.ajax({ // create an AJAX call...
@@ -257,11 +291,69 @@ $.buscador=function(){
 				console.log(data);
 				console.log("construyendo enlaces");
 				html="";
+				/*
 					for(var i=0;i<data.length; i++){
 						console.log(data[i]);
 						console.log(data[i].username);
-						html+="<a href='/redsocial/"+data[i].username+"' class='list-group-item'>"+data[i].first_name+" "+data[i].last_name+"</a>"
+						//html+="<li><a href='/redsocial/"+data[i].user__username+"'>"+data[i].user__first_name+" "+data[i].user__last_name+"</a></li>"
+						html+="<li><div class='panel-heading'><img src='/static/"+data[i].path_principal+"' width='40px' height='40px'><a href='/redsocial/"+data[i].user__username+"'>"+data[i].user__first_name+" "+data[i].user__last_name+"</a></div></li>";
 					}
+				*/
+				//Lista personas
+				
+
+				for(var i=0;i<data.length; i++){
+					if(data[i].length == 0){ //este bucle if es para imprimir no hay resultados en la busqueda ajax
+						console.log($('#buscar_texto').val());
+						if($('#buscar_texto').val() !="" && i==0){ //data[0] es la lista de personas
+							html+="<li><div class='panel-heading'><h5 style='color:beige'>No se encontraron resultados para personas</h5></div></li>";
+							
+						}
+						if($('#buscar_texto').val() !=""  && i==1){ //data[1] es la lista de grupos
+							html+="<li><div class='panel-heading'><h5 style='color:beige'>No se encontraron resultados para grupos</h5></div></li>";
+						}
+					}else{
+						for(var j=0;j<data[i].length; j++){
+							console.log(data[i]);
+							console.log(data[i][j].username);
+							//html+="<li><a href='/redsocial/"+data[i].user__username+"'>"+data[i].user__first_name+" "+data[i].user__last_name+"</a></li>"
+							if(i==0){
+								if(j==0){
+									html+="<li><div class='panel-heading' style='color:beige'>Personas</div></li>";
+								}
+								console.log('recorremos personas');
+								
+								html+="<li><div class='panel-heading'><img src='/static/"+data[i][j].path_principal+"' width='40px' height='40px'><a href='/redsocial/"+data[i][j].user__username+"'>"+data[i][j].user__first_name+" "+data[i][j].user__last_name+"</a></div></li>";
+								if(j>2){
+									html+="<li><div class='panel-heading'><h5 style='color:beige'>...pulse intro para ver mas..</h5></div></li>";
+									break;
+								}
+							}
+							if(i==1){
+								if(j==0){
+									html+="<li><div class='panel-heading' style='color:beige'>Grupos</div></li>";
+								}
+								console.log('recorremos grupos');
+								html+="<li><div class='panel-heading'><a href='/redsocial/grupo/"+data[i][j].id+"'>"+data[i][j].titulo+"</a></div></li>";
+								if(j>2){
+									html+="<li><div class='panel-heading'><h5 style='color:beige'>...pulse intro para ver mas..</h5></div></li>";
+									break;
+								}
+							}
+						}
+					}
+				}
+				/*
+				if(data[0].length < 1 && data[1].length <1){
+					console.log($('#buscar_texto').val());
+					if($('#buscar_texto').val() !=""){
+					html+="<li><div class='panel-heading'><h5 style='color:beige'>No se encontraron resultados</h5></div></li>";
+					}
+				}*/
+				//lista grupos
+				
+				//$('#list-group').html(html);
+				console.log(html);
 				$('#list-group').html(html);
 			}  
 		});
@@ -273,7 +365,7 @@ $.buscador=function(){
 		});
 	});
 	*/
-}
+//}
 
 $.agregar=function(){
 	$('#agregar').on('click', function(event){
