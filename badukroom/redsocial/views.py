@@ -11,12 +11,13 @@ from redsocial.forms import ComentarioForm
 from django.http import JsonResponse
 from datetime import datetime
 from django.http.response import HttpResponseRedirect
-from django.http import HttpResponse
 from django.contrib.auth.models import User
 import re
 from principal.metodosAux import informacion_partida, informacion_partida2, estamos_en_grupo
 from badukroom.settings import BASE_DIR
 from principal.models import Partida, Jugador
+from django.http import HttpResponse, HttpResponseBadRequest
+from django.core.paginator import Paginator, InvalidPage
 # Create your views here.
 #@login_required(login_url='/login')
 def perfil(request, username):
@@ -44,6 +45,8 @@ def perfil(request, username):
     diccionario_perfil_comentarios={}
     diccionario_perfil_comentarios["perfil"]=p 
     comentarios=Comentario.objects.filter(perfil=p).order_by('fecha').reverse()
+    #comentarios=Comentario.objects.values().filter(perfil=p).order_by('fecha').reverse()
+    print comentarios
     lista_diccionario_comentarios_respuestas=[] #va a almacenar una lista del diccionario siguiente
     for c in comentarios:
         if c.grupo == None:
@@ -164,6 +167,37 @@ def perfil(request, username):
         formulario=ComentarioForm()
         context = {'lista_diccionario_comentarios': lista_diccionarios_def, 'formulario':formulario,'formulario_respuesta':formulario_respuesta, 'lista_dic_imagenes':lista_dic_imagenes, 'lista_dic_amigo':lista_dic_amigo}
     return render_to_response('perfil.html',context,context_instance=RequestContext(request))
+
+def comentarios_scroll(request):
+    #comentarios = [i for i in Comentario.objects.all()]
+    comentarios=list(Comentario.objects.values())
+    paginator = Paginator(comentarios, 15)
+    if request.method == 'GET':
+        if request.is_ajax():
+            if request.GET.get('page_number'):
+                # Paginate based on the page number in the GET request
+                page_number = request.GET.get('page_number');
+                try:
+                    page_objects = paginator.page(page_number).object_list
+                except InvalidPage:
+                    return HttpResponseBadRequest(mimetype="json")
+                # Serialize the paginated objects
+                #resp = serializers.serialize('json', page_objects)
+                lista=[i for i in page_objects]
+                print lista
+                print "es lista"
+                resp=lista
+                #resp = serialize_comentarios(page_objects)
+                #print json.dumps(resp)
+                #return HttpResponse(json.dumps(resp))
+                print JsonResponse(resp, safe=False)
+                print "es json"
+                return JsonResponse(resp, safe=False)
+    comentarios = paginator.page(1).object_list
+    context = {
+        "object_list": comentarios,
+    }
+    return render_to_response('list.html', context,  context_instance=RequestContext(request))
 
 @login_required(login_url='/login')
 def home(request):
@@ -388,12 +422,23 @@ def buscador(request):
         if request.method=='GET':
             print "Esto contiene request.GET: "+request.GET['texto']
             cadena=request.GET['texto']
-            lista_perfiles=list(Perfil.objects.values('user').filter(Q(user__first_name__iregex=cadena) | Q(user__last_name__iregex=cadena))) #cambiar username por first_name o last_name
-            print lista_perfiles
-            for p in lista_perfiles:
-                lista_user=list(User.objects.values('first_name', 'last_name', 'username').filter(id=p['user']))
-            print lista_user
-            return JsonResponse(lista_user, safe=False)
+            #usaremos irregex para diferenciar entre minusculas y mayusculas
+            
+            if cadena!="":
+                lista_perfiles=list(Perfil.objects.values('user__first_name', 'user__last_name', 'user__username','path_principal').filter(Q(user__first_name__iregex=cadena) | Q(user__last_name__iregex=cadena))) #cambiar username por first_name o last_nameprint lista_perfiles
+                lista_grup=list(Grupo.objects.values('id', 'titulo').filter(titulo__iregex=cadena))
+                print lista_grup
+                print lista_perfiles
+                lista_res=[]
+                lista_res.append(lista_perfiles)
+                lista_res.append(lista_grup)
+                print lista_res
+                print JsonResponse(lista_res, safe=False)
+                #print JsonResponse(lista_perfiles, safe=False)
+                return JsonResponse(lista_res, safe=False)
+            else:
+                lista_perfiles=[]
+                return JsonResponse(lista_perfiles, safe=False)
             """
             print lista_perfiles
             context={'lista_perfiles',lista_perfiles}
@@ -402,9 +447,22 @@ def buscador(request):
         else:
             render("Hubo un problema en su peticion")
     else:
-        
-        
-        return HttpResponseRedirect(request.META['HTTP_REFERER'])
+        lista_grup=[]
+        lista_perfiles=[]
+        print "no es una peticion ajax"
+        print request.GET
+        if request.method=='POST':
+            print "Esto contiene request.POST: "+request.POST['buscar_texto']
+            cadena=request.POST['buscar_texto']
+            #usaremos irregex para diferenciar entre minusculas y mayusculas
+            if cadena!="":
+                lista_perfiles=list(Perfil.objects.filter(Q(user__first_name__iregex=cadena) | Q(user__last_name__iregex=cadena))) #cambiar username por first_name o last_nameprint lista_perfiles
+                lista_grup=list(Grupo.objects.filter(titulo__iregex=cadena))
+            context={'lista_perfiles':lista_perfiles, 'lista_grupos':lista_grup}
+            print context
+            return render_to_response('busqueda.html', context, context_instance=RequestContext(request))
+
+        #return HttpResponseRedirect(request.META['HTTP_REFERER']) #Asi recargariamos la página
 
 def agregar_ajax(request):
     #revisar falta de else para todos los if
@@ -536,5 +594,12 @@ def lista_grupos(request):
     print grupos
     context = {'lista_grupos': grupos}
     return render_to_response('lista_grupos.html',context,context_instance=RequestContext(request))
+
+def amigos(request):
+    p=get_object_or_404(Perfil, user__username=request.user.username)
+    amigos=list(p.amigos.all())
+    context = {'lista_amigos': amigos}
+    return render_to_response('amigos.html', context, context_instance=RequestContext(request))
+        
     
     

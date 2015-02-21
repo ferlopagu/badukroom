@@ -16,7 +16,9 @@ import locale
 from django.conf.urls import url
 from redsocial.models import Grupo
 from django.shortcuts import get_object_or_404
-
+from login.models import Perfil
+from django.contrib.auth.models import User
+from django.db.models import Q
 
 #from datetime import datetime
 """METODO PARA AVERIGUAR PATH DE CADA FICHERO """
@@ -106,9 +108,21 @@ from login.models import Perfil
 cadena="Pris"
 lista_perfiles=Perfil.objects.filter(user__username__iregex=cadena) #cambiar username por el campo que queramos filtrar con la expresion regular por ejemplo first name
 print lista_perfiles
+
+Perfil.objects.values('user').filter(Q(user__first_name__regex=cadena) | Q(user__last_name__regex=cadena))
 """
-
-
+def buscador():
+    cadena=raw_input("Introduce un nombre: ")
+    print cadena
+    #antes usaba iregex
+    if cadena!="":
+        lista_perfiles=list(Perfil.objects.values('user__first_name', 'user__last_name', 'user__username').filter(Q(user__first_name__regex=cadena) | Q(user__last_name__regex=cadena))) #cambiar username por first_name o last_name
+        print lista_perfiles
+        #for p in lista_perfiles:
+            #lista_user=list(User.objects.values('first_name', 'last_name', 'username').filter(id=p['user']))
+        #print lista_user
+    else:
+        print "La cadena es ''"
 def informacion_partida(path):
 #fichero = pathFile("../static/sgf")
     """ LEEMOS EL FICHERO"""
