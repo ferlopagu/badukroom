@@ -230,8 +230,8 @@ $.comentar=function(){
 		    processData: false,
 		    contentType: false,
 			success: function(data){ // on success..
-				//location.reload(true);
-				alert("Se ha comentado con exito");
+				location.reload(true);
+				//alert("Se ha comentado con exito");
 			}  
 		});
 	});
@@ -239,16 +239,27 @@ $.comentar=function(){
 
 $.responder=function(){
 	console.log("Entramos en responder");
-	$('#formulario_respuesta').submit(function(event) { // catch the form's submit event
+	$('.formulario_respuesta').submit(function(event) { // catch the form's submit event
 		event.preventDefault();
+		/* Con esto cogemos el atributo clase del input 'enviar' correspondiente al formulario que estamos mandando
+	    alert(
+	        ($(this).children('p:last'))//seleccionamos <p> que contiene input responder
+	        .children(':last')//seleccionamos el input responder
+	        .attr("class"));
+		*/
+	    var id_comentario=$(this).children('p:last')//seleccionamos <p> que contiene input responder
+        .children(':last')//seleccionamos el input responder
+        .attr("class");
+	    alert("Id_ del comentario a responder: "+id_comentario);
 		var form= new FormData(this);
 		var x = location.pathname;
 		form.append("url",x);
-		form.append("id_comentario",$('#responder').attr('class'));
+		form.append("id_comentario",id_comentario);
 		console.log(x);
-		alert($('#responder').attr('class'));
-		var dic={"form":form, 'id':$('#responder').attr('class')};
+		/*
+		var dic={"form":form, 'id':id_comentario};
 		alert(dic);
+		*/
 		$.ajax({ // create an AJAX call...
 			/*
 			

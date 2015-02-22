@@ -1,3 +1,4 @@
+@import url('http://fonts.googleapis.com/css?family=Oswald')
 @CHARSET "UTF-8";
 
 #cuerpo 
@@ -17,13 +18,64 @@
 	padding-top: 5px;
 	background-color: aliceblue;
 }
-/*
+
 #myNavbar{
 	border:none;
 }
-*/
-/*
+
+
 #lg-menu{
 	position:fixed;
 }
-*/
+
+.jumbotron{
+	background-position: center;
+	background-size: cover;
+	min-height: 300px;
+	max-height: 400px;
+	overflow: hidden;
+	position: relative;
+	padding: initial;
+}
+
+#imagen-principal{
+	max-width: 100px;
+	bottom: 5px;
+	left: 5px;
+	position: absolute;
+	display: inline;
+	border: 3px solid white;
+	border-radius: 3px;
+	shadow:2px -2px 1px #000;
+	
+}
+
+#div_nombre{
+	display: inline;
+	/* margin: inherit; */
+	position: absolute;
+	bottom: 0px;
+	left: 120px;
+}
+.h_nombre_perfil{
+	display: inline;
+	color: white;
+	-webkit-text-fill-color: white;
+	-webkit-text-stroke: 1px black;
+	text-shadow:2px -2px 1px #000;
+	font-size: 36px;
+}
+#botones_portada{
+	position: absolute;
+	right: 3px;
+	bottom: 3px;
+}
+#nav_botones_portada{
+	margin:0px;
+}
+
+.navbar-right {
+float: right!important;
+margin-right: -15px;
+margin-left: -15px;
+}
