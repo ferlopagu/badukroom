@@ -2,21 +2,37 @@
 {% load staticfiles %}
 {% block columna_principal %}
 
-
-<div class="jumbotron">
-	{%for e in lista_dic_imagenes %} 
-	<img src='{% static e.perfil %}'>
-	<img src="{% static e.portada %}"> 
+{%for e in lista_dic_imagenes %} 
+<div class="jumbotron" style="background-image: url('{% static e.portada %}')">
+	
+	<img id="imagen-principal" src='{% static e.perfil %}'>
+	<!--  <img src="{% static e.portada %}"> -->
 	{% endfor %} 
 	
 	{% for e in lista_diccionario_comentarios %}
-	<h3 id="nombre">{{e.perfil.user.first_name}}</h3>
-	<h3 id="apellidos">{{e.perfil.user.last_name}}</h3>
-	<h5 id="nick">{{e.perfil.user.username}}</h5>
+	<div id="div_nombre">
+	<h2 class="h_nombre_perfil" id="nombre">{{e.perfil.user.first_name}}</h2>
+	<h2 class="h_nombre_perfil" id="apellidos">{{e.perfil.user.last_name}}</h2>
+	<!--  <h5 class="h_nombre_perfil" id="nick">@{e.perfil.user.username}</h5> -->
+	</div>
 	{% endfor %}
+	
+			<div id="botones_portada">
+			<nav class="navbar navbar-default" id="nav_botones_portada">
+				<div class="container-fluid">
+				<ul class="nav navbar-nav navbar-right">
+					<li class="active"><a href="#">Biografia</a></li>
+					<li><a href="#">Informacion</a></li>
+					<li><a href="#">Amigos</a></li>
+					<li><a href="#">Partidas</a></li>
+				</ul>
+						</div>
+	</nav>
+			</div>
 
+</div>
 
-	<div id="botones">
+<div id="botones">
 		{% for option in lista_dic_amigo %} 
 			{% if option.somos_nosotros == True %}
 				<h6></h6>
@@ -32,7 +48,6 @@
 				<a id="agregar" href="#" class="btn btn-info" role="button">Agregar como amigo</a> 
 			{% endif %} 
 		{% endfor %}
-	</div>
 </div>
 
 <div id='modal'>
@@ -134,7 +149,7 @@
 			<div id="div_respuesta">
 				<img src='{% static user.perfil.path_principal %}' width="40px" height="40px">
 				<!--  <img src='/static/{{e.perfil}}' width="40px" height="40px"> -->
-				<form id='formulario_respuesta' method="post" action="{% url 'redsocial:responder' %}" enctype="multipart/form-data">
+				<form class="formulario_respuesta" id='formulario_respuesta' method="post" action="{% url 'redsocial:responder' %}" enctype="multipart/form-data">
 							{% csrf_token %} {{formulario_respuesta.as_p}}
 					<p>
 						<input class="{{dic.comentario.id}}" id='responder' type='submit' value='Responder' />
