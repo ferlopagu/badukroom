@@ -21,6 +21,8 @@ class Grupo(models.Model):
     titulo=models.CharField(max_length=300)
     descripcion=models.TextField(max_length=600)
     miembros=models.ManyToManyField(Perfil)
+    foto_portada=models.ImageField( blank=True, upload_to=MEDIA_ROOT+'imagenes', default=MEDIA_ROOT+"/imagenes/sin_portada.jpg")
+    path_portada = models.CharField(max_length=70, default='imagenes/sin_portada.jpg' ,blank=True)
     
     def __unicode__(self):
         return self.titulo

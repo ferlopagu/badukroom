@@ -2,6 +2,7 @@
 {% load staticfiles %}
 {% block columna_principal %}
 								<div class="well"> 
+								<!--  
 									<form class="form-horizontal" role="form">
 										<h4>¿Qué estás pensando?</h4>
 										<div class="form-group" style="padding:14px;">
@@ -13,6 +14,19 @@
 											<li><a href=""><i class="glyphicon glyphicon-camera"></i></a></li>
 										</ul>
 									</form>
+								--><div class="panel panel-default">
+										<div class="panel-heading">
+											<h1>¿Qué estás pensando...?</h1>
+										</div>
+										<div class="panel-body">
+											<form enctype="multipart/form-data" id='formulario' method="post" action="{% url 'redsocial:creaComentario' %}"   >
+													{% csrf_token %} {{formulario.as_p}}
+											<p>
+												<input id='enviar' type='submit' value='enviar' />
+											</p>
+											</form>	
+										</div>
+									</div>
 								</div>
 
 								{% for d in lista_dic_commentarios_respuestas %} 
@@ -31,7 +45,7 @@
 														</div>
 														
 														<div>
-														<a  href="/static/{{dic.comentario.partida.path}}" class="btn btn-info" role="button">Descargar</a>
+														<a  href="/static/{{d.comentario.partida.path}}" class="btn btn-info" role="button">Descargar</a>
 														</div>
 													{% endif %}													
 												</div>
@@ -74,11 +88,21 @@
 															</div>
 															
 															<div>
-															<a  href="/static/{{dic.comentario.partida.path}}" class="btn btn-info" role="button">Descargar</a>
+															<a  href="/static/{{r.partida.path}}" class="btn btn-info" role="button">Descargar</a>
 															</div>
 														{% endif %}											
 													</div>
-												{% endfor %} 
+												{% endfor %}
+												<div>
+													<form class="formulario_respuesta" method="post"
+														action="{% url 'redsocial:responder' %}" enctype="multipart/form-data">
+														{% csrf_token %} {{formulario.as_p}}
+														<p>
+															<input class="{{d.comentario.id}}" id='responder' type='submit'
+																value='enviar' />
+														</p>
+													</form>
+												</div>
 											</div>
 								{% endfor %} 
 								
@@ -91,6 +115,8 @@
 		$.buscador();
 		$.contar();
 		$.visualizarSGF();
+		$.comentar();
+		$.responder();
 	});
 </script>
 {% endblock js2 %}
