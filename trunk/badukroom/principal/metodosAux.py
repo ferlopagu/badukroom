@@ -7,7 +7,7 @@ datetime.date.today()
 '''
 import os
 import re
-from principal.models import Jugador
+from principal.models import Jugador, Partida
 #from login.models import Perfil
 import datetime
 from datetime import date
@@ -19,6 +19,11 @@ from django.shortcuts import get_object_or_404
 from login.models import Perfil
 from django.contrib.auth.models import User
 from django.db.models import Q
+from badukroom.settings import BASE_DIR
+from django.core.files import File
+
+import django
+django.setup()
 
 #from datetime import datetime
 """METODO PARA AVERIGUAR PATH DE CADA FICHERO """
@@ -34,13 +39,17 @@ def pathFile(path): #example--> path="Correos",    dir="Correos/"
         print e
     return ficheros
 
-#pathFile("../static/sgf")
 
+#pathFile("../static/sgf")
 def recorrer_sgfs():
     lista_diccionarios_res=[]
     dict_game={}
-    ficheros = pathFile("../static/sgf")
+    #ficheros = pathFile("../static/sgf")
+    ficheros=pathFile("../principal/gokifu.com")
+    #ficheros=pathFile("../gokifu.com")
     for path in ficheros:
+        print path
+        nombre_fichero=path
         #print path
         contador=0
         """ LEEMOS EL FICHERO"""
@@ -83,10 +92,25 @@ def recorrer_sgfs():
         dict_game["fecha"]=date
         dict_game["result"]=result
         dict_game["path"]=path
+        
+        """Creamos los jugadores y la Partida"""
+        path_fichero=BASE_DIR+"/static/sgf/"+path
+        jugador_negro, created = Jugador.objects.get_or_create(nombre=dict_game['black'])
+        print jugador_negro.__unicode__()
+        #jugador_negro=Jugador()
+        #jugador_negro.save()
+        print 'jugador negro guardado con exito'
+        #jugador_blanco=Jugador(nombre=dict_game['blanco'])
+        jugador_blanco, created = Jugador.objects.get_or_create(nombre=dict_game['blanco'])
+        #jugador_blanco.save()
+        print nombre_fichero
+        partida = Partida(fecha=dict_game['fecha'], jugador_negro=jugador_negro, jugador_blanco=jugador_blanco, resultado=dict_game['result'], fichero=File(open(nombre_fichero, 'r')), path=path_fichero)
+        partida.save()
+        """ Fin crear Partida """
+        
         lista_diccionarios_res.append(dict_game)
     for e in lista_diccionarios_res:
-        print e
-     
+        print e     
 #recorrer_sgfs()
 
 profesionales=['Yoshiteru Abe','Akaboshi Intetsu','Jiro Akiyama','Nobuo Amayake','Akio Ando','Takeo Ando','Toshiyuki Ando','Nobuaki Anzai','Kaori Aoba','Kikuyo Aoki','Shinichi Aoki','Takeshi Aragaki','Shuzo Awaji','Shigeru Baba','Kaori Chinen','Hideyuki Fujisawa','Hosai Fujisawa','Susumu Fukui','Go Seigen','Dogen Handa','Naoki Hane','Yasumasa Hane','Shoji Hashimoto','Utaro Hashimoto','Naoto Hikosaka','Hirose Heijiro','Kunihisa Honda','Honinbo Chihaku','Honinbo Doetsu','Honinbo Shuhaku','Honinbo Shusai','Honinbo Dochi','Honinbo Dosaku','Honinbo Doteki',
@@ -339,5 +363,17 @@ def estamos_en_grupo(url):
         print resultado[0]
     return resultado
         
-estamos_en_grupo("/redsocial/grupo/1/")
-estamos_en_grupo("/redsocial/fla2727/")
+#estamos_en_grupo("/redsocial/grupo/1/")
+#estamos_en_grupo("/redsocial/fla2727/")
+
+
+
+#names_urls = zip(names, urls)
+
+#for name, url in names_urls:
+def descarga_sgf():
+    url="http://gokifu.com/es/?p=2"
+    print('Downloading %s' % url)
+    #wget -A pdf,jpg -m -p -E -k -K -np http://site/path/
+    os.system('wget -A sgf,SGF -r -l 1  %s' % url)
+#descarga_sgf()

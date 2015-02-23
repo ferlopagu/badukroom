@@ -233,7 +233,8 @@ def home(request):
     print lista_diccionario_comentarios_respuestas
     
     #context = {'lista_comentarios': lista_comentarios}
-    context = {'lista_dic_commentarios_respuestas': lista_diccionario_comentarios_respuestas}
+    formulario=ComentarioForm()
+    context = {'lista_dic_commentarios_respuestas': lista_diccionario_comentarios_respuestas,'formulario':formulario}
     return render_to_response('home.html',context,context_instance=RequestContext(request))
 
 
@@ -584,7 +585,19 @@ def grupo(request, grupo_id):
     """ add form comentar"""
     formulario=ComentarioForm()
     
-    context = {'lista_diccionario_comentarios': lista_diccionarios_def, 'formulario':formulario}
+    """ add nombre del grupo - path portada - descripcion """
+    titulo=g.titulo
+    path_portada=g.path_portada
+    descripcion=g.descripcion
+    """ comprobamos si el usuario es miembro o no del grupo """
+    miembro=False
+    p=get_object_or_404(Perfil, user__username=request.user.username)
+    if g.miembros.filter(user__username=p.user.username):
+        print "Somos miembros"
+        miembro=True
+    
+    
+    context = {'lista_diccionario_comentarios': lista_diccionarios_def, 'formulario':formulario, 'titulo':titulo, 'path_portada':path_portada, 'miembro':miembro, 'descripcion':descripcion}
     return render_to_response('grupo.html',context,context_instance=RequestContext(request))
 
 def lista_grupos(request):

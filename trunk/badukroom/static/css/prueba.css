@@ -79,3 +79,11 @@ float: right!important;
 margin-right: -15px;
 margin-left: -15px;
 }
+
+#div_titulo{
+display: inline;
+/* margin: inherit; */
+position: absolute;
+bottom: 0px;
+/* left: 120px; */
+}
