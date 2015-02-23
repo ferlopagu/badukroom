@@ -4,7 +4,7 @@ Created on 21/01/2015
 @author: fla2727
 '''
 from django.conf.urls import patterns, url
-from redsocial.views import perfil, home, crea_comentario, buscador, agregar_ajax, contar_notificaciones, ver_notificaciones, aceptar_peticion, declinar_peticion, limpiar_notificaciones, eliminar_ajax, grupo, lista_grupos, responder, amigos
+from redsocial.views import perfil, home, crea_comentario, buscador, agregar_ajax, contar_notificaciones, ver_notificaciones, aceptar_peticion, declinar_peticion, limpiar_notificaciones, eliminar_ajax, grupo, lista_grupos, responder, amigos, partidas, partidas_ajax
 #from django.views.generic.base import TemplateView
 
 #url(r'crea_comentario/$', crea_comentario.as_view(template_name="inicio"))
@@ -23,5 +23,7 @@ urlpatterns = patterns ('' ,
     url(r'^mis_grupos/$', lista_grupos, name='lista_grupos'),
     url(r'^grupo/(?P<grupo_id>\d+)/$', grupo, name='grupo'),
     url(r'^amigos/', amigos, name='amigos'),
+    url(r'^partidas/', partidas, name='partidas'),
+    url(r'^partidas_ajax/', partidas_ajax, name="partidas_ajax"),
     url(r'^(?P<username>\w+)/$', perfil, name='perfil'),     
 )

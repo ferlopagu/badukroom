@@ -1,0 +1,311 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Compartir partidas SGF con amigos 2</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta http-equiv="content-language" content="es"/>
+    <meta name="title" content="Compartir partidas SGF con amigos 2" />
+    <meta name="keywords" content="go ,weiqi, baduk, igo ,sgf, games, online , go comunity,blog ,social network,forums ,kifu,gokifu, juegos, tablero, estrategia" />
+    <meta name="description" content="Comparte partidas con amigos. Es muy fácil insertar partidas en blogs, reces sociales, foros" />
+    <meta name="baidu-site-verification" content="lgM2PbswkZ" />
+    <link rel="stylesheet" href="/css/style.css" type="text/css" media="screen" />
+    <!--[if lte IE 6]><link rel="stylesheet" href="css/style_ie.css" type="text/css" media="screen" /><![endif]-->
+    <link rel="icon" href="./favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon" />    
+    <link rel="alternate" type="application/rss+xml" title="Gokifu RSS Feed" href="http://gokifu.com/es/rss/"/>
+	<script type="text/javascript" src="/js/jquery-1.4.2.min.js"></script>
+	<script type="text/javascript" src="/js/jquery-ui-1.8.1.custom.min.js"></script>
+	<link type="text/css" href="/css/jquery-ui-1.8.1.custom.css " rel="stylesheet" />
+<script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
+
+<meta name="google-site-verification" content="Ce_5JZReUMNjnzRbDa5qLtfq1LQAiXRQN1xXjautyLI" />
+</head>
+
+<body>
+
+<div id="wrapper">
+
+    <div id="header">
+    <div id="r_menu">
+       <a href="http://gokifu.com/ru/">Русский</a>
+       |<a href="http://gokifu.com/ua/">Українська</a> 
+       |<a href="http://gokifu.com/ar/">عربي</a>
+       |<a href="http://gokifu.com/iw/">עיברית</a>
+       |<a href="http://gokifu.com/az/">Azərbaycan</a>
+       |<a href="http://gokifu.com/de/">Deutsch</a>
+       |<a href="http://gokifu.com/en/">English</a>
+       |<a href="http://gokifu.com/es/">Español</a>
+       |<a href="http://gokifu.com/fr/">Français</a>
+       |<a href="http://gokifu.com/it/">Italiano</a>
+       |<a href="http://gokifu.com/pl/">Polski</a>
+       |<a href="http://gokifu.com/fi/">Suomi</a>
+       |<a href="http://gokifu.com/tr/">Türkçe</a>
+       |<a href="http://gokifu.com/ko/">한국어</a>
+       |<a href="http://gokifu.com/zh/index.php">中文</a><br>
+   
+
+<div align="right"><a href="/signin.php">Login</a></div>
+
+
+       </div>
+    <a href="/index.php"><img src="/images/21logo.png"></a> 
+    
+    </div><!-- #header-->
+
+   <div align="center">
+	<p><a href="/index.php">Pro</a>&nbsp;&nbsp;&nbsp;<a href="/kgs.php">KGS</a>&nbsp;&nbsp;&nbsp;<a href="/other.php">Other</a>&nbsp;&nbsp;&nbsp;<a href="/upload.php">Subir</a>&nbsp;&nbsp;&nbsp;<a  id="aclick"href="#">Archivos</a>&nbsp;&nbsp;&nbsp;<a href="/tournaments.php">Tournament</a></p>
+                
+
+                <div   id="sform" >
+		<form  action="/index.php" name=f method='GET'>
+	        <input id="tags" maxlength=40 name=q size=40 title="Search" value="" >
+	        <input type=submit value="Buscar" style="font-size:15px"></form>
+                </div>
+		<div id="aform" style="display: none">
+  
+<a href="http://gokifu.com/es/index.php?a=1&y=2000&m=02">2000</a>&nbsp;&nbsp;<a href="http://gokifu.com/es/index.php?a=1&y=2001&m=02">2001</a>&nbsp;&nbsp;<a href="http://gokifu.com/es/index.php?a=1&y=2002&m=02">2002</a>&nbsp;&nbsp;<a href="http://gokifu.com/es/index.php?a=1&y=2003&m=02">2003</a>&nbsp;&nbsp;<a href="http://gokifu.com/es/index.php?a=1&y=2004&m=02">2004</a>&nbsp;&nbsp;<a href="http://gokifu.com/es/index.php?a=1&y=2005&m=02">2005</a>&nbsp;&nbsp;<a href="http://gokifu.com/es/index.php?a=1&y=2006&m=02">2006</a>&nbsp;&nbsp;<a href="http://gokifu.com/es/index.php?a=1&y=2007&m=02">2007</a>&nbsp;&nbsp;<a href="http://gokifu.com/es/index.php?a=1&y=2008&m=02">2008</a>&nbsp;&nbsp;<a href="http://gokifu.com/es/index.php?a=1&y=2009&m=02">2009</a>&nbsp;&nbsp;<a href="http://gokifu.com/es/index.php?a=1&y=2010&m=02">2010</a>&nbsp;&nbsp;<a href="http://gokifu.com/es/index.php?a=1&y=2011&m=02">2011</a>&nbsp;&nbsp;<a href="http://gokifu.com/es/index.php?a=1&y=2012&m=02">2012</a>&nbsp;&nbsp;<a href="http://gokifu.com/es/index.php?a=1&y=2013&m=02">2013</a>&nbsp;&nbsp;<a href="http://gokifu.com/es/index.php?a=1&y=2014&m=02">2014</a>&nbsp;&nbsp;<a href="http://gokifu.com/es/index.php?a=1&y=2015&m=02"" class="adt">2015</a>&nbsp;&nbsp;<br><span > <a href="http://gokifu.com/es/index.php?a=1&y=2015&m=1">01</a>&nbsp;&nbsp;&nbsp;&nbsp;</span><span  class="adt" > <a href="http://gokifu.com/es/index.php?a=1&y=2015&m=2">02</a>&nbsp;&nbsp;&nbsp;&nbsp;</span><span > <a href="http://gokifu.com/es/index.php?a=1&y=2015&m=3">03</a>&nbsp;&nbsp;&nbsp;&nbsp;</span><span > <a href="http://gokifu.com/es/index.php?a=1&y=2015&m=4">04</a>&nbsp;&nbsp;&nbsp;&nbsp;</span><span > <a href="http://gokifu.com/es/index.php?a=1&y=2015&m=5">05</a>&nbsp;&nbsp;&nbsp;&nbsp;</span><span > <a href="http://gokifu.com/es/index.php?a=1&y=2015&m=6">06</a>&nbsp;&nbsp;&nbsp;&nbsp;</span><span > <a href="http://gokifu.com/es/index.php?a=1&y=2015&m=7">07</a>&nbsp;&nbsp;&nbsp;&nbsp;</span><span > <a href="http://gokifu.com/es/index.php?a=1&y=2015&m=8">08</a>&nbsp;&nbsp;&nbsp;&nbsp;</span><span > <a href="http://gokifu.com/es/index.php?a=1&y=2015&m=9">09</a>&nbsp;&nbsp;&nbsp;&nbsp;</span><span > <a href="http://gokifu.com/es/index.php?a=1&y=2015&m=10">10</a>&nbsp;&nbsp;&nbsp;&nbsp;</span><span > <a href="http://gokifu.com/es/index.php?a=1&y=2015&m=11">11</a>&nbsp;&nbsp;&nbsp;&nbsp;</span><span > <a href="http://gokifu.com/es/index.php?a=1&y=2015&m=12">12</a>&nbsp;&nbsp;&nbsp;&nbsp;</span>		</div>
+
+<b>31849</b> &nbsp;&nbsp;&nbsp;<g:plusone size="small"></g:plusone>
+
+ &nbsp;&nbsp;<a href="http://gokifu.com/tournament/6-Korea-Council-Cup-2011-Russia">KR-Council Russia 2011</a>&nbsp;&nbsp;&nbsp;<a href="http://gokifu.com/tournament/2-2011-SMI-B-Finland">SMI Karsinta 2011-II</a>&nbsp;&nbsp;&nbsp;    </div>
+
+
+ <div  id="gamelist" >
+
+<br>
+<div class="player_block">
+<div class="player_name">Juegador negro</div>
+<div class="player_name">Jugador blanco</div>
+
+<div class="game_date">Data del juego</div>
+<div class="game_result">Resultado</div>
+<div class="game_type">View</div>
+</div>       
+<div class="player_block cblock_3">
+<div  class="player_name" ><img src="/images/xx.png" >&nbsp;<a href="http://gokifu.com/es/player/Liao+Yuanhe"  title=" Buscar Liao Yuanhe" >Liao Yuanhe</a>&nbsp;(2p)</div>
+<div  class="player_name" ><img src="/images/xx.png" >&nbsp;<a href="http://gokifu.com/es/player/Xie+Ke"  title=" Buscar Xie Ke" >Xie Ke</a>&nbsp;(?)</div>
+<div  class="game_date" >2015-02-08</div>
+<div  class="game_result" >B+R</div>
+<div class="game_type"><a href="http://gokifu.com/es/s/25gr-gokifu-20150208-Liao_Yuanhe(2p)-Xie_Ke(?).html"  ><img src="/images/view.png"  title="View Xie Ke vs Liao Yuanhe"></a>&nbsp;<a href="http://gokifu.com/es/f/25gr-gokifu-20150208-Liao_Yuanhe-Xie_Ke.sgf"  ><img src="/images/save.png" sgf></a>&nbsp;<a href="http://gokifu.com/es/share/25gr" target="_blank" ><img src="/images/info.png"></a>&nbsp;</div>
+</div>
+<div class="player_block cblock_3">
+<div  class="player_name" ><img src="/images/kr.png" >&nbsp;<a href="http://gokifu.com/es/player/Choi+Jeong"  title=" Buscar Choi Jeong" >Choi Jeong</a>&nbsp;(5p)</div>
+<div  class="player_name" ><img src="/images/kr.png" >&nbsp;<a href="http://gokifu.com/es/player/Moon+Dowon"  title=" Buscar Moon Dowon" >Moon Dowon</a>&nbsp;(3p)</div>
+<div  class="game_date" >2015-02-07</div>
+<div  class="game_result" >W+R</div>
+<div class="game_type"><a href="http://gokifu.com/es/s/261m-gokifu-20150207-Choi_Jeong(5p)-Moon_Dowon(3p).html"  ><img src="/images/view.png"  title="View Moon Dowon vs Choi Jeong"></a>&nbsp;<a href="http://gokifu.com/es/f/261m-gokifu-20150207-Choi_Jeong-Moon_Dowon.sgf"  ><img src="/images/save.png" sgf></a>&nbsp;<a href="http://gokifu.com/es/share/261m" target="_blank" ><img src="/images/info.png"></a>&nbsp;</div>
+</div>
+<div class="player_block cblock_3">
+<div  class="player_name" ><img src="/images/xx.png" >&nbsp;<a href="http://gokifu.com/es/player/Ding+Hao"  title=" Buscar Ding Hao" >Ding Hao</a>&nbsp;(2p)</div>
+<div  class="player_name" ><img src="/images/xx.png" >&nbsp;<a href="http://gokifu.com/es/player/Chen+Zijian"  title=" Buscar Chen Zijian" >Chen Zijian</a>&nbsp;(2p)</div>
+<div  class="game_date" >2015-02-07</div>
+<div  class="game_result" >B+R</div>
+<div class="game_type"><a href="http://gokifu.com/es/s/25fk-gokifu-20150207-Ding_Hao(2p)-Chen_Zijian(2p).html"  ><img src="/images/view.png"  title="View Chen Zijian vs Ding Hao"></a>&nbsp;<a href="http://gokifu.com/es/f/25fk-gokifu-20150207-Ding_Hao-Chen_Zijian.sgf"  ><img src="/images/save.png" sgf></a>&nbsp;<a href="http://gokifu.com/es/share/25fk" target="_blank" ><img src="/images/info.png"></a>&nbsp;</div>
+</div>
+<div class="player_block cblock_3">
+<div  class="player_name" ><img src="/images/xx.png" >&nbsp;<a href="http://gokifu.com/es/player/Liao+Yuanhe"  title=" Buscar Liao Yuanhe" >Liao Yuanhe</a>&nbsp;(2p)</div>
+<div  class="player_name" ><img src="/images/xx.png" >&nbsp;<a href="http://gokifu.com/es/player/Jiang+Qirun"  title=" Buscar Jiang Qirun" >Jiang Qirun</a>&nbsp;(2p)</div>
+<div  class="game_date" >2015-02-07</div>
+<div  class="game_result" >B+R</div>
+<div class="game_type"><a href="http://gokifu.com/es/s/25g0-gokifu-20150207-Liao_Yuanhe(2p)-Jiang_Qirun(2p).html"  ><img src="/images/view.png"  title="View Jiang Qirun vs Liao Yuanhe"></a>&nbsp;<a href="http://gokifu.com/es/f/25g0-gokifu-20150207-Liao_Yuanhe-Jiang_Qirun.sgf"  ><img src="/images/save.png" sgf></a>&nbsp;<a href="http://gokifu.com/es/share/25g0" target="_blank" ><img src="/images/info.png"></a>&nbsp;</div>
+</div>
+<div class="player_block cblock_3">
+<div  class="player_name" ><img src="/images/xx.png" >&nbsp;<a href="http://gokifu.com/es/player/Xie+Ke"  title=" Buscar Xie Ke" >Xie Ke</a>&nbsp;(?)</div>
+<div  class="player_name" ><img src="/images/xx.png" >&nbsp;<a href="http://gokifu.com/es/player/Xu+Jiayang"  title=" Buscar Xu Jiayang" >Xu Jiayang</a>&nbsp;(3p)</div>
+<div  class="game_date" >2015-02-07</div>
+<div  class="game_result" >B+R</div>
+<div class="game_type"><a href="http://gokifu.com/es/s/25g1-gokifu-20150207-Xie_Ke(?)-Xu_Jiayang(3p).html"  ><img src="/images/view.png"  title="View Xu Jiayang vs Xie Ke"></a>&nbsp;<a href="http://gokifu.com/es/f/25g1-gokifu-20150207-Xie_Ke-Xu_Jiayang.sgf"  ><img src="/images/save.png" sgf></a>&nbsp;<a href="http://gokifu.com/es/share/25g1" target="_blank" ><img src="/images/info.png"></a>&nbsp;</div>
+</div>
+<div class="player_block cblock_3">
+<div  class="player_name" ><img src="/images/xx.png" >&nbsp;<a href="http://gokifu.com/es/player/Jiang+Qirun"  title=" Buscar Jiang Qirun" >Jiang Qirun</a>&nbsp;(2p)</div>
+<div  class="player_name" ><img src="/images/xx.png" >&nbsp;<a href="http://gokifu.com/es/player/Zhao+Chenyu"  title=" Buscar Zhao Chenyu" >Zhao Chenyu</a>&nbsp;(4p)</div>
+<div  class="game_date" >2015-02-06</div>
+<div  class="game_result" >B+R</div>
+<div class="game_type"><a href="http://gokifu.com/es/s/25en-gokifu-20150206-Jiang_Qirun(2p)-Zhao_Chenyu(4p).html"  ><img src="/images/view.png"  title="View Zhao Chenyu vs Jiang Qirun"></a>&nbsp;<a href="http://gokifu.com/es/f/25en-gokifu-20150206-Jiang_Qirun-Zhao_Chenyu.sgf"  ><img src="/images/save.png" sgf></a>&nbsp;<a href="http://gokifu.com/es/share/25en" target="_blank" ><img src="/images/info.png"></a>&nbsp;</div>
+</div>
+<div class="player_block cblock_3">
+<div  class="player_name" ><img src="/images/xx.png" >&nbsp;<a href="http://gokifu.com/es/player/Shin+Minjun"  title=" Buscar Shin Minjun" >Shin Minjun</a>&nbsp;(2p)</div>
+<div  class="player_name" ><img src="/images/kr.png" >&nbsp;<a href="http://gokifu.com/es/player/Na+Hyun"  title=" Buscar Na Hyun" >Na Hyun</a>&nbsp;(5p)</div>
+<div  class="game_date" >2015-02-06</div>
+<div  class="game_result" >W+R</div>
+<div class="game_type"><a href="http://gokifu.com/es/s/25fq-gokifu-20150206-Shin_Minjun(2p)-Na_Hyun(5p).html"  ><img src="/images/view.png"  title="View Na Hyun vs Shin Minjun"></a>&nbsp;<a href="http://gokifu.com/es/f/25fq-gokifu-20150206-Shin_Minjun-Na_Hyun.sgf"  ><img src="/images/save.png" sgf></a>&nbsp;<a href="http://gokifu.com/es/share/25fq" target="_blank" ><img src="/images/info.png"></a>&nbsp;</div>
+</div>
+<div class="player_block cblock_3">
+<div  class="player_name" ><img src="/images/xx.png" >&nbsp;<a href="http://gokifu.com/es/player/Zhao+Jiannan"  title=" Buscar Zhao Jiannan" >Zhao Jiannan</a>&nbsp;(2p)</div>
+<div  class="player_name" ><img src="/images/xx.png" >&nbsp;<a href="http://gokifu.com/es/player/Ding+Hao"  title=" Buscar Ding Hao" >Ding Hao</a>&nbsp;(2p)</div>
+<div  class="game_date" >2015-02-06</div>
+<div  class="game_result" >W+R</div>
+<div class="game_type"><a href="http://gokifu.com/es/s/25fr-gokifu-20150206-Zhao_Jiannan(2p)-Ding_Hao(2p).html"  ><img src="/images/view.png"  title="View Ding Hao vs Zhao Jiannan"></a>&nbsp;<a href="http://gokifu.com/es/f/25fr-gokifu-20150206-Zhao_Jiannan-Ding_Hao.sgf"  ><img src="/images/save.png" sgf></a>&nbsp;<a href="http://gokifu.com/es/share/25fr" target="_blank" ><img src="/images/info.png"></a>&nbsp;</div>
+</div>
+<div class="player_block cblock_3">
+<div  class="player_name" ><img src="/images/xx.png" >&nbsp;<a href="http://gokifu.com/es/player/Li+Weiqing"  title=" Buscar Li Weiqing" >Li Weiqing</a>&nbsp;(2p)</div>
+<div  class="player_name" ><img src="/images/xx.png" >&nbsp;<a href="http://gokifu.com/es/player/Huang+Jingyuan"  title=" Buscar Huang Jingyuan" >Huang Jingyuan</a>&nbsp;(2p)</div>
+<div  class="game_date" >2015-02-06</div>
+<div  class="game_result" >W+R</div>
+<div class="game_type"><a href="http://gokifu.com/es/s/25ft-gokifu-20150206-Li_Weiqing(2p)-Huang_Jingyuan(2p).html"  ><img src="/images/view.png"  title="View Huang Jingyuan vs Li Weiqing"></a>&nbsp;<a href="http://gokifu.com/es/f/25ft-gokifu-20150206-Li_Weiqing-Huang_Jingyuan.sgf"  ><img src="/images/save.png" sgf></a>&nbsp;<a href="http://gokifu.com/es/share/25ft" target="_blank" ><img src="/images/info.png"></a>&nbsp;</div>
+</div>
+<div class="player_block cblock_3">
+<div  class="player_name" ><img src="/images/xx.png" >&nbsp;<a href="http://gokifu.com/es/player/He+Yuhan"  title=" Buscar He Yuhan" >He Yuhan</a>&nbsp;(2p)</div>
+<div  class="player_name" ><img src="/images/xx.png" >&nbsp;<a href="http://gokifu.com/es/player/Liao+Yuanhe"  title=" Buscar Liao Yuanhe" >Liao Yuanhe</a>&nbsp;(2p)</div>
+<div  class="game_date" >2015-02-06</div>
+<div  class="game_result" >W+R</div>
+<div class="game_type"><a href="http://gokifu.com/es/s/25fw-gokifu-20150206-He_Yuhan(2p)-Liao_Yuanhe(2p).html"  ><img src="/images/view.png"  title="View Liao Yuanhe vs He Yuhan"></a>&nbsp;<a href="http://gokifu.com/es/f/25fw-gokifu-20150206-He_Yuhan-Liao_Yuanhe.sgf"  ><img src="/images/save.png" sgf></a>&nbsp;<a href="http://gokifu.com/es/share/25fw" target="_blank" ><img src="/images/info.png"></a>&nbsp;</div>
+</div>
+<div class="player_block cblock_3">
+<div  class="player_name" ><img src="/images/xx.png" >&nbsp;<a href="http://gokifu.com/es/player/Yuan+Tingyu"  title=" Buscar Yuan Tingyu" >Yuan Tingyu</a>&nbsp;(?)</div>
+<div  class="player_name" ><img src="/images/xx.png" >&nbsp;<a href="http://gokifu.com/es/player/Xie+Ke"  title=" Buscar Xie Ke" >Xie Ke</a>&nbsp;(?)</div>
+<div  class="game_date" >2015-02-06</div>
+<div  class="game_result" >W+R</div>
+<div class="game_type"><a href="http://gokifu.com/es/s/25fx-gokifu-20150206-Yuan_Tingyu(?)-Xie_Ke(?).html"  ><img src="/images/view.png"  title="View Xie Ke vs Yuan Tingyu"></a>&nbsp;<a href="http://gokifu.com/es/f/25fx-gokifu-20150206-Yuan_Tingyu-Xie_Ke.sgf"  ><img src="/images/save.png" sgf></a>&nbsp;<a href="http://gokifu.com/es/share/25fx" target="_blank" ><img src="/images/info.png"></a>&nbsp;</div>
+</div>
+<div class="player_block cblock_3">
+<div  class="player_name" ><img src="/images/xx.png" >&nbsp;<a href="http://gokifu.com/es/player/Zhao+Guanru"  title=" Buscar Zhao Guanru" >Zhao Guanru</a>&nbsp;(?)</div>
+<div  class="player_name" ><img src="/images/xx.png" >&nbsp;<a href="http://gokifu.com/es/player/Xu+Jiayang"  title=" Buscar Xu Jiayang" >Xu Jiayang</a>&nbsp;(3p)</div>
+<div  class="game_date" >2015-02-06</div>
+<div  class="game_result" >W+R</div>
+<div class="game_type"><a href="http://gokifu.com/es/s/25fy-gokifu-20150206-Zhao_Guanru(?)-Xu_Jiayang(3p).html"  ><img src="/images/view.png"  title="View Xu Jiayang vs Zhao Guanru"></a>&nbsp;<a href="http://gokifu.com/es/f/25fy-gokifu-20150206-Zhao_Guanru-Xu_Jiayang.sgf"  ><img src="/images/save.png" sgf></a>&nbsp;<a href="http://gokifu.com/es/share/25fy" target="_blank" ><img src="/images/info.png"></a>&nbsp;</div>
+</div>
+<div class="player_block cblock_3">
+<div  class="player_name" ><img src="/images/xx.png" >&nbsp;<a href="http://gokifu.com/es/player/Xie+Ke"  title=" Buscar Xie Ke" >Xie Ke</a>&nbsp;(?)</div>
+<div  class="player_name" ><img src="/images/xx.png" >&nbsp;<a href="http://gokifu.com/es/player/Wang+Zejin"  title=" Buscar Wang Zejin" >Wang Zejin</a>&nbsp;(3p)</div>
+<div  class="game_date" >2015-02-05</div>
+<div  class="game_result" >B+R</div>
+<div class="game_type"><a href="http://gokifu.com/es/s/25em-gokifu-20150205-Xie_Ke(?)-Wang_Zejin(3p).html"  ><img src="/images/view.png"  title="View Wang Zejin vs Xie Ke"></a>&nbsp;<a href="http://gokifu.com/es/f/25em-gokifu-20150205-Xie_Ke-Wang_Zejin.sgf"  ><img src="/images/save.png" sgf></a>&nbsp;<a href="http://gokifu.com/es/share/25em" target="_blank" ><img src="/images/info.png"></a>&nbsp;</div>
+</div>
+<div class="player_block cblock_3">
+<div  class="player_name" ><img src="/images/kr.png" >&nbsp;<a href="http://gokifu.com/es/player/Kim+Jiseok"  title=" Buscar Kim Jiseok" >Kim Jiseok</a>&nbsp;(9p)</div>
+<div  class="player_name" ><img src="/images/xx.png" >&nbsp;<a href="http://gokifu.com/es/player/Kim+Myounghoon"  title=" Buscar Kim Myounghoon" >Kim Myounghoon</a>&nbsp;(?)</div>
+<div  class="game_date" >2015-02-05</div>
+<div  class="game_result" >W+R</div>
+<div class="game_type"><a href="http://gokifu.com/es/s/25fs-gokifu-20150205-Kim_Jiseok(9p)-Kim_Myounghoon(?).html"  ><img src="/images/view.png"  title="View Kim Myounghoon vs Kim Jiseok"></a>&nbsp;<a href="http://gokifu.com/es/f/25fs-gokifu-20150205-Kim_Jiseok-Kim_Myounghoon.sgf"  ><img src="/images/save.png" sgf></a>&nbsp;<a href="http://gokifu.com/es/share/25fs" target="_blank" ><img src="/images/info.png"></a>&nbsp;</div>
+</div>
+<div class="player_block cblock_3">
+<div  class="player_name" ><img src="/images/kr.png" >&nbsp;<a href="http://gokifu.com/es/player/Mok+Jinseok"  title=" Buscar Mok Jinseok" >Mok Jinseok</a>&nbsp;(9p)</div>
+<div  class="player_name" ><img src="/images/kr.png" >&nbsp;<a href="http://gokifu.com/es/player/Kim+Junghyun"  title=" Buscar Kim Junghyun" >Kim Junghyun</a>&nbsp;(5p)</div>
+<div  class="game_date" >2015-02-05</div>
+<div  class="game_result" >B+R</div>
+<div class="game_type"><a href="http://gokifu.com/es/s/25fv-gokifu-20150205-Mok_Jinseok(9p)-Kim_Junghyun(5p).html"  ><img src="/images/view.png"  title="View Kim Junghyun vs Mok Jinseok"></a>&nbsp;<a href="http://gokifu.com/es/f/25fv-gokifu-20150205-Mok_Jinseok-Kim_Junghyun.sgf"  ><img src="/images/save.png" sgf></a>&nbsp;<a href="http://gokifu.com/es/share/25fv" target="_blank" ><img src="/images/info.png"></a>&nbsp;</div>
+</div>
+<div class="player_block cblock_3">
+<div  class="player_name" ><img src="/images/xx.png" >&nbsp;<a href="http://gokifu.com/es/player/Zhou+Yuanjun"  title=" Buscar Zhou Yuanjun" >Zhou Yuanjun</a>&nbsp;(2p)</div>
+<div  class="player_name" ><img src="/images/xx.png" >&nbsp;<a href="http://gokifu.com/es/player/Liao+Yuanhe"  title=" Buscar Liao Yuanhe" >Liao Yuanhe</a>&nbsp;(2p)</div>
+<div  class="game_date" >2015-02-05</div>
+<div  class="game_result" >W+R</div>
+<div class="game_type"><a href="http://gokifu.com/es/s/25fz-gokifu-20150205-Zhou_Yuanjun(2p)-Liao_Yuanhe(2p).html"  ><img src="/images/view.png"  title="View Liao Yuanhe vs Zhou Yuanjun"></a>&nbsp;<a href="http://gokifu.com/es/f/25fz-gokifu-20150205-Zhou_Yuanjun-Liao_Yuanhe.sgf"  ><img src="/images/save.png" sgf></a>&nbsp;<a href="http://gokifu.com/es/share/25fz" target="_blank" ><img src="/images/info.png"></a>&nbsp;</div>
+</div>
+<div class="player_block cblock_3">
+<div  class="player_name" ><img src="/images/ja.png" >&nbsp;<a href="http://gokifu.com/es/player/Iyama+Yuuta"  title=" Buscar Iyama Yuuta" >Iyama Yuuta</a>&nbsp;(9p)</div>
+<div  class="player_name" ><img src="/images/ja.png" >&nbsp;<a href="http://gokifu.com/es/player/Yamashita+Keigo"  title=" Buscar Yamashita Keigo" >Yamashita Keigo</a>&nbsp;(9p)</div>
+<div  class="game_date" >2015-02-05</div>
+<div  class="game_result" >B+1.5</div>
+<div class="game_type"><a href="http://gokifu.com/es/s/25g2-gokifu-20150205-Iyama_Yuuta(9p)-Yamashita_Keigo(9p).html"  ><img src="/images/view.png"  title="View Yamashita Keigo vs Iyama Yuuta"></a>&nbsp;<a href="http://gokifu.com/es/f/25g2-gokifu-20150205-Iyama_Yuuta-Yamashita_Keigo.sgf"  ><img src="/images/save.png" sgf></a>&nbsp;<a href="http://gokifu.com/es/share/25g2" target="_blank" ><img src="/images/info.png"></a>&nbsp;</div>
+</div>
+<div class="player_block cblock_3">
+<div  class="player_name" ><img src="/images/ja.png" >&nbsp;<a href="http://gokifu.com/es/player/Ida+Athushi"  title=" Buscar Ida Athushi" >Ida Athushi</a>&nbsp;(8p)</div>
+<div  class="player_name" ><img src="/images/ja.png" >&nbsp;<a href="http://gokifu.com/es/player/Kobayashi+Satoru"  title=" Buscar Kobayashi Satoru" >Kobayashi Satoru</a>&nbsp;(9p)</div>
+<div  class="game_date" >2015-02-05</div>
+<div  class="game_result" >B+R</div>
+<div class="game_type"><a href="http://gokifu.com/es/s/25g4-gokifu-20150205-Ida_Athushi(8p)-Kobayashi_Satoru(9p).html"  ><img src="/images/view.png"  title="View Kobayashi Satoru vs Ida Athushi"></a>&nbsp;<a href="http://gokifu.com/es/f/25g4-gokifu-20150205-Ida_Athushi-Kobayashi_Satoru.sgf"  ><img src="/images/save.png" sgf></a>&nbsp;<a href="http://gokifu.com/es/share/25g4" target="_blank" ><img src="/images/info.png"></a>&nbsp;</div>
+</div>
+<div class="player_block cblock_3">
+<div  class="player_name" ><img src="/images/xx.png" >&nbsp;<a href="http://gokifu.com/es/player/Xie+Ke"  title=" Buscar Xie Ke" >Xie Ke</a>&nbsp;(?)</div>
+<div  class="player_name" ><img src="/images/xx.png" >&nbsp;<a href="http://gokifu.com/es/player/Wang+Zejin"  title=" Buscar Wang Zejin" >Wang Zejin</a>&nbsp;(3p)</div>
+<div  class="game_date" >2015-02-05</div>
+<div  class="game_result" >W+R</div>
+<div class="game_type"><a href="http://gokifu.com/es/s/25dj-gokifu-20150205-Xie_Ke(?)-Wang_Zejin(3p).html"  ><img src="/images/view.png"  title="View Wang Zejin vs Xie Ke"></a>&nbsp;<a href="http://gokifu.com/es/f/25dj-gokifu-20150205-Xie_Ke-Wang_Zejin.sgf"  ><img src="/images/save.png" sgf></a>&nbsp;<a href="http://gokifu.com/es/share/25dj" target="_blank" ><img src="/images/info.png"></a>&nbsp;</div>
+</div>
+<div class="player_block cblock_3">
+<div  class="player_name" ><img src="/images/xx.png" >&nbsp;<a href="http://gokifu.com/es/player/O+Jangwuk"  title=" Buscar O Jangwuk" >O Jangwuk</a>&nbsp;(2p)</div>
+<div  class="player_name" ><img src="/images/kr.png" >&nbsp;<a href="http://gokifu.com/es/player/Lee+Donghoon"  title=" Buscar Lee Donghoon" >Lee Donghoon</a>&nbsp;(4p)</div>
+<div  class="game_date" >2015-02-04</div>
+<div  class="game_result" >W+R</div>
+<div class="game_type"><a href="http://gokifu.com/es/s/25fu-gokifu-20150204-O_Jangwuk(2p)-Lee_Donghoon(4p).html"  ><img src="/images/view.png"  title="View Lee Donghoon vs O Jangwuk"></a>&nbsp;<a href="http://gokifu.com/es/f/25fu-gokifu-20150204-O_Jangwuk-Lee_Donghoon.sgf"  ><img src="/images/save.png" sgf></a>&nbsp;<a href="http://gokifu.com/es/share/25fu" target="_blank" ><img src="/images/info.png"></a>&nbsp;</div>
+</div>
+    <div class="nav_block" align="center"> 
+    <a href="?p=1" ><<</a>&nbsp;&nbsp;&nbsp;<a href="?p=1" >1</a>&nbsp;&nbsp;&nbsp;<a href="?p=2" class="active_nav">2</a>&nbsp;&nbsp;&nbsp;<a href="?p=3" >3</a>&nbsp;&nbsp;&nbsp;<a href="?p=4" >4</a>&nbsp;&nbsp;&nbsp;<a href="?p=5" >5</a>&nbsp;&nbsp;&nbsp;<a href="?p=6" >6</a>&nbsp;&nbsp;&nbsp;<a href="?p=7" >7</a>&nbsp;&nbsp;&nbsp;<a href="?p=8" >8</a>&nbsp;&nbsp;&nbsp;<a href="?p=9" >9</a>&nbsp;&nbsp;&nbsp;<a href="?p=10" >10</a>&nbsp;&nbsp;&nbsp;<a href="?p=11" >11</a>&nbsp;&nbsp;&nbsp;<a href="?p=12" >12</a>&nbsp;&nbsp;&nbsp;<a href="?p=13" >13</a>&nbsp;&nbsp;&nbsp;<a href="?p=14" >14</a>&nbsp;&nbsp;&nbsp;<a href="?p=15" >15</a>&nbsp;&nbsp;&nbsp;<a href="?p=16" >16</a>&nbsp;&nbsp;&nbsp;<a href="?p=17" >17</a>&nbsp;&nbsp;&nbsp;<a href="?p=18" >18</a>&nbsp;&nbsp;&nbsp;<a href="?p=19" >19</a>&nbsp;&nbsp;&nbsp;<a href="?p=20" >20</a>&nbsp;&nbsp;&nbsp;<a href="?p=3" >>></a>&nbsp;&nbsp;&nbsp; </div>
+</div>
+
+
+</div><!-- #wrapper -->
+
+
+<div id="footer">
+<div id="footer_text_left">
+&copy; 2015 gokifu.com <a href="http://gokifu.com/es/about.php">About</a>&nbsp;|&nbsp;<a href="http://blog.gokifu.com">Blog</a>&nbsp;|&nbsp;<a href="mailto:info@gokifu.com?subject=Share Sgf Feedback">Contacto</a>&nbsp;|&nbsp;<a href="http://gokifu.com/es/help.php">Help</a>&nbsp;|&nbsp;<a href="http://gokifu.com/es/tos.php">TOS</a>|&nbsp;<a href="http://gokifu.com/es/users.php">Users</a>|&nbsp;<a href="http://gokifu.com/es/sitemap/">Site Map</a>
+<br>
+<!--Rating@Mail.ru counter-->
+<a target="_top" href="http://top.mail.ru/jump?from=2046703">
+<img src="http://da.c3.bf.a1.top.mail.ru/counter?id=2046703;t=84" 
+border="0" height="18" width="88" alt="Рейтинг@Mail.ru"></a>
+<!--// Rating@Mail.ru counter-->
+</div>
+</div><!-- #footer -->
+<p id="counter"></p>
+<script>
+$("a#aclick").click(function () {
+    $("div#gamelist").fadeIn("slow");
+    $("div#sform").hide("slow");
+    $("div#uform").hide("slow");
+    $("div#aform").show("slow");
+ 
+    });
+ 
+ $("a#uclick").click(function () {
+    $("div#gamelist").fadeOut("slow");
+    $("div#aform").hide("slow");
+    $("div#sform").hide("slow");
+    $("div#gamelist").hide("slow");
+    $("div#uform").show("slow");
+    });
+ $("a#sclick").click(function () {
+    $("div#gamelist").fadeIn("slow");
+    $("div#aform").hide("slow");
+    $("div#sform").show("slow");
+    $("div#uform").hide("slow");
+ 
+ 
+    });
+
+ function write_counter()
+    {
+	        var str="<"
+        str+="script type=\"text";
+        str+="/javascript\">";
+        str+="var sc_project=5659732;";
+        str+="var sc_invisible=1;";
+        str+="var sc_partition=60;";
+        str+="var sc_click_stat=1;";
+        str+="var sc_security=\"b94a8e95\";";
+//        str+="alert('hello');";// debug code:)
+        str+="<";
+        str+="/script>";
+        str+="<";
+        str+="script type=\"text";
+        str+="/javascript\" ";
+        str+="src=\"http://www.statcounter.com/counter/counter.js\">";
+        str+="<";
+        str+="/script>";
+
+        str+="<";
+        str+="noscript><div class=\"statcounter\">";
+        str+="<a title=\"stat counter\" href=\"http://www.statcounter.com/statcounter.com/\" target=\"_blank\">";
+        str+="<img class=\"statcounter\" src=\"http://c.statcounter.com/5659732/0/b94a8e95/1/\" alt=\"stat counter\">";
+        str+="</a></div></noscript>";
+        str+="<!-- End of StatCounter Code -->";
+         $('p#counter').append(str);
+
+    }
+
+    $(function() {				
+			     
+        write_counter();
+
+        var availableTags = [ "", "Abe Yoshiteru", "Adachi Toashimasa", "Ahn Kukhyun", "Akiyama Jiro", "Alain WETTACH", "Aleksey Lazarev", "Alexander Dienersteinn", "Alexander Dinerchtein", "Alexander Vashurov", "Alexandre Dinerchtein", "Alexey Lazarev", "Ali Jabarin", "An Dalhun", "An Dongxu", "An Hyungjoon", "An Joyeong", "An Kwanwuk", "An Sungjoon", "An Younggil", "Ando Kazushige", "Andrej Kravets", "Andrey Kashaev", "Andrey Kulkov", "Andrij Kravec", "Antoine Fenech", "Antti Tormanen", "Anzai Nobuaki", "Aoba Kaori", "Aoki Kikuyo", "Aoki Shinichi", "Aoyama Ayako", "Aragaki Shumu", "Aragaki Shun", "Aragaki Takeshi", "Arai Miyu", "Araki Issei", "Arimura Hiroshi", "Arnaud Boucherie", "Artem Kachanovsky", "Artem Kachanovskyi", "Asano Yasuko", "Ashida Isoko", "Awaji Shuzo", "Baba Shigeru", "Bae Junhee", "Bae Yunjin", "Baek Chanhee", "Bai Baoxiang", "Bai Guangyuan", "Bao Yun", "Benjamin Chetioui", "Benjamin Teuber", "Bernd Radmacher", "Bian Zhiwen", "Bogdan Zhurakovsky", "Byun Sangil", "Cai Bihan", "Cai Jianpeng", "Cai Jing", "Cai Wenhe", "Cao Cheng", "Cao Dayuan", "Cao Hengting", "Cao Xiaoyang", "Cao Youyin", "Catalin Taranu", "Cha Sookwon", "Chang Hao", "Chang Suyeong", "Che Zewu", "Chen Feng", "Chen Guoxing", "Chen Hao", "Chen Linxin", "Chen Seuyen", "Chen Xian", "Chen Xiaonan", "Chen Yaoye", "Chen Yida", "Chen Yiming", "Chen Yixiang", "Chen Yongan", "Chen Yunong", "Chen Zhaonian", "Chen Zhengxun", "Chen Zijian", "Chen Zude", "Cheng Xiaoliu", "Chin Kaei", "Chinen Kaori", "Chino Tadahiko", "Cho Chien", "Cho Chikun", "Cho Daehyeon", "Cho Hanseung", "Cho Hunhyun", "Cho Hyeyeon", "Cho Insun", "Cho Kyungho", "Cho Mikyung", "Cho Riyu", "Cho Sonjin", "Cho U", "Choi Byounghwan", "Choi Cheolhan", "Choi Dongeun", "Choi Hyunjae", "Choi Jeong", "Choi Kihoon", "Choi Kyubyeong", "Choi Munyong", "Choi Myeonghun", "Choi Wongyong", "Christian Pop", "Chu Fei", "Cipra Petr", "Cornel Burzo", "Cristian Pop", "Csaba Mero", "Cui Can", "Cui Ning", "Cui Qianjin", "Dai Jiashen", "Dai Junfu", "Dang Xiyun", "Dang Yifei", "Diana Koszegi", "Ding Hao", "Ding Lie", "Ding Shixiong", "Ding Wei", "Dmitrij Surin", "Dmitry Bogatsky", "Dmytro Bogatsky", "Dmytro Bohatskyi", "Doi Makoto", "Dong Yan", "Drean - Guenaizia Benjamin", "Du Yufeng", "Duan Rong", "Dusan Mitic", "Eduardo Lopez", "Enda Hideki", "Endo Yoshifumi", "Fan Hui", "Fan Tingyu", "Fan Weijing", "Fan Yangbo", "Fan Yin", "Fan Yunruo", "Fang Hao", "Fang Jie", "Fang Tianfeng", "Feng Wei", "Feng Yun", "Fernand Aguilar", "FJ Dickhut", "Frank Janssen", "Fu Chong", "Fu Li", "Fujii Shuhya", "Fujimura Yosuke", "Fujisawa Hideyuki", "Fujisawa Kazunari", "Fujisawa Rina", "Fujita Akihiko", "Fukui Masaaki", "Furusho Katsuko", "Furuya Masao", "Furuya Yutaka", "Gaku Yuzuru", "Gan Siyang", "Gao Xing", "Ge Yongfei", "Goto Shungo", "Gu Li", "Gu Lingyi", "Gu Zihao", "Gueon Hyojin", "Gueon Omin", "Gui Wenbo", "Guo Beiya", "Guo Juan", "Guo Wenchao", "Guo Xinyi", "Guo Yuzheng", "Ha Chanseok", "Ha Hojung", "Ha Sungbong", "Ha Youngil", "Han Cheolkyun", "Han Chongjin", "Han Haewon", "Han Han", "Han Sanghoon", "Han Sangyeol", "Han Seungjoo", "Han Taehee", "Han Wonggyu", "Han Ye", "Han Yizhou", "Han Zenki", "Hane Naoki", "Hane Yasumasa", "Hang Tianpeng", "Hans Pietsch", "Hara Sachiko", "Haruyama Isamu", "Hasegawa Sunao", "Hashimoto Syoji", "Hashimoto Yujiro", "He Yuhan", "Hei Jiajia", "Heo Janghoi", "Heo Jin", "Heo Yongho", "Hikosaka Naoto", "Hiramoto Yasei", "Hirano Norikazu", "Hiraoka Satoshi", "Hirata Tomoya", "Hiroe Hiroyuki", "Hisajima Kunio", "Honda Kunihisa", "Hong Jansik", "Hong Jonghyun", "Hong Kipyo", "Hong Kochnoeul", "Hong Maleunsaem", "Hong Minpyo", "Hong Mujin", "Hong Seongji", "Hong Taesun", "Honinbo Shusaku", "Horimoto Mitsunari", "Hosaka Mayu", "Hoshikawa Kouyou", "Hoshikawa Manabu", "Hoshikawa Takumi", "Hoshino Masaki", "Hsu Chiayuan", "Hu Ranmin", "Hu Xiaoling", "Hu Yaoyu", "Hu Yuefeng", "Hu Yuhan", "Hu Yuqing", "Hua Xueming", "Hua Yigang", "Huang Chen", "Huang Jia", "Huang Jingyuan", "Huang Xiangren", "Huang Yan", "Huang Yizhong", "Huang Yunsong", "Hwang Jaeyeon", "Hwang Weonjun", "Hyun Mijin", "Ichiriki Ryo", "Ida Athushi", "Igor Popov", "Iguchi Toyohide", "Ikeda Ayako", "Ilya Shikshin", "Im Seongkeun", "Im Soontaek", "Imai Kazuhiro", "Imamura Toshiya", "Imamura Yoshiaki", "Inaba Takahiro", "Inori Yoko", "Inoue Hatsue", "Inoue Naoki", "Ishida Akira", "Ishida Atsushi", "Ishida Yoshio", "Ishigure Ikuro", "Ishii Akane", "Ishii Kunio", "Ishii Mamoru", "Ishii Shinzo", "Ishikura Noboru", "Ito Masashi", "Ito Yoji", "Iwamaru Taira", "Iwata Hajime", "Iwata Tatsuaki", "Iyama Yuuta", "Izawa Akino", "Izumitani Hideo", "Jan Prokop", "Jan Simara", "Janne Nikula", "Jean-Philippe Leduc", "Jen Youngkyu", "Jeon Sang Youn", "Jeong Daesang", "Jeong Suhyeon", "Jérôme Salignon", "Jia Ganglu", "Jia Qian", "Jia Xiaoyu", "Jiang Mingjiu", "Jiang Qirun", "Jiang Wei", "Jiang Weijie", "Jiang Zhujiu", "Jimmy Cha", "Jin Donggyu", "Jin Siyoung", "Jin Weibin", "Jing Shi", "John Lee", "Joonas Ylönen", "Ju Hyeongwuk", "Judith Conradi", "Juh Taehwan", "Juho Heikkinen", "Julien Payrat", "Juri Kuronen", "Juuso Nyyssönen", "Kai Naoyuki", "Kamiji Hiroki", "Kamimura Haruo", "Kamimura Kunio", "Kanazawa Hideo", "Kanazawa Makoto", "Kanazawa Moriei", "Kanda Ei", "Kang Changbae", "Kang Dajeong", "Kang Dongyun", "Kang Hun", "Kang Jiseong", "Kang Manwoo", "Kang Seunghee", "Kang Seungmin", "Kang Yootaek", "Kang Zhanbin", "Kanno Masashi", "Kanno Naomi", "Kataoka Satoshi", "Katayama Yasuo", "Kato Atsushi", "Kato Keiko", "Kato Masao", "Kato Tomoko", "Kato Yuuki", "Katsura Atsushi", "Kawada Kohei", "Kawai Syoji", "Kawai Tetsuyuki", "Ke Jie", "Kenmochi Joe", "Kibe Natsuki", "Kikuchi Yasuro", "Kim Byeongjun", "Kim Chanwu", "Kim Chongsu", "Kim Daehee", "Kim Daeyoung", "Kim Donghee", "Kim Dongho", "Kim Dongmyeon", "Kim Dongyeop", "Kim Eunseon", "Kim Hwansoo", "Kim Hyelim", "Kim Hyenchan", "Kim Hyeoimin", "Kim Hyeongwan", "Kim Hyeongwoo", "Kim Hyojung", "Kim Hyokon", "Kim Hyunjong", "Kim Hyunsub", "Kim Ilhwan", "Kim Jinhwi", "Kim Jinhyu", "Kim Jinwoo", "Kim Jiseok", "Kim JongJoon", "Kim Joonyoung", "Kim Juho", "Kim Junghyun", "Kim Kangkeun", "Kim Kihun", "Kim Kiwon", "Kim Kiyoung", "Kim Kwangsik", "Kim Mansoo", "Kim Minho", "Kim Minhui", "Kim Miri", "Kim Myeongwan", "Kim Myounghoon", "Kim Nahyun", "Kim Namhun", "Kim Pyonmin", "Kim Sedong", "Kim Seokheung", "Kim Seongjae", "Kim Seongrae", "Kim Seonryong", "Kim Sesil", "Kim Seungjun", "Kim Sinyoung", "Kim Sonjin", "Kim Soojang", "Kim Soojin", "Kim Sooyong", "Kim Sujun", "Kim Sunho", "Kim Sunmi", "Kim Yeonghwan", "Kim Yeongsam", "Kim Yoonyoung", "Kim Youngsam", "Kimd Dalsoo", "Kitano Ryo", "Kiwada Kazuomi", "Kiyonari Tetsuya", "Ko Daehyuk", "Ko Iso", "Ko Iun", "Ko Jaehee", "Ko Joyeon", "Ko Keuntae", "Ko Mosei", "Ko Reibun", "Kobayashi Izumi", "Kobayashi Kenji", "Kobayashi Koichi", "Kobayashi Satoru", "Kojima Takaho", "Komatsu Fujio", "Komatsu Hideki", "Komatsu Hideko", "Konagai Masaru", "Kong Byeongjoo", "Kong Jie", "Konishi Kazuko", "Konno Tameto", "Kono Mitsuki", "Kono Rin", "Kono Takashi", "Konstantin Lopatyuk", "Kou Zhengyan", "Kouda Akiko", "Kovaleva Natalia", "Koyama Hideo", "Koyama Mitsuru", "Koyama Ryugo", "Koyama Terumi", "Kubo Hideo", "Kubo Katsuaki", "Kubota Masaru", "Kudo Norio", "Kumamoto Syusei", "Kunisawa Hiroto", "Kurahashi Masayuki", "Kurotaki Masaki", "Kurotaki Masanori", "Kusunoki Teruko", "Kuwabara Yoko", "Kuwamoto Shinpei", "Kwon Hyungjin", "Kwon Kapyong", "Lan Tian", "Le Calvé Tanguy", "Lee Changho", "Lee Chungyu", "Lee Donghoon", "Lee Dongkyu", "Lee Hajin", "Lee Hobum", "Lee Hongyeol", "Lee Huiseong", "Lee Hyeonwuk", "Lee Hyungjin", "Lee Hyunho", "Lee Ishu", "Lee Jaeung", "Lee Jihyun", "Lee Jihyun (6a)", "Lee Juhyung", "Lee Jungwon", "Lee Jungwoo", "Lee Kangwook", "Lee Kwanchul", "Lee Minjin", "Lee Sanghun (b)", "Lee Sanghun (s)", "Lee Sedol", "Lee Seongjae", "Lee Sula", "Lee Taehyun", "Lee Tahye", "Lee Wondo", "Lee Wonyoung", "Lee Yeongkyu", "Lee Yongchan", "Lee Yongshin", "Lee Youngjoo", "Lee Yungsoo", "Li Biqi", "Li Chunhua", "Li Cong", "Li Daichun", "Li Haojie", "Li He", "Li Huasong", "Li Jian", "Li Jie", "Li Jie (", "Li Junkai", "Li Kang", "Li Kuihan", "Li Liang", "Li Ming", "Li Qincheng", "Li Weiqing", "Li Xiangyu", "Li Xiaoxi", "Li Xuanhao", "Li Yi", "Li Ying (s)", "Li Yonggang", "Li Zhangyuan", "Li Zhe", "Lian Xiao", "Liang Weitang", "Liang Yadi", "Liao Guiyong", "Liao Xingwen", "Liao Yuanhe", "Lin Feng", "Lin Junyan", "Lin Shengxian", "Lin Shuyang", "Lin Yuxiang", "Lin Zhaohua", "Lin Zhihan", "Lisy Pavol", "Liu Fan", "Liu Jing", "Liu Jun", "Liu Shizhen", "Liu Tao", "Liu Xi", "Liu Xiaoguang", "Liu Xing", "Liu Yaowen", "Liu yiyi", "Liu Yunlong", "Liu Zhaozhe", "Lou Xi", "Lu Jia", "Lukas Krämer", "Lukas Podpera", "Luo Delong", "Luo Xihe", "Luo Yan", "Ma Rulong", "Ma Tianfang", "Ma Xiaobing", "Ma Xiaochun", "Ma Yichao", "Makihata Taeko", "Mannami Kana", "Mannami Nao", "Mao Ruilong", "Maria Zaharchenko", "Matsumoto Takehisa", "Matsuoka Hideki", "Matti Siivola", "Meng Lei", "Meng Tailing", "Meng Zhaoyu", "Mi Yuting", "Michael Redmond", "Michail Galchenko", "Mijodrag Stankovic", "Milos Bojanic", "Mimura Kaori", "Mimura Tomoyasu", "Min Na", "Min Sangyoun", "Mine Yasuhiro", "Mitani Tetsuya", "Mitic Nikola", "Mito Yukari", "Mitsunaga Junzou", "Miyagawa Fumihiko", "Miyamoto Yoshihisa", "Miyazaki Ryutaro", "Miyazaki Shimako", "Miyazawa Goro", "Miyazawa Kichitaro", "Mizokami Tomochika", "Mizuma Toshifumi", "Mochizuki Kenichi", "Mok Jinseok", "Moon Dowon", "Morita Michihiro", "Moriyama Naoki", "Motoki Katsuya", "Mukai Chiaki", "Mukai Kaori", "Mukai Kozue", "Murakami Akihide", "Murakawa Daisuke", "Muramatsu Hiroki", "Muramatsu Ryuichi", "Na Hyun", "Na Jonghoon", "Nagahara Yoshiaki", "Nagashima Kozue", "Nakagawa Junsetsu", "Nakajima Mieko", "Nakamura Hidehito", "Nakamura Shinya", "Nakane Naoyuki", "Nakano Hironari", "Nakano Yasuhiro", "Nakao Jungo", "Nakaoka Jiro", "Nakaonoda Tomomi", "Nakazawa Ayako", "Nakazono Seizo", "Nie Weiping", "Nishimura Keiji", "Niu Yutian", "No Yeongha", "Numadate Sakiya", "O Jangwuk", "O Meien", "O Rissei", "O Yuinin", "Obuchi Kotaro", "Obuchi Morito", "Oda Hiromitsu", "Oda Teppei", "Ogaki Yusaku", "Ogata Masaki", "Ogawa Tomoko", "Ogoshi Ichiro", "Oh Jeonga", "Oh Kyuchul", "Oh Yujin", "Ohashi Hirofumi", "Ohashi Naruya", "Ohba Junya", "Ok Teukjin", "Okada Shinichiro", "Okada Yumiko", "Oki Keiji", "Okuda Aya", "Oleg Mezhov", "Omori Yasushi", "On Sojin", "Onda Yasuhiko", "Ondrej Silt", "Onishi Kenya", "Ono Nobuyuki", "Onoda Takuya", "Osawa Kenro", "Osawa Narumi", "Ota Seido", "Ota Yuzo", "Otake Hideo", "Oto Shozo", "Otso Alanko", "Oya Koichi", "Oyama Kunio", "Paek Daehyun", "Paek Hongseok", "Paek Jihee", "Paek Seongho", "Pal Balogh", "Pan Fei", "Pan Feng", "Pan Kunyu", "Pan Wenjun", "Park Byeongkyu", "Park Changmyeong", "Park Cheongsang", "Park Jeonggeun", "Park Jihun (b)", "Park Jihun (s)", "Park Jinsol", "Park Jinyeol", "Park Jiyeon", "Park Jongyoel", "Park Jungwhan", "Park Junsuck", "Park Minkyu", "Park Sangdon", "Park Seungcheol", "Park Seunghwa", "Park Seunghyeon", "Park Seungmun", "Park Seunsoo", "Park Shiun", "Park Siyeol", "Park Sohyun", "Park Yeongchan", "Park Yeonghun", "Park Yeongyong", "Pavol Lisy", "Pekka Lajunen", "Peng Jinghua", "Peng Liyao", "Peng Quan", "Philippe Renaut", "Piao Wenyao", "Podpera Lukas", "Pop Christian", "Prokop Jan", "Qi Lihe", "Qin Shi", "Qin Yuexin", "Qiu Danyun", "Qiu Jun", "Rao Ruiyong", "Ri Tin", "Rin Kaiho", "Rin Kanketsu", "Rin Shien", "Rob van Zeijst", "Rong Yi", "Ruan Yunsheng", "Rudi Verhagen", "Rui Naiwei", "Ryu Chaehyeong", "Ryu Dongwan", "Ryu Minhyung", "Ryu Shikun", "Ryu Suhang", "Saito Tadashi", "Sakai Hideyuki", "Sakai Maki", "Sakai Takeshi", "Sakamoto Yasuo", "Salingnon Jérôme", "Sang-Youn", "Sang-Youn Jeon", "Sanno Hirotaka", "Sano Takatsugu", "Sasaka Shiro", "Sasakibara Fumiko", "Sato Fumitoshi", "Sato Masaharu", "Seki Tatsuya", "Sekiyama Toshimichi", "Seo Bongsoo", "Seo Gunwoo", "Seo Joonghui", "Seo Musang", "Seo Nungwuk", "Seto Taiki", "Shan Ziteng", "Shao Guang", "Shao Weigang", "Shao Zhenzhong", "Shen Jing", "Shi Jinbo", "Shi Yue", "Shi Yulai", "Shibusawa Machiko", "Shida Tatsuya", "Shigeno Yuki", "Shikshina Svetlana", "Shimoji Gensho", "Shimojima Yohei", "Shimosaka Miori", "Shin Jinseo", "Shin Minjun", "Shinkai Hiroko", "Shiraishi Kyoko", "Shiraishi Yuichi", "Shiraishi Yutaka", "Shiung Feng", "Shu Yixiao", "Shuto Shun", "Silt Ondrej", "Simara Jan", "Simo Vanhala", "So Kofuku", "So Yokoku", "Son Geungi", "Son Hideyo", "Song Pengwang", "Song Ronghui", "Song Sanghun", "Song Taekon", "Song Xuelin", "Sonoda Yasutaka", "Sonoda Yuichi", "Su Kaiseki", "Su Shengfang", "Su Su", "Sugimoto Akira", "Sugiuchi Kazuko", "Sugiuchi Masao", "Sun Li", "Sun Mengsha", "Sun Mingjie", "Sun Tengyu", "Sun Yiguo", "Sun Yuan", "Sun Zhe", "Surin Dimitriy", "Suzuki Ayumi", "Suzuki Isao", "Suzuki Shinji", "Suzuki Yoshimichi", "Svetlana Shikshina", "Tae-Hwan Juh", "Tafu kae", "Tahara Yasufumi", "Tajima Shingo", "Tajiri Yuto", "Takabayashi Masahiro", "Takabayashi Takuji", "Takagi Junpei", "Takagi Shoichi", "Takahara Syuji", "Takahashi Hideo", "Takahashi Masumi", "Takamizawa Tadao", "Takanashi Seiken", "Takano Hideki", "Takao Shinji", "Takashima Takeshi", "Takayama Sanjiro", "Takeda Yoshinori", "Takei Takashi", "Takekiyo Isamu", "Takemiya Masaki", "Takemiya Youkou", "Tamai Shin", "Tamaki Shinobu", "Tamura Chiaki", "Tan Xiao", "Tan Yanwu", "Tanaka Chieko", "Tanemura Sayuri", "Tang Weixing", "Tang Yi", "Tang Ying", "Tanguy Le Calvé", "Taniguchi Tooru", "Tao Ran", "Tao Xin", "Tao Xinran", "Taranu Catalin", "Teemu Rovio", "Tei Meiko", "Teng Cheng", "Terayama Rei", "Thomas Debarre", "Thomas Hsiang", "Thorsten Knauf", "Tian Ye", "Tian Zhou", "Timur Sankin", "Tobita Saki", "Tokimoto Hajime", "Tong Mengcheng", "Tong Yulin", "Tono Hiroaki", "Tozawa Akinobu", "Tsukuda Akiko", "Tsurumaru Keiichi", "Tsuruta Kazushi", "Tsuruyama Atsushi", "Tu Qing", "Tuo Jiaxi", "Tuomas Hella", "Uchida Shuhei", "Ueki Yoshio", "Umezawa Yukari", "Ushikubo Yoshitaka", "Ville Ainali", "Vladimir Danek", "Wada Ikkei", "Wang Bogang", "Wang Chen", "Wang Chenfan", "Wang Chenxing", "Wang Dongliang", "Wang Haijun", "Wang Haoyang", "Wang Hongwei", "Wang Hui", "Wang Jianan", "Wang Jianhong", "Wang Jiankun", "Wang Jingyi", "Wang Jun", "Wang Lei (b)", "Wang Lei (s)", "Wang Niqiao", "Wang Pan", "Wang Qun", "Wang Rui", "Wang Runan", "Wang Ruoran", "Wang Senfeng", "Wang Shuang", "Wang Tao", "Wang Wei", "Wang Xi", "Wang Xiangjie", "Wang Xiangru", "Wang Xiangyun", "Wang Xiru", "Wang Xuechuan", "Wang Yang", "Wang Yao", "Wang Yimin", "Wang Youxia", "Wang Yuanjun", "Wang Yubo", "Wang Yuhui", "Wang Zejin", "Wang Zheming", "Wei Haoting", "Weon Seongjin", "Wu Guangya", "Wu Kai", "Wu Qi", "Wu Shuhao", "Wu Songsheng", "Wu Tian", "Wu Xinyu", "Wu Zhaoyi", "Xi Yanyan", "Xia Chenkun", "Xia Daming", "Xiao Zhenghao", "Xie Erhao", "Xie He", "Xie Ke", "Xie Shaobo", "Xie Yimin", "Xu Changzheng", "Xu Dun", "Xu Jiayang", "Xu Shuxiang", "Xu Xingyou", "Xu Ying", "Xu Zexin", "Xue Lei", "Yamada Kimio", "Yamada Noriyoshi", "Yamada Shinji", "Yamada Takuji", "Yamamori Tadanao", "Yamamoto Kentaro", "Yamamoto Masato", "Yamashiro Hiroshi", "Yamashita Keigo", "Yan Huan", "Yan Ning", "Yanagisawa Satoshi", "Yanaka Katsunori", "Yang Dingxin", "Yang Dong", "Yang Hui", "Yang Huiren", "Yang Jaeho", "Yang Jinhua", "Yang Kaiwen", "Yang Keon", "Yang Mengyun", "Yang Qian", "Yang Shihai", "Yang Wooseok", "Yang Xiaotian", "Yang Yi", "Yang Zhide", "Yang Zi", "Yao Yun", "Yao Zhiteng", "Yashiro Kumiko", "Yasuda Yasutoshi", "Yata Naoki", "Ye Gui", "Ye Jinjin", "Yeom Jeonghun", "Yi Lingtao", "Yin Hang", "Yin Mingming", "Yo Kaei", "Yo Kagen", "Yoda Norimoto", "Yokota Shigeaki", "Yoo Changhyuk", "Yoo Haewon", "Yoo Jaeho", "Yoo Jaeseong", "Yoo Kyeongmin", "Yoshida Mika", "Yoshioka Kaoru", "You Byungyong", "Youngsam Kim", "Yu Bin", "Yu Meiling", "Yu Ping", "Yu Zhengqi", "Yu Zhiying", "Yuan Tingyu", "Yuan Weihong", "Yuan Xi", "Yue Liang", "Yue Song", "Yukawa Mitsuhisa", "Yuki Satoshi", "Yun Chanhee", "Yun Hyuk", "Yun Hyunseok", "Yun Jaewung", "Yun Jihee", "Yun Junsang", "Yun Kihyeon", "Yun Seonghyeon", "Yun Yeongseon", "Yun Youngmin", "Zen", "Zen19S", "Zeno van Ditzhuijzen", "Zeno_van Ditzhuijzen", "Zhan Ying", "Zhang Ce", "Zhang Chi", "Zhang Dongyue", "Zhang Hao", "Zhang Jiao", "Zhang Kaixin", "Zhang Li", "Zhang Peipei", "Zhang Qiang", "Zhang Rui", "Zhang Sen", "Zhang Tao", "Zhang Wei", "Zhang Weijin", "Zhang Wendong", "Zhang Xin", "Zhang Xuan", "Zhang Xuebin", "Zhang Yabo", "Zhang Yingting", "Zhang Yueran", "Zhang Zhengping", "Zhang Zihan", "Zhao Baolong", "Zhao Chenyu", "Zhao Guanru", "Zhao Jiannan", "Zhao Shouxun", "Zhao Xinghua", "Zhao Zhelun", "Zheng Ce", "Zheng Hong", "Zheng Miaoxin", "Zheng Yan", "Zhong Wenjing", "Zhou Bo", "Zhou Hexi", "Zhou Heyang", "Zhou Junxun", "Zhou Keping", "Zhou Kui", "Zhou Pingqiang", "Zhou Ruiyang", "Zhou Yinnan", "Zhou Yuanjun", "Zhou Zhenyu", "Zhu Baoxun", "Zhu Jianshun", "Zhu Lili", "Zhu Songli", "Zhu Yanming", "Zhu Yi", "Zhu Yuanhao", "Zoran Mutabzija", "Zou Junjie", "姜東潤七段", "杨博崴", "林立祥", "林至涵", "Abe Yoshiki", "Alexei Lazarev", "Ali Jabarin ", "Ali Yesilcimen", "Benjamin Papazoglou", "Blanchard Benjamin", "Blomback Fredrik", "Burdakova Dina", "Chang Doojin", "Chang Myunghan", "Chen Boya", "Chen Mingchuan", "Chen Si", "Chen Wenzheng", "Chen Yusen", "Chen Zhaofeng", "Cheng Honghao", "Choi Hongyun", "Choi Youngchan", "Ding Ming", "Dmitry Kornev", "Dmitry Surin", "Dmitry Yatsenko", "Endo Takahiro", "Ezura Yuichi", "Fabien Lips", "Franz-Josef Dickhut", "Gleb Kalinin", "Go Seigen", "Guo Mingxin", "Guo Tianrui", "Hagiya Kazuhiro", "Hashimoto Utaro", "Hatanaka Hoshinobu", "Hayashi Kozo", "He Tianning", "He Xiaoren", "Huang Longshi", "Huang Xin", "Huang Xiwen", "Hwang Jinhyung", "Iguchi Hideichiro", "Ilia Shikshin", "Ivan Kulikovsky", "Janice Kim", "Jeon Sang-Youn", "Jeong Dongsik", "Jeong Dooho", "Jesse Savo", "Jiao Shiwei", "Jin Jing", "Jin Shengyu", "Junfu Dai", "Kalsberg Elvina", "Kanagawa Masaaki", "Kazuo Yoshihara", "Kenji Shoto", "Kim Cheayoung", "Kim Deokkyu", "Kim En", "Kim In", "Kim Jinhun", "Kim Taehyang", "Kim Won", "Kin Pyon Min", "Kitamura Hiroshi", "Koshkina Daria", "Kozo Hayashi", "Kuo Chyoching", "Kwon Kyeongun", "Kyung Kwang - Soo", "Lazar Manojlovic", "Lee Bonggeun", "Lee Hoseong", "Lee Sangchul", "Li Fan", "Li Kui", "Li Yuchuan", "Liang Bochao", "Lin Lixiang", "Liu Jianchang", "Liu Xi (", "Liu Yuxin", "Long Lin", "Lou Luoning", "Luo Jianwen", "Ma Shi", "Maeda Norikazu", "Mashiko Fumihiko", "Mateusz Surma", "Matsubara Taisei", "Matsumoto Nayoko", "Melkisheva Anastasia", "Mero Csaba", "Minami Yoshimi", "Miyamoto Naoki", "Mizuno Hiromi", "Morino Setsuo", "Motoki Noguchi", "Nakamura Kuniko", "Nakayama Kaoru", "Nam Chihyeong", "Narusawa Yasuichi", "Nobuta Shigehito", "Noguchi Hitoshi", "Oiva Moisio", "Ondrej Kruml", "Ono Koji", "Park Taehee", "Qiao Zhijian", "Reino Karttunen", "Renaut Philippe", "Rita Pocsai", "Rudy Verhagen", "Sada Atsushi", "Sakaguchi Ryuzo", "Sakata Eio", "Sasaki Tadashi", "Shuto Kunio", "Sin Yoonho", "Surma Mateusz", "Tae Hwan Juh", "Takeuchi Kousuke", "Tang Jialong", "Toni Kyöttilä", "Tsuneishi Takashi", "Umeki Suguru", "Ushinohama Satsuo", "Vanessa Wong", "Vasily Skochko", "Vesa Laatikainen", "Wang Guanjun", "Wang Lu", "Wang Yanhao", "Wang Yuan", "Wu Zhenyu", "Xavier Richard", "Xu Jinyang", "Yamada Shihou", "Yan Zaiming", "Yanagawa Hiromasa", "Yang Sangkuk", "Yanqi Zhang", "Yoo Byungho", "Yu Xuan", "Yun Chunho", "Yun Jongseob", "Zhang Wei (", "Zhuang Yuan", "周俊勋", "李世石九段", "林修平", "王元均"];
+        $("#tags").autocomplete({
+            source: availableTags
+        });
+    });
+
+</script>
+</body>
+</html>

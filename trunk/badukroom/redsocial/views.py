@@ -19,10 +19,12 @@ from principal.models import Partida, Jugador
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.core.paginator import Paginator, InvalidPage
 # Create your views here.
+#return render_to_response('inicio.html', locals())   
+
 #@login_required(login_url='/login')
 def perfil(request, username):
     print request.user
-    #return render_to_response('inicio.html', locals())   
+ 
     """
     Con esta vista vamos a visualizar los perfiles de los usuarios, tanto el del usuario que se loguea como el de los demas.
     Probamos version pasandole directamente el username
@@ -613,6 +615,54 @@ def amigos(request):
     amigos=list(p.amigos.all())
     context = {'lista_amigos': amigos}
     return render_to_response('amigos.html', context, context_instance=RequestContext(request))
-        
+
+def partidas(request):
+    partidas=list(Partida.objects.all())
+    paginator = Paginator(partidas, 10)
+    if request.is_ajax():
+        if request.method=="GET":
+            if request.GET.get('page_number'):
+                # Paginate based on the page number in the GET request
+                page_number = request.GET.get('page_number');
+                print page_number
+                try:
+                    page_objects = paginator.page(page_number).object_list
+                    print page_objects
+                except InvalidPage:
+                    return HttpResponseBadRequest(mimetype="json")
+                lista=[i for i in page_objects]
+                print lista
+                print "es lista"
+                print "Vamos a imprimir lista"
+                return HttpResponse("Prueba")
+                #print JsonResponse(lista, safe=False)
+                #print "es json"
+                #return JsonResponse(lista, safe=False)
+    else:
+        lista_partidas=paginator.page(1).object_list
+        context ={'lista_partidas':lista_partidas}
+        return render_to_response('partidas.html', context, context_instance=RequestContext(request))
     
-    
+def partidas_ajax(request):
+    partidas=list(Partida.objects.values())
+    paginator = Paginator(partidas, 10)
+    if request.is_ajax():
+        if request.method=="GET":
+            if request.GET.get('page_number'):
+                # Paginate based on the page number in the GET request
+                page_number = request.GET.get('page_number');
+                print "Entramos en Partidas_Ajax"
+                print page_number
+                try:
+                    page_objects = paginator.page(page_number).object_list
+                    print page_objects
+                except InvalidPage:
+                    return HttpResponseBadRequest(mimetype="json")
+                lista=[i for i in page_objects]
+                print lista
+                print "es lista"
+                print "Vamos a imprimir lista"
+                #return HttpResponse(lista)
+                print JsonResponse(lista, safe=False)
+                #print "es json"
+                return JsonResponse(lista, safe=False)
