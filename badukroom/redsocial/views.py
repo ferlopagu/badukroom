@@ -7,7 +7,7 @@ from redsocial.models import Comentario, Respuesta, PeticionAmistad, Notificacio
 from login.models import Perfil
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
-from redsocial.forms import ComentarioForm
+from redsocial.forms import ComentarioForm, GrupoForm
 from django.http import JsonResponse
 from datetime import datetime
 from django.http.response import HttpResponseRedirect
@@ -18,6 +18,10 @@ from badukroom.settings import BASE_DIR
 from principal.models import Partida, Jugador
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.core.paginator import Paginator, InvalidPage
+import json
+from django.core import serializers
+from django.template.defaultfilters import safe
+from django.views.generic.base import TemplateView
 # Create your views here.
 #return render_to_response('inicio.html', locals())   
 
@@ -156,18 +160,21 @@ def perfil(request, username):
     lista_dic_amigo=[]
     lista_dic_amigo.append(diccionario_amigos) #devolvemos lista con diccionario unico donde especifica si es amigo o no el perfil que visitamos
     
+    amigos=p.amigos.all()
+    grupos=list(Grupo.objects.filter(miembros__user__username=p.user.username))
+    
     
     
     if somos_nosotros==False:
         formulario_respuesta=ComentarioForm()
         print "Somos nosotros es false no devolvemos formulario de comentar"
-        context = {'lista_diccionario_comentarios': lista_diccionarios_def, 'formulario_respuesta':formulario_respuesta,'lista_dic_imagenes':lista_dic_imagenes, 'lista_dic_amigo':lista_dic_amigo}
+        context = {'lista_diccionario_comentarios': lista_diccionarios_def, 'formulario_respuesta':formulario_respuesta,'lista_dic_imagenes':lista_dic_imagenes, 'lista_dic_amigo':lista_dic_amigo, 'perfil':p, 'amigos':amigos, 'grupos':grupos}
     else:
         #Paso 8
         """ add form comentar"""
         formulario_respuesta=ComentarioForm()
         formulario=ComentarioForm()
-        context = {'lista_diccionario_comentarios': lista_diccionarios_def, 'formulario':formulario,'formulario_respuesta':formulario_respuesta, 'lista_dic_imagenes':lista_dic_imagenes, 'lista_dic_amigo':lista_dic_amigo}
+        context = {'lista_diccionario_comentarios': lista_diccionarios_def, 'formulario':formulario,'formulario_respuesta':formulario_respuesta, 'lista_dic_imagenes':lista_dic_imagenes, 'lista_dic_amigo':lista_dic_amigo, 'perfil':p, 'amigos':amigos, 'grupos':grupos}
     return render_to_response('perfil.html',context,context_instance=RequestContext(request))
 
 def comentarios_scroll(request):
@@ -256,13 +263,22 @@ def crea_comentario(request):
                 print "Path_info: "+request.path_info
                 #form.save()
                 #comentario=form.save(commit=False)
-                
                 fecha=datetime.now()
                 perfil=Perfil.objects.get(user=request.user)
-                
                 path_fichero=BASE_DIR+"/static/sgf/"+request.FILES['fichero'].__str__()
                 print "path fichero:"+path_fichero
-    
+                
+                """Intento de modificar nombre fichero y su path correspondiente"""
+                fichero=request.FILES['fichero']
+                print "nombre del fichero: "+fichero.name
+                name=fichero.name
+                nombre=name.split('.')
+                nombre[0]=nombre[0]+"xyz" #add terminacion random
+                fichero.name=nombre[0]+"."+nombre[1]
+                print "nombre del fichero: "+fichero.name
+                camino_fichero="sgf/"+fichero.name
+                print camino_fichero
+                """ Fin intento modificar nombre fichero"""
                 """ 
                 for chunk in request.FILES['fichero'].chunks():
                     print chunk
@@ -270,18 +286,24 @@ def crea_comentario(request):
                 """ Estamos leyendo la partida y sacando la informacion util para crearla"""
                 lineas=request.FILES['fichero'].chunks()
                 diccionario_informacion=informacion_partida2(lineas, path_fichero)
-                print diccionario_informacion 
-                jugador_negro=Jugador(nombre=diccionario_informacion['black'])
-                jugador_negro.save()
-                print 'jugador negro guardado con exito'
-                jugador_blanco=Jugador(nombre=diccionario_informacion['blanco'])
-                jugador_blanco.save()
+                print diccionario_informacion
+                jugador_negro, created = Jugador.objects.get_or_create(nombre=diccionario_informacion['black'])
+                #jugador_negro=Jugador(nombre=diccionario_informacion['black'])
+                #jugador_negro.save()
+                jugador_blanco, created = Jugador.objects.get_or_create(nombre=diccionario_informacion['blanco'])
+                #jugador_blanco=Jugador(nombre=diccionario_informacion['blanco'])
+                #jugador_blanco.save()
+                """Seleccionamos path correcto"""
+                cadenas=diccionario_informacion['path'].split("/")
+                nombre_fichero=cadenas[len(cadenas)-1]
+                path_fichero="sgf/"+nombre_fichero
+                """Fin seleccionar path correcto"""
                 partida = Partida(fecha=diccionario_informacion['fecha'], jugador_negro=jugador_negro, 
                                   jugador_blanco=jugador_blanco, resultado=diccionario_informacion['result'], 
-                                  fichero=request.FILES['fichero'], path=diccionario_informacion['path'])
+                                  fichero=request.FILES['fichero'], path=camino_fichero)
                 partida.save()
-                print partida.__unicode__()
-                print 'partida salvada con exito'
+                #print partida.__unicode__()
+                #print 'partida salvada con exito'
                 """ Fin crear la partida """
                 perfil=perfil
                 partida=partida
@@ -296,7 +318,7 @@ def crea_comentario(request):
                     comentario=Comentario(fecha=fecha, perfil=perfil, texto=texto, partida=partida)
                 """Fin comprobar si es un grupo"""
                 comentario.save()
-                print 'comentario guardado con exito'
+                #print 'comentario guardado con exito'
                 comentarios=list(Comentario.objects.values())
                 return JsonResponse(comentarios, safe=False)
             else:
@@ -371,14 +393,21 @@ def responder(request):
                 lineas=request.FILES['fichero'].chunks()
                 diccionario_informacion=informacion_partida2(lineas, path_fichero)
                 print diccionario_informacion 
-                jugador_negro=Jugador(nombre=diccionario_informacion['black'])
-                jugador_negro.save()
+                """Seleccionamos path correcto"""
+                cadenas=diccionario_informacion['path'].split("/")
+                nombre_fichero=cadenas[len(cadenas)-1]
+                path_fichero="sgf/"+nombre_fichero
+                """fin seleccionar path correcto"""
+                jugador_negro, created = Jugador.objects.get_or_create(nombre=diccionario_informacion['black'])
+                #jugador_negro=Jugador(nombre=diccionario_informacion['black'])
+                #jugador_negro.save()
                 print 'jugador negro guardado con exito'
-                jugador_blanco=Jugador(nombre=diccionario_informacion['blanco'])
-                jugador_blanco.save()
+                jugador_blanco, created = Jugador.objects.get_or_create(nombre=diccionario_informacion['blanco'])
+                #jugador_blanco=Jugador(nombre=diccionario_informacion['blanco'])
+                #jugador_blanco.save()
                 partida = Partida(fecha=diccionario_informacion['fecha'], jugador_negro=jugador_negro, 
                                   jugador_blanco=jugador_blanco, resultado=diccionario_informacion['result'], 
-                                  fichero=request.FILES['fichero'], path=diccionario_informacion['path'])
+                                  fichero=request.FILES['fichero'], path=path_fichero)
                 partida.save()
                 print partida.__unicode__()
                 print 'partida salvada con exito'
@@ -607,7 +636,8 @@ def lista_grupos(request):
     print p
     grupos=list(Grupo.objects.values('titulo','descripcion','pk').filter(miembros__user__username=p.user.username))
     print grupos
-    context = {'lista_grupos': grupos}
+    form=GrupoForm()
+    context = {'lista_grupos': grupos,'form':form}
     return render_to_response('lista_grupos.html',context,context_instance=RequestContext(request))
 
 def amigos(request):
@@ -617,7 +647,7 @@ def amigos(request):
     return render_to_response('amigos.html', context, context_instance=RequestContext(request))
 
 def partidas(request):
-    partidas=list(Partida.objects.all())
+    partidas=list(Partida.objects.all().order_by('fecha').reverse())
     paginator = Paginator(partidas, 10)
     if request.is_ajax():
         if request.method=="GET":
@@ -644,7 +674,8 @@ def partidas(request):
         return render_to_response('partidas.html', context, context_instance=RequestContext(request))
     
 def partidas_ajax(request):
-    partidas=list(Partida.objects.values())
+    #partidas=list(Partida.objects.values().order_by('fecha').reverse())
+    partidas=list(Partida.objects.all().order_by('fecha').reverse())
     paginator = Paginator(partidas, 10)
     if request.is_ajax():
         if request.method=="GET":
@@ -662,7 +693,53 @@ def partidas_ajax(request):
                 print lista
                 print "es lista"
                 print "Vamos a imprimir lista"
-                #return HttpResponse(lista)
-                print JsonResponse(lista, safe=False)
-                #print "es json"
-                return JsonResponse(lista, safe=False)
+                #return JsonResponse(serializers.serialize('json',lista, use_natural_foreign_keys=True, safe=False)) esta opcion no funcionaba pusieramos en el codigo javascript que recibiamos json como si no
+                print HttpResponse(serializers.serialize('json',lista, use_natural_foreign_keys=True))
+                return HttpResponse(serializers.serialize('json',lista, use_natural_foreign_keys=True))
+            
+def partidas_jugador(request, id):
+    partidas=list(Partida.objects.filter(Q(jugador_negro__id=id) | Q(jugador_blanco__id=id)))
+    jugador=Jugador.objects.get(id=id)
+    context={'partidas': partidas, 'jugador':jugador.nombre}
+    return render_to_response('jugador.html', context, context_instance=RequestContext(request))
+
+def revisiones(request):
+    name='revisiones.html'
+    return render(request,name)
+
+def crear_grupo(request):
+    if request.method=="POST":
+        if 'foto_portada' in request.FILES: #comprobamos que tenga fichero
+            form = GrupoForm(request.POST, request.FILES)
+            print form
+            if form.is_valid():
+                titulo=form.cleaned_data['titulo']
+                descripcion=form.cleaned_data['descripcion']
+                foto_portada=form.cleaned_data['foto_portada']
+                path_portada='imagenes'+foto_portada.name
+                grupo, created=Grupo.objects.get_or_create(titulo=titulo, descripcion=descripcion, foto_portada=foto_portada, path_portada=path_portada)
+                perfil=Perfil.objects.get(user__username=request.user.username)
+                grupo.miembros.add(perfil)
+                grupo.save()
+                return HttpResponseRedirect(request.META['HTTP_REFERER'])
+            else:
+                print "el fichero con imagen no es valido"
+        else:
+            form = GrupoForm(request.POST)
+            print form
+            if form.is_valid():
+                titulo=form.cleaned_data['titulo']
+                descripcion=form.cleaned_data['descripcion']
+                grupo, created=Grupo.objects.get_or_create(titulo=titulo, descripcion=descripcion)
+                print grupo
+                perfil=Perfil.objects.get(user__username=request.user.username)
+                print perfil
+                grupo.miembros.add(perfil)
+                #receptor.amigos.add(emisor)
+                grupo.save()
+                return HttpResponseRedirect(request.META['HTTP_REFERER'])
+            else:
+                print "el formulario sin imagen no es valido"
+    else:
+        print "el metodo no es POST"
+    

@@ -46,3 +46,4 @@ class Respuesta(models.Model):
     texto=models.CharField(max_length=2000)
     partida=models.ForeignKey(Partida, null=True, blank=True)
     #fichero=models.FileField(upload_to=MEDIA_ROOT+'sgf', blank=True)
+

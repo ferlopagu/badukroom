@@ -20,12 +20,21 @@
 			<div id="botones_portada">
 			<nav class="navbar navbar-default" id="nav_botones_portada">
 				<div class="container-fluid">
-				<ul class="nav navbar-nav navbar-right">
+				<!--  
+					<ul class="nav navbar-nav navbar-right">
 					<li class="active"><a href="#">Biografia</a></li>
 					<li><a href="#">Informacion</a></li>
 					<li><a href="#">Amigos</a></li>
 					<li><a href="#">Partidas</a></li>
 				</ul>
+				-->
+				  <ul class="nav nav-tabs" role="tablist">
+				    <li role="presentation" class="active"><a href="#tablon" aria-controls="tablon" role="tab" data-toggle="tab">Tablon</a></li>
+				    <li role="presentation"><a href="#informacion" aria-controls="informacion" role="tab" data-toggle="tab">Informacion</a></li>
+				    <li role="presentation"><a href="#amigos" aria-controls="amigos" role="tab" data-toggle="tab">Amigos</a></li>
+				    <li role="presentation"><a href="#grupos" aria-controls="grupos" role="tab" data-toggle="tab">Grupos</a></li>
+				  </ul>
+
 						</div>
 	</nav>
 			</div>
@@ -84,89 +93,146 @@
 	</div>
 </div>
 
-<div class="well">
 
-	<form id='formulario' method="post" action="{% url 'redsocial:creaComentario' %}" enctype="multipart/form-data">
-		{% csrf_token %} {{formulario.as_p}}
-		<p>
-			<input id='enviar' type='submit' value='enviar' />
-		</p>
-	</form>
-</div>
-
-{% for e in lista_diccionario_comentarios %}
-	{% for dic in e.comentarios %}
-		{%for e in lista_dic_imagenes %} 
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<img src='/static/{{e.perfil}}' width="40px" height="40px">
-				<h4>{{ dic.comentario.perfil.user.username }}</h4>
-				<h5>{{ dic.comentario.fecha}}</h5>
-			</div>
-			<div class="panel-body">
-					{{ dic.comentario.texto }}
-										{% if dic.comentario.partida.path != Null %}
-					<div data-wgo="/static/{{dic.comentario.partida.path}}">
-							Sorry, your browser doesn't support WGo.js. Download SGF <a
-							href="/static/{{dic.comentario.partida.path}}">directly</a>.
-					</div>
-					
-					<div>
-					<a  href="/static/{{dic.comentario.partida.path}}" class="btn btn-info" role="button">Descargar</a>
-					</div>
-					{% endif %}
-			</div>
-					<!--  
-					<div data-wgo="/static/{{dic.comentario.partida.path}}">
-							Sorry, your browser doesn't support WGo.js. Download SGF <a
-							href="/static/{{dic.comentario.partida.path}}">directly</a>.
-					</div>
-			</div>
-			<a  href="/static/{{dic.comentario.partida.path}}" class="btn btn-info" role="button">Descargar</a>
-			-->
-			<div class="collapse navbar-collapse navbar-ex1-collapse">
-				<ul class="nav navbar-nav">
-					<li><a href="#">Me gusta</a></li>
-					<li><a id="#" href="#">Responder</a></li>
-				</ul>
-			</div>
-			{% for r in dic.respuestas %}
-				<div class="panel-body" id="div_body_respuesta">
-				<img src='{% static r.perfil.path_principal %}' width="40px" height="40px">
-				{{ r.texto }}
-				{% if r.partida.path != Null %}
-					<div data-wgo="/static/{{r.partida.path}}">
-							Sorry, your browser doesn't support WGo.js. Download SGF <a
-							href="/static/{{dic.comentario.partida.path}}">directly</a>.
-					</div>
-					
-					<div>
-					<a  href="/static/{{r.partida.path}}" class="btn btn-info" role="button">Descargar</a>
-					</div>
-					{% endif %}
-				</div>
-			{% endfor %}
-			<div id="div_respuesta">
-				<img src='{% static user.perfil.path_principal %}' width="40px" height="40px">
-				<!--  <img src='/static/{{e.perfil}}' width="40px" height="40px"> -->
-				<form class="formulario_respuesta" id='formulario_respuesta' method="post" action="{% url 'redsocial:responder' %}" enctype="multipart/form-data">
-							{% csrf_token %} {{formulario_respuesta.as_p}}
-					<p>
-						<input class="{{dic.comentario.id}}" id='responder' type='submit' value='Responder' />
-					</p>
-				</form>
-				
-			</div>
+<div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="tablon">
+	    
+	    <div class="well">
+			<form id='formulario' method="post" action="{% url 'redsocial:creaComentario' %}" enctype="multipart/form-data">
+				{% csrf_token %} {{formulario.as_p}}
+				<p>
+					<input id='enviar' type='submit' value='enviar' />
+				</p>
+			</form>
 		</div>
+	
+	{% for e in lista_diccionario_comentarios %}
+		{% for dic in e.comentarios %}
+			{%for e in lista_dic_imagenes %} 
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<img src='/static/{{e.perfil}}' width="40px" height="40px">
+					<h4>{{ dic.comentario.perfil.user.username }}</h4>
+					<h5>{{ dic.comentario.fecha}}</h5>
+				</div>
+				<div class="panel-body">
+						{{ dic.comentario.texto }}
+											{% if dic.comentario.partida.path != Null %}
+						<div data-wgo="/static/{{dic.comentario.partida.path}}">
+								Sorry, your browser doesn't support WGo.js. Download SGF <a
+								href="/static/{{dic.comentario.partida.path}}">directly</a>.
+						</div>
+						
+						<div>
+						<a  href="/static/{{dic.comentario.partida.path}}" class="btn btn-info" role="button">Descargar</a>
+						</div>
+						{% endif %}
+				</div>
+						<!--  
+						<div data-wgo="/static/{{dic.comentario.partida.path}}">
+								Sorry, your browser doesn't support WGo.js. Download SGF <a
+								href="/static/{{dic.comentario.partida.path}}">directly</a>.
+						</div>
+				</div>
+				<a  href="/static/{{dic.comentario.partida.path}}" class="btn btn-info" role="button">Descargar</a>
+				-->
+				<div class="collapse navbar-collapse navbar-ex1-collapse">
+					<ul class="nav navbar-nav">
+						<li><a href="#">Me gusta</a></li>
+						<li><a id="#" href="#">Responder</a></li>
+					</ul>
+				</div>
+				{% for r in dic.respuestas %}
+					<div class="panel-body" id="div_body_respuesta">
+					<img src='{% static r.perfil.path_principal %}' width="40px" height="40px">
+					{{ r.texto }}
+					{% if r.partida.path != Null %}
+						<div data-wgo="/static/{{r.partida.path}}">
+								Sorry, your browser doesn't support WGo.js. Download SGF <a
+								href="/static/{{dic.comentario.partida.path}}">directly</a>.
+						</div>
+						
+						<div>
+						<a  href="/static/{{r.partida.path}}" class="btn btn-info" role="button">Descargar</a>
+						</div>
+						{% endif %}
+					</div>
+				{% endfor %}
+				<div id="div_respuesta">
+					<img src='{% static user.perfil.path_principal %}' width="40px" height="40px">
+					<!--  <img src='/static/{{e.perfil}}' width="40px" height="40px"> -->
+					<form class="formulario_respuesta" id='formulario_respuesta' method="post" action="{% url 'redsocial:responder' %}" enctype="multipart/form-data">
+								{% csrf_token %} {{formulario_respuesta.as_p}}
+						<p>
+							<input class="{{dic.comentario.id}}" id='responder' type='submit' value='Responder' />
+						</p>
+					</form>
+					
+				</div>
+			</div>
 		{% endfor %} 
 	{% endfor %}
 {% endfor %}
+    
+    </div>
+    <div role="tabpanel" class="tab-pane" id="informacion">
+    	<div class="panel panel-info">
+				<div class="panel-heading">
+					Informacion
+				</div>
+				<div class="panel-body">
+					<h3>Edad: 21 años</h3>
+					<h3>Ciudad: Sevilla</h3>
+					<h3>Rango: {{perfil.rango}}</h3>
+					<h3>Jugadores Preferidos:</h3>
+					{% for e in perfil.jugadores_preferidos%}
+						<ul><li>{{e}}<li></li></ul>
+					{%endfor%}
+					<h3>{{perfil.user.username}}</h3>
+				</div>
+    
+    	</div>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="amigos">
+			{% for p in amigos %}
+			<div class="panel panel-default" style="display: inline-table">
+				<div class='panel-heading'>
+					<img src='/static/{{p.path_principal}}' width="40px" height="40px">
+					<a href="/redsocial/{{p.user.username}}">{{ p.user.first_name}} {{p.user.last_name}}</a>
+				</div>
+				<div class="panel-body">
+					<h5>Nacimiento: {{p.fecha_nacimiento}}</h5>
+					<h5>Rango: {{p.rango}}</h5>
+					<h5>Jugadores preferidos: {%for j in p.jugadores_favoritos.all%} {{j}} {%endfor%}</h5>
+				</div>
+			</div>
+			{% endfor %}
+    </div>
+    
+     <div role="tabpanel" class="tab-pane" id="grupos">
+			{% for g in grupos %}
+			<div class="panel panel-default">
+				<div class='panel-heading'>
+					<a href="/redsocial/grupo/{{g.pk}}">{{g.titulo}}</a>
+				</div>
+				<div class="panel-body">
+					{{g.descripcion}}
+				</div>
+			</div>
+			{% endfor %}
+    </div>
+    
+</div>
+
+
+<!--  
 <div class='container-fluid'>
 <div data-wgo="{% static 'sgf/ersev-angler59.sgf' %}">
 	Sorry, your browser doesn't support WGo.js. Download SGF <a
 		href="{% static 'sgf/ersev-angler59.sgf' %}">directly</a>.
 </div>
 </div>
+-->
 
 {% endblock columna_principal %} {% block js2 %}
 <script type="text/javascript">

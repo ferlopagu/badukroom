@@ -1,0 +1,126 @@
+{% extends "base_perfil_home.html" %} 
+{% load staticfiles %} 
+{% block columna_principal %}
+
+<ul class="nav nav-pills" role="tablist">
+	<li class="active"><a href="#">Recientes</a></li>
+	<li><a href="#">Jugador</a></li>
+	<li><a href="#">Busqueda avanzada</a></li>
+</ul>
+
+<ul class="nav nav-pills" role="tablist" style="float:right">
+	<li><a href="#">Subir partida</a></li>
+</ul>
+
+<h1>Visualizando partidas de: {{jugador}}</h1>
+
+<table class="table">
+	<thead>
+		<tr>
+			<th>Jugador Negro</th>
+			<th>Jugador Blanco</th>
+			<th>Fecha</th>
+			<th>Resultado</th>
+			<th>Partida</th>
+		</tr>
+	</thead>
+	<tbody id="nuevos_datos">
+		{% for p in partidas %}
+			<tr>
+				<td><a href="">{{p.jugador_negro}}</a></td>
+				<td><a href="">{{p.jugador_blanco}}</a></td>
+				<td>{{p.fecha}}</td>
+				<td>{{p.resultado}}</td>
+				<td><a href="{ static 'redsocial:partida' id }">{{p.path}}</a></td>
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>
+
+<div id="next">
+	<li><a id="recargar" href="">Recargar</a></li>
+</div>
+
+
+{% endblock columna_principal %} 
+{% block js2 %}
+<script type="text/javascript">
+	$(function() {
+		$.comentar();
+		$.buscador();
+		$.contar();
+		$.aceptarPeticion();
+		$.agregar();
+		$.eliminar();
+		$.responder();
+		$.recargar();
+		
+		$('#recargar').on(
+				'click',
+				function(event) {
+					//alert("entramos en recargar");
+					event.preventDefault();
+					console.log("Entramos en load items");
+					// If the next page doesn't exist, just quit now 
+					if (hasNextPage === false) {
+						//alert("hasNextPage es false");
+						return false //ya no haria falta ya que al comprobar si son menos de diez se eliminara el boton
+					}
+					// Update the page number
+					pageNum = pageNum + 1;
+					// Configure the url we're about to hit
+					$.ajax({
+						url : "{% url 'redsocial:partidas_ajax' %}",
+						data : {
+							page_number : pageNum
+						},
+						dataType : 'json',
+						success : function(data) {
+							//alert(data.length);
+							if(data.length < 10){
+								//alert("No hay mas páginas");
+								$('#next').html("Ya no hay más partidas que mostrar");
+							}
+							//No se ejecuta lo de dentro y si el complete
+							//alert("entramos en success");
+							console.log(data);
+							// Update global next page variable
+							hasNextPage = true;//.hasNext;
+							// Loop through all items
+							html = "";
+							console.log("Valor que tenia html: " + html);
+							for (i = 0; i < data.length; i++){
+								html += "<tr>" + "<th>"
+										+ data[i].jugador_negro_id + "</th>"
+										+ "<th>" + data[i].jugador_blanco_id
+										+ "</th>" + "<th>" + data[i].fecha
+										+ "</th>" + "<th>" + data[i].resultado
+										+ "</th>" + "<th>"
+										+ data[i].path+ "</th>"
+										+ "</tr>";
+
+								/*
+								$("#newItems").before(
+								// Do something with your json object response
+									//console.log(i)
+									//console.log(data[i])
+									
+								);*/
+							}
+							$("#nuevos_datos").append(html);
+						},
+						error : function(data) {
+							// When I get a 400 back, fail safely
+							hasNextPage = false;
+						},
+				        complete: function(data, textStatus){
+				            // Turn the scroll monitor back on
+				            //alert("Completado");
+						}
+					});
+					//alert("Realizado con exito");
+				});
+	});
+</script>
+
+{% endblock js2 %}
