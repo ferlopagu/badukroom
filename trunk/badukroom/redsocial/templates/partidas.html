@@ -25,8 +25,8 @@
 	<tbody id="nuevos_datos">
 		{% for p in lista_partidas %}
 			<tr>
-				<td><a href="">{{p.jugador_negro}}</a></td>
-				<td><a href="">{{p.jugador_blanco}}</a></td>
+				<td><a href="{% url 'redsocial:partidas_jugador' p.jugador_negro.id %}">{{p.jugador_negro}}</a></td>
+				<td><a href="{% url 'redsocial:partidas_jugador' p.jugador_blanco.id %}">{{p.jugador_blanco}}</a></td>
 				<td>{{p.fecha}}</td>
 				<td>{{p.resultado}}</td>
 				<td><a href="{ static 'redsocial:partida' id }">{{p.path}}</a></td>
@@ -72,30 +72,41 @@
 						data : {
 							page_number : pageNum
 						},
-						dataType : 'json',
+						dataType : 'json', //add esto cuando vayamos a recivir del servidor un json
 						success : function(data) {
 							//alert(data.length);
 							if(data.length < 10){
 								//alert("No hay mas páginas");
 								$('#next').html("Ya no hay más partidas que mostrar");
 							}
+							
+							//alert(JSON.stringify(data.fields));
 							//No se ejecuta lo de dentro y si el complete
 							//alert("entramos en success");
-							console.log(data);
 							// Update global next page variable
 							hasNextPage = true;//.hasNext;
 							// Loop through all items
 							html = "";
 							console.log("Valor que tenia html: " + html);
+							//alert("Imprimimos json fields");
+							//alert(JSON.stringify(data.fields));
 							for (i = 0; i < data.length; i++){
+								/*
 								html += "<tr>" + "<th>"
-										+ data[i].jugador_negro_id + "</th>"
-										+ "<th>" + data[i].jugador_blanco_id
-										+ "</th>" + "<th>" + data[i].fecha
-										+ "</th>" + "<th>" + data[i].resultado
+								+ "<a href='redsocial/jugadores/"+ data[i].fields.jugador_negro[1] +"/'></a>"
+										+ data[i].fields.jugador_negro[0]+ "</th>"
+										+ "<th>" + data[i].fields.jugador_blanco[0]
+										+ "</th>" + "<th>" + data[i].fields.fecha
+										+ "</th>" + "<th>" + data[i].fields.resultado
 										+ "</th>" + "<th>"
-										+ data[i].path+ "</th>"
-										+ "</tr>";
+										+ data[i].fields.path+ "</th>"
+										+ "</tr>"; */
+								html+="<tr><td><a href='/redsocial/jugadores/"+data[i].fields.jugador_negro[1]+"'>"+data[i].fields.jugador_negro[0]+"</a></td>"
+								+"<td><a href='/redsocial/jugadores/"+data[i].fields.jugador_blanco[1]+"'>"+data[i].fields.jugador_blanco[0]+"</a></td>"
+								+"<td>"+data[i].fields.fecha+"</td>"
+								+"<td>"+data[i].fields.resultado+"</td>"
+								+"<td>"+data[i].fields.path+"</td>";
+										
 
 								/*
 								$("#newItems").before(

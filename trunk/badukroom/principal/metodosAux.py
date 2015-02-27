@@ -48,8 +48,8 @@ def recorrer_sgfs():
     ficheros=pathFile("../principal/gokifu.com")
     #ficheros=pathFile("../gokifu.com")
     for path in ficheros:
-        print path
-        nombre_fichero=path
+        #print path
+        #nombre_fichero=path
         #print path
         contador=0
         """ LEEMOS EL FICHERO"""
@@ -94,7 +94,8 @@ def recorrer_sgfs():
         dict_game["path"]=path
         
         """Creamos los jugadores y la Partida"""
-        path_fichero=BASE_DIR+"/static/sgf/"+path
+        #path_fichero=BASE_DIR+"/static/sgf/"+path
+        #print path_fichero
         jugador_negro, created = Jugador.objects.get_or_create(nombre=dict_game['black'])
         print jugador_negro.__unicode__()
         #jugador_negro=Jugador()
@@ -103,8 +104,13 @@ def recorrer_sgfs():
         #jugador_blanco=Jugador(nombre=dict_game['blanco'])
         jugador_blanco, created = Jugador.objects.get_or_create(nombre=dict_game['blanco'])
         #jugador_blanco.save()
-        print nombre_fichero
-        partida = Partida(fecha=dict_game['fecha'], jugador_negro=jugador_negro, jugador_blanco=jugador_blanco, resultado=dict_game['result'], fichero=File(open(nombre_fichero, 'r')), path=path_fichero)
+        
+        cadenas=path.split("/")
+        nombre_fichero=cadenas[len(cadenas)-1]
+        path_fichero="sgf/"+nombre_fichero
+        print "Path fichero"+path_fichero
+        
+        partida = Partida(fecha=dict_game['fecha'], jugador_negro=jugador_negro, jugador_blanco=jugador_blanco, resultado=dict_game['result'], fichero=File(open(path, 'r')), path=path_fichero)
         partida.save()
         """ Fin crear Partida """
         
