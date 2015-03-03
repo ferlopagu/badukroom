@@ -21,5 +21,3 @@ def crea_partida(request):
         partida_form=PartidaForm()
     return render_to_response('crea_partida.html', {'partida_form':partida_form}, context_instance=RequestContext(request))
 
-
-        

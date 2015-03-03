@@ -3,9 +3,7 @@
 {% block columna_principal %}
 	{# Load the tag library #} 
 	{% load bootstrap3 %} 
-	{# Load CSS and JavaScript #} 
-	
-	{% bootstrap_javascript %} 
+	{# Load CSS and JavaScript #}  
 	{# Display django.contrib.messages as Bootstrap alerts #} 
 	{% bootstrap_messages %}
 <h2>Mis grupos</h2>
@@ -19,7 +17,7 @@
     <form action="{% url 'redsocial:crear_grupo' %}" role="form" method="post" enctype="multipart/form-data" {% if layout != 'vertical' %}class="form-{{ layout }}"{% endif %}>
         {% csrf_token %}
         {% bootstrap_form form layout=layout %}
-        {% buttons submit='OK' reset="Cancel" %}{% endbuttons %}
+        {% buttons submit='OK' reset="Cancelar" %}{% endbuttons %}
     </form>
 
 	{% endblock %}

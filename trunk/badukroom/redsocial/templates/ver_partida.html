@@ -1,0 +1,27 @@
+{% extends "base_perfil_home.html" %} {% load staticfiles %} 
+{% block columna_principal %}
+
+<div data-wgo="/static/{{partida.path}}">
+	Sorry, your browser doesn't support WGo.js. Download SGF <a
+		href="/static/{{partida.path}}">directly</a>.
+</div>
+<div>
+	<a href="/static/{{partida.path}}" class="btn btn-info" role="button">Descargar</a>
+</div>
+
+
+{% endblock columna_principal %}
+{% block js2 %}
+	<script>
+	
+	$(function(){
+		$.contar();
+		$.limpiarNotificaciones();
+		$.limpiarPeticiones();
+		
+	});
+	
+	
+	</script>
+
+{% endblock js2 %}

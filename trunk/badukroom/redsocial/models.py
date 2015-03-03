@@ -16,6 +16,13 @@ class PeticionAmistad(models.Model):
 class Notificacion(models.Model):
     receptor=models.ForeignKey(Perfil)
     mensaje=models.CharField(max_length=300)
+    revision=models.BooleanField(default=False)
+
+class PeticionRevision(models.Model):
+    emisor=models.ForeignKey(Perfil, related_name='sender1')
+    receptor=models.ForeignKey(Perfil, related_name='receiver1')
+    mensaje=models.CharField(max_length=300)
+    revision=models.BooleanField(default=False)
 
 class Grupo(models.Model):
     titulo=models.CharField(max_length=300)

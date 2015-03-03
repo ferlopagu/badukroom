@@ -2,19 +2,27 @@
 {% load staticfiles %} 
 {% block columna_principal %}
 
+{% block menu_filtrar%}
 <ul class="nav nav-pills" role="tablist">
 	<li class="active"><a href="#">Recientes</a></li>
-	<li><a href="#">Jugador</a></li>
-	<li><a href="#">Busqueda avanzada</a></li>
+	<li><a href="#">Fuerza</a></li>
+	<li><a href="#">Revisor</a></li>
+	<li><a href="#">Información</a></li>
 </ul>
 
 <ul class="nav nav-pills" role="tablist" style="float:right">
 	<li><a href="#">Subir partida</a></li>
 </ul>
+{% endblock menu_filtrar%}
 
+{%block filtrar %}
+{%endblock filtrar%}
+
+{%block tabla%}
 <table class="table">
 	<thead>
 		<tr>
+			<th>Revisor</th>
 			<th>Jugador Negro</th>
 			<th>Jugador Blanco</th>
 			<th>Fecha</th>
@@ -23,21 +31,24 @@
 		</tr>
 	</thead>
 	<tbody id="nuevos_datos">
-		{% for p in lista_partidas %}
+		{%block resultados%}
+		{% for p in partidas_revisadas %}
 			<tr>
+				<td><a href="{% url 'redsocial:by_revisor' p.revisor.nickname_kgs %}">{{p.revisor.nickname_kgs}}</a></td>
 				<td><a href="{% url 'redsocial:partidas_jugador' p.jugador_negro.id %}">{{p.jugador_negro}}</a></td>
 				<td><a href="{% url 'redsocial:partidas_jugador' p.jugador_blanco.id %}">{{p.jugador_blanco}}</a></td>
 				<td>{{p.fecha}}</td>
 				<td>{{p.resultado}}</td>
-				<td><a href="{% url 'redsocial:ver_partida' p.id %}">Visualizar</a></td>
+				<td><a href="{ static 'redsocial:partida' id }">{{p.path}}</a></td>
 			</tr>
 		{% endfor %}
+		{%endblock resultados%}
 	</tbody>
 </table>
-
 <div id="next">
-	<a class="btn btn-primary" id="recargar" href="">Recargar</a>
+	<li><a id="recargar" href="">Recargar</a></li>
 </div>
+{%endblock tabla%}
 
 
 {% endblock columna_principal %} 
@@ -77,7 +88,7 @@
 							//alert(data.length);
 							if(data.length < 10){
 								//alert("No hay mas páginas");
-								$('#next').html("<div class='alert alert-info' role='alert'>Ya no hay más partidas que mostrar</div>");
+								$('#next').html("Ya no hay más partidas que mostrar");
 							}
 							
 							//alert(JSON.stringify(data.fields));

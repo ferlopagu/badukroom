@@ -1,7 +1,7 @@
 {% extends "base_perfil_home.html" %}
 {% load staticfiles %}
-{% block columna_principal %}
 
+{% block columna_principal %}
 {%for e in lista_dic_imagenes %} 
 <div class="jumbotron" style="background-image: url('{% static e.portada %}')">
 	
@@ -233,8 +233,9 @@
 </div>
 </div>
 -->
+{% endblock columna_principal %} 
 
-{% endblock columna_principal %} {% block js2 %}
+{% block js2 %}
 <script type="text/javascript">
 	
 $(function(){

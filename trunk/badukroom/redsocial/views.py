@@ -3,11 +3,11 @@ from django.shortcuts import render
 from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import login_required
 from django.template.context import RequestContext
-from redsocial.models import Comentario, Respuesta, PeticionAmistad, Notificacion, Grupo
+from redsocial.models import Comentario, Respuesta, PeticionAmistad, Notificacion, Grupo, PeticionRevision
 from login.models import Perfil
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
-from redsocial.forms import ComentarioForm, GrupoForm
+from redsocial.forms import ComentarioForm, GrupoForm, EnvioForm, SgfForm
 from django.http import JsonResponse
 from datetime import datetime
 from django.http.response import HttpResponseRedirect
@@ -15,7 +15,7 @@ from django.contrib.auth.models import User
 import re
 from principal.metodosAux import informacion_partida, informacion_partida2, estamos_en_grupo
 from badukroom.settings import BASE_DIR
-from principal.models import Partida, Jugador
+from principal.models import Partida, Jugador, Revisor
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.core.paginator import Paginator, InvalidPage
 import json
@@ -69,32 +69,6 @@ def perfil(request, username):
     lista_diccionarios_def.append(diccionario_perfil_comentarios)
     print lista_diccionarios_def
     
-    
-    #Paso 7
-    
-    """
-    Almacenar un string con el path de la imagen principal el cual no estamos almacenando en la base de datos como si hacemos en el modelo Partida
-    
-    path_perfil=p.foto_principal.name.__str__()
-    path_portada=p.foto_portada.name.__str__() #es posible hacerlo asi supuestamente p.foto_portada.url
-    m1 = re.match(".*/(imagenes/.*)", path_perfil)
-    m2 = re.match(".*/(imagenes/.*)", path_portada) 
-    dic_imagenes={}
-    print path_perfil
-    if m1 or m2:
-        print m1.group(1)
-        perfil= m1.group(1)
-        portada=m2.group(1)
-        dic_imagenes={'perfil':perfil,'portada':portada}
-    else:
-        dic_imagenes={'perfil':"",'portada':""}
-  
-    print dic_imagenes
-    lista_dic_imagenes=[]
-    lista_dic_imagenes.append(dic_imagenes)
-    """
-    """fin almacenar"""
-    
     #Paso 7 devolver imagenes de portada y perfil
     perfil=p.path_principal
     print "Contenido p.path_principal: "+perfil
@@ -107,9 +81,7 @@ def perfil(request, username):
     dic_imagenes={'perfil':perfil,'portada':portada}
     lista_dic_imagenes=[]
     lista_dic_imagenes.append(dic_imagenes)
-    
 
-    
     #Paso 9
     """comprobamos si el perfil que visualizamos somos nosotros, es un amigo o desconocido """
     somos_nosotros=False
@@ -162,8 +134,6 @@ def perfil(request, username):
     
     amigos=p.amigos.all()
     grupos=list(Grupo.objects.filter(miembros__user__username=p.user.username))
-    
-    
     
     if somos_nosotros==False:
         formulario_respuesta=ComentarioForm()
@@ -268,7 +238,8 @@ def crea_comentario(request):
                 path_fichero=BASE_DIR+"/static/sgf/"+request.FILES['fichero'].__str__()
                 print "path fichero:"+path_fichero
                 
-                """Intento de modificar nombre fichero y su path correspondiente"""
+                """Intento de modificar nombre fichero y su path correspondiente YA NO ES NECESARIO PORQUE LO HACEMOS EN EL MODEL"""
+                """
                 fichero=request.FILES['fichero']
                 print "nombre del fichero: "+fichero.name
                 name=fichero.name
@@ -278,6 +249,7 @@ def crea_comentario(request):
                 print "nombre del fichero: "+fichero.name
                 camino_fichero="sgf/"+fichero.name
                 print camino_fichero
+                """
                 """ Fin intento modificar nombre fichero"""
                 """ 
                 for chunk in request.FILES['fichero'].chunks():
@@ -300,7 +272,7 @@ def crea_comentario(request):
                 """Fin seleccionar path correcto"""
                 partida = Partida(fecha=diccionario_informacion['fecha'], jugador_negro=jugador_negro, 
                                   jugador_blanco=jugador_blanco, resultado=diccionario_informacion['result'], 
-                                  fichero=request.FILES['fichero'], path=camino_fichero)
+                                  fichero=request.FILES['fichero'])
                 partida.save()
                 #print partida.__unicode__()
                 #print 'partida salvada con exito'
@@ -393,10 +365,12 @@ def responder(request):
                 lineas=request.FILES['fichero'].chunks()
                 diccionario_informacion=informacion_partida2(lineas, path_fichero)
                 print diccionario_informacion 
-                """Seleccionamos path correcto"""
+                """Seleccionamos path correcto NO ES NECESARIO PORQUE LO HACEMOS EN EL MODEL"""
+                """
                 cadenas=diccionario_informacion['path'].split("/")
                 nombre_fichero=cadenas[len(cadenas)-1]
                 path_fichero="sgf/"+nombre_fichero
+                """
                 """fin seleccionar path correcto"""
                 jugador_negro, created = Jugador.objects.get_or_create(nombre=diccionario_informacion['black'])
                 #jugador_negro=Jugador(nombre=diccionario_informacion['black'])
@@ -407,7 +381,7 @@ def responder(request):
                 #jugador_blanco.save()
                 partida = Partida(fecha=diccionario_informacion['fecha'], jugador_negro=jugador_negro, 
                                   jugador_blanco=jugador_blanco, resultado=diccionario_informacion['result'], 
-                                  fichero=request.FILES['fichero'], path=path_fichero)
+                                  fichero=request.FILES['fichero'])
                 partida.save()
                 print partida.__unicode__()
                 print 'partida salvada con exito'
@@ -542,7 +516,9 @@ def contar_notificaciones(request):
 def ver_notificaciones(request):
     lista_peticiones=list(PeticionAmistad.objects.filter(receptor__user__username=request.user.username))
     lista_notificaciones=list(Notificacion.objects.filter(receptor__user__username=request.user.username))
-    context={'lista_peticiones': lista_peticiones, 'lista_notificaciones': lista_notificaciones}
+    lista_peticiones_revision=list(PeticionRevision.objects.filter(receptor__user__username=request.user.username))
+    form=SgfForm()
+    context={'lista_peticiones': lista_peticiones, 'lista_notificaciones': lista_notificaciones, 'form':form, 'lista_peticiones_revision': lista_peticiones_revision}
     print context
     return render_to_response('notificaciones.html',context,context_instance=RequestContext(request))
 
@@ -704,8 +680,19 @@ def partidas_jugador(request, id):
     return render_to_response('jugador.html', context, context_instance=RequestContext(request))
 
 def revisiones(request):
+    #p=Perfil.objects.get(user_username=request.user.username)
     name='revisiones.html'
-    return render(request,name)
+    lista=list(Partida.objects.exclude(revisor=None))
+    form=EnvioForm()
+    #form.fields['revisor']=forms.Revisor.objects.all()
+    context={'partidas_revisadas':lista, 'form':form}
+    return render(request,name, context)
+
+def partidas_by_revisor(request, nickname_kgs):
+    name='by_revisor.html'
+    lista=list(Partida.objects.filter(revisor__nickname_kgs=nickname_kgs))
+    context={'partidas_revisadas':lista}
+    return render(request, name, context)
 
 def crear_grupo(request):
     if request.method=="POST":
@@ -742,4 +729,100 @@ def crear_grupo(request):
                 print "el formulario sin imagen no es valido"
     else:
         print "el metodo no es POST"
+
+#Sistema de revisiones de partidas
+def enviar_partida_revisar(request):
+    form = EnvioForm(request.POST, request.FILES)
+    if form.is_valid():
+        p=Perfil.objects.get(user__username=request.user.username)
+        revisor=Revisor.objects.get(id=request.POST['revisor'])
+        if not PeticionRevision.objects.filter(receptor=revisor.perfil, emisor=p):
+            print form
+            """ Estamos leyendo la partida y sacando la informacion util para crearla"""
+            path_fichero=BASE_DIR+"/static/sgf/"+request.FILES['fichero'].__str__()
+            lineas=request.FILES['fichero'].chunks()
+            diccionario_informacion=informacion_partida2(lineas, path_fichero)
+            print diccionario_informacion 
+            jugador_negro, created = Jugador.objects.get_or_create(nombre=diccionario_informacion['black'])
+            #jugador_negro=Jugador(nombre=diccionario_informacion['black'])
+            #jugador_negro.save()
+            print 'jugador negro guardado con exito'
+            jugador_blanco, created = Jugador.objects.get_or_create(nombre=diccionario_informacion['blanco'])
+            #jugador_blanco=Jugador(nombre=diccionario_informacion['blanco'])
+            #jugador_blanco.save()
+            partida = Partida(fecha=diccionario_informacion['fecha'], jugador_negro=jugador_negro, 
+                              jugador_blanco=jugador_blanco, resultado=diccionario_informacion['result'], 
+                              fichero=request.FILES['fichero'])
+            partida.save()
+            print partida.__unicode__()
+            print 'partida salvada con exito'
+            """ Fin crear la partida """
+            """Mandamos las notificaciones"""
+            
+            print request.POST['revisor']
+            
+            mensaje_a_revisor="Tienes una nueva partida para revisar, puedes descargarla aqui: <a href='/static/"+partida.path+"'>Descargar</a>."
+            peticion=PeticionRevision(receptor=revisor.perfil, emisor=p, mensaje=mensaje_a_revisor, revision=True)
+            peticion.save()
+            
+            notificacion2=Notificacion(receptor=p, mensaje="Tu partida ha sido asignada con éxito, te rogamos esperes unos días antes de volver a enviarla a otro revisor.")
+            notificacion2.save()
+            print "Notificaciones enviadas con exito"
+            return ver_notificaciones(request)
+        else:
+            print "Ya existe una revision pendiente"
+            return ver_notificaciones(request)
+    else:
+        print "el formulario no es valido"
+
+def aceptar_partida_revisar(request, username):
+    #aqui ya mandamos la partida suponemos que acepta si la revisa y sino la va a revisar rechazara cuando lea la notificacion
+    revisor=Revisor.objects.get(perfil__user__username=request.user.username)
+    form = SgfForm(request.POST, request.FILES)
+    if form.is_valid():
+        print form
+        """ Estamos leyendo la partida y sacando la informacion util para crearla"""
+        path_fichero=BASE_DIR+"/static/sgf/"+request.FILES['fichero'].__str__()
+        lineas=request.FILES['fichero'].chunks()
+        diccionario_informacion=informacion_partida2(lineas, path_fichero)
+        print diccionario_informacion 
+        jugador_negro, created = Jugador.objects.get_or_create(nombre=diccionario_informacion['black'])
+        #jugador_negro=Jugador(nombre=diccionario_informacion['black'])
+        #jugador_negro.save()
+        print 'jugador negro guardado con exito'
+        jugador_blanco, created = Jugador.objects.get_or_create(nombre=diccionario_informacion['blanco'])
+        #jugador_blanco=Jugador(nombre=diccionario_informacion['blanco'])
+        #jugador_blanco.save()
+        partida = Partida(fecha=diccionario_informacion['fecha'], jugador_negro=jugador_negro, 
+                          jugador_blanco=jugador_blanco, resultado=diccionario_informacion['result'], 
+                          fichero=request.FILES['fichero'], revisor=revisor)
+        partida.save()
+        print partida.__unicode__()
+        print 'partida salvada con exito'
+        """ Fin crear la partida """
+        """Mandamos las notificaciones"""
+        mensaje_a_usuario="La partida ha sido revisada, puedes descargarla aqui: <a href='/static/"+partida.path+"'>Descargar</a>. O visualizarla desde el apartado de Revisiones"
+        p=Perfil.objects.get(user__username=username)
+        notificacion1=Notificacion(receptor=p, mensaje=mensaje_a_usuario)
+        notificacion1.save()
+        notificacion2=Notificacion(receptor=revisor.perfil, mensaje="La partida revisada fue almacenada con éxito en el sistema")
+        notificacion2.save()
+        peticion=PeticionRevision.objects.get(receptor=revisor.perfil, emisor=p)
+        peticion.delete()
+        return ver_notificaciones(request)
+        print "Notificaciones enviadas con exito"
+    else:
+        print "el formulario no es valido"
+
+def rechazar_partida_revisar(request):
+    pass
+
+def reenvio_partida_revisar(request):
+    pass
+
+def ver_partida(request, partida_id):
+    partida=get_object_or_404(Partida, pk=partida_id)
+    name="ver_partida.html"
+    context={'partida':partida}
+    return render(request,name, context)
     
