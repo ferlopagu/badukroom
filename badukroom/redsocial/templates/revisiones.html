@@ -1,5 +1,15 @@
 {% extends "base_perfil_home.html" %} 
 {% load staticfiles %} 
+
+	{# Load the tag library #} 
+	{% load bootstrap3 %} 
+	{# Load CSS and JavaScript #} 
+	
+	{% bootstrap_javascript %} 
+	{# Display django.contrib.messages as Bootstrap alerts #} 
+	{% bootstrap_messages %}
+
+
 {% block columna_principal %}
 
 {% block menu_filtrar%}
@@ -10,9 +20,22 @@
 	<li><a href="#">Información</a></li>
 </ul>
 
-<ul class="nav nav-pills" role="tablist" style="float:right">
-	<li><a href="#">Subir partida</a></li>
-</ul>
+<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+  Enviar partida a revisar
+</button>
+<div class="collapse" id="collapseExample">
+  <div class="well">
+    {% block content %}
+
+    <form action="{% url 'redsocial:enviar_partida_revisar' %}" role="form" method="post" enctype="multipart/form-data" {% if layout != 'vertical' %}class="form-{{ layout }}"{% endif %}>
+        {% csrf_token %}
+        {% bootstrap_form form layout=layout %}
+        {% buttons submit='Enviar' reset="Resetear" %}{% endbuttons %}
+    </form>
+	{% endblock %}
+  </div>
+</div>
+
 {% endblock menu_filtrar%}
 
 {%block filtrar %}
@@ -32,21 +55,21 @@
 	</thead>
 	<tbody id="nuevos_datos">
 		{%block resultados%}
-		{% for p in lista_partidas %}
+		{% for p in partidas_revisadas %}
 			<tr>
-				<td><a href="{% url 'redsocial:partidas_revisadas' p.revisor.nickname_kgs %}">{{p.revisor.nickname_kgs}}</a></td>
+				<td><a href="{% url 'redsocial:by_revisor' p.revisor.nickname_kgs %}">{{p.revisor.nickname_kgs}}</a></td>
 				<td><a href="{% url 'redsocial:partidas_jugador' p.jugador_negro.id %}">{{p.jugador_negro}}</a></td>
 				<td><a href="{% url 'redsocial:partidas_jugador' p.jugador_blanco.id %}">{{p.jugador_blanco}}</a></td>
 				<td>{{p.fecha}}</td>
 				<td>{{p.resultado}}</td>
-				<td><a href="{ static 'redsocial:partida' id }">{{p.path}}</a></td>
+				<td><a href="{% url 'redsocial:ver_partida' p.id %}">Visualizar</a></td>
 			</tr>
 		{% endfor %}
 		{%endblock resultados%}
 	</tbody>
 </table>
 <div id="next">
-	<li><a id="recargar" href="">Recargar</a></li>
+	<a class="btn btn-primary" id="recargar_revisiones" href="">Recargar</a>
 </div>
 {%endblock tabla%}
 

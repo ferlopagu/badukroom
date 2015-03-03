@@ -4,7 +4,7 @@ Created on 21/01/2015
 @author: fla2727
 '''
 from django.conf.urls import patterns, url
-from redsocial.views import perfil, home, crea_comentario, buscador, agregar_ajax, contar_notificaciones, ver_notificaciones, aceptar_peticion, declinar_peticion, limpiar_notificaciones, eliminar_ajax, grupo, lista_grupos, responder, amigos, partidas, partidas_ajax, partidas_jugador, revisiones, crear_grupo
+from redsocial.views import perfil, home, crea_comentario, buscador, agregar_ajax, contar_notificaciones, ver_notificaciones, aceptar_peticion, declinar_peticion, limpiar_notificaciones, eliminar_ajax, grupo, lista_grupos, responder, amigos, partidas, partidas_ajax, partidas_jugador, revisiones, crear_grupo, partidas_by_revisor, enviar_partida_revisar, aceptar_partida_revisar, ver_partida
 from django.views.generic.base import TemplateView
 #from django.views.generic.base import TemplateView
 
@@ -23,11 +23,15 @@ urlpatterns = patterns ('' ,
     url(r'^limpiar_notificaciones/', limpiar_notificaciones, name='limpiar_notificaciones'),
     url(r'^mis_grupos/$', lista_grupos, name='lista_grupos'),
     url(r'^grupo/(?P<grupo_id>\d+)/$', grupo, name='grupo'),
+    url(r'^crear-grupo/', crear_grupo, name="crear_grupo"),
     url(r'^amigos/', amigos, name='amigos'),
     url(r'^partidas/', partidas, name='partidas'),
     url(r'^partidas_ajax/', partidas_ajax, name="partidas_ajax"),
     url(r'^jugadores/(?P<id>\w+)/$', partidas_jugador, name="partidas_jugador"),
+    url(r'^ver_partida/(?P<partida_id>\w+)/$', ver_partida, name="ver_partida"),
     url(r'^revisiones/', revisiones, name="revisiones"),
-    url(r'^crear-grupo/', crear_grupo, name="crear_grupo"),
+    url(r'^by_revisor/(?P<nickname_kgs>\w+)/$', partidas_by_revisor, name="by_revisor"),
+    url(r'^enviar_partida_revisar/', enviar_partida_revisar, name="enviar_partida_revisar"),
+    url(r'^aceptar_partida_revisar/(?P<username>\w+)/$', aceptar_partida_revisar, name="aceptar_partida_revisar"),
     url(r'^(?P<username>\w+)/$', perfil, name='perfil'),     
 )
