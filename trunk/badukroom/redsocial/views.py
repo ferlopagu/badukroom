@@ -22,6 +22,8 @@ import json
 from django.core import serializers
 from django.template.defaultfilters import safe
 from django.views.generic.base import TemplateView
+from .recomendacion import perfiles_amigos, topMatches_amigos_comun, topMatches_gustos, getRecommendations_jugadores
+from redsocial.recomendacion import perfiles_gustos
 # Create your views here.
 #return render_to_response('inicio.html', locals())   
 
@@ -619,7 +621,16 @@ def lista_grupos(request):
 def amigos(request):
     p=get_object_or_404(Perfil, user__username=request.user.username)
     amigos=list(p.amigos.all())
-    context = {'lista_amigos': amigos}
+    
+    """ add perfiles recomendados """
+    diccionario_amigos=perfiles_amigos()
+    lista_recomendacion_comun=topMatches_amigos_comun(diccionario_amigos, p)
+    
+    diccionario_gustos=perfiles_gustos()
+    lista_recomendacion_gustos=topMatches_gustos(diccionario_gustos, p)
+    """ fin perfiles recomendados"""
+    
+    context = {'lista_amigos': amigos, 'lista_recomendacion_comun': lista_recomendacion_comun, 'lista_recomendacion_gustos': lista_recomendacion_gustos}
     return render_to_response('amigos.html', context, context_instance=RequestContext(request))
 
 def partidas(request):
