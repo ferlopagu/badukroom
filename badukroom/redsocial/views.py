@@ -657,7 +657,15 @@ def partidas(request):
                 #return JsonResponse(lista, safe=False)
     else:
         lista_partidas=paginator.page(1).object_list
-        context ={'lista_partidas':lista_partidas}
+        """ Devolvemos diccionario con todos los jugadores del sistema nombres de jugadores"""
+        dic_jugadores={}
+        abecedario= ["A", "B", "C", "D", "E", "F", "G","H","I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
+        for letra in abecedario:
+            lista=list(Jugador.objects.filter(nombre__startswith=letra))
+            dic_jugadores[letra]=lista
+        print dic_jugadores
+        """ Fin devolver diccionario jugadores """
+        context ={'lista_partidas':lista_partidas, 'dic_jugadores':dic_jugadores}
         return render_to_response('partidas.html', context, context_instance=RequestContext(request))
     
 def partidas_ajax(request):
@@ -675,7 +683,9 @@ def partidas_ajax(request):
                     page_objects = paginator.page(page_number).object_list
                     print page_objects
                 except InvalidPage:
-                    return HttpResponseBadRequest(mimetype="json")
+                    #return HttpResponseBadRequest(mimetype="json")
+                    #puede ser que al ser multiplo de 10 ya no queden elementos en la pagina siguiente. Devolvemos lista vacia
+                    page_objects=[]
                 lista=[i for i in page_objects]
                 print lista
                 print "es lista"
