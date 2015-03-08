@@ -35,6 +35,9 @@
 													<img src='/static/{{d.comentario.perfil.path_principal}}' width="40px" height="40px">
 													<h4>{{ d.comentario.perfil.user.username }}</h4>
 													<h4 class="fecha_comentario">{{ d.comentario.fecha|date:"d/m/y/H/i/s" }}</h4>
+													{% if d.comentario.perfil.user.username == user.username %}
+														<a class="glyphicon glyphicon-remove eliminar_comentario /{{d.comentario.id}}"></a>
+													{%endif%}
 												</div>
 												<div class="panel-body">
 													{{ d.comentario.texto }}
@@ -117,9 +120,9 @@ restarFecha=function(){
 		var string=$(this).text();
 		var array=string.split("/");
 		var fecha_array=new Date("20"+array[2], array[1]-1, array[0], array[3], array[4], array[5]);
-		alert(fecha_array);
+		//alert(fecha_array);
 		var fecha=fecha_array.toLocaleDateString();
-		alert(fecha);
+		//alert(fecha);
 		//Fin construir el objeto Date
 		var ahora=new Date();
 		var diff= ahora.getTime()-fecha_array.getTime(); //cogemos diferencia en milisegundos
@@ -127,8 +130,7 @@ restarFecha=function(){
 		var diffMinutes = (diff / (60 * 1000)).toFixed(0) % 60;
 		var diffHours = (diff / (60 * 60 * 1000)).toFixed(0) % 24;
 		var diffDays = (diff / (24 * 60 * 60 * 1000)).toFixed(0);
-		alert(diffSeconds + "\n" + diffMinutes + "\n" + diffHours
-				+ "\n" + "\n" + diffDays);
+		//alert(diffSeconds + "\n" + diffMinutes + "\n" + diffHours + "\n" + "\n" + diffDays);
 		if (diffDays >= 1) {
 			console.log("Se comento el " + fecha_array);
 			$(this).text(fecha_array);

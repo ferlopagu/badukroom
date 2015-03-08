@@ -846,4 +846,15 @@ def ver_partida(request, partida_id):
     name="ver_partida.html"
     context={'partida':partida}
     return render(request,name, context)
+
+def eliminar_comentario_ajax(request):
+    if request.is_ajax():
+        if request.method=='POST':
+            comentario_id=request.POST['comentario_id']
+            comentario=get_object_or_404(Comentario, pk=comentario_id)
+            comentario.delete()
+            print "eliminado con exito"
+            return HttpResponse("Eliminado con éxito")
+    else:
+        return HttpResponse("Problema con peticion ajax")
     

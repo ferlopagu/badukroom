@@ -414,6 +414,25 @@ $.eliminar=function(){
 	});
 }
 
+$.eliminar_comentario=function(){
+	$(".eliminar_comentario").on('click', function(event){
+		console.log("Acemos click en eliminar_comentario");
+		event.preventDefault();
+		var comentario_clase=$(this).attr("class");
+		var array_clases=comentario_clase.split("/");
+		var comentario_id=array_clases[1];
+		alert(comentario_id);
+		$.ajax({
+			data:{"comentario_id":comentario_id},
+			type:'POST',
+			url: "{% url 'redsocial:eliminar_comentario_ajax' %}",
+			success: function(data){
+				alert("Comentario eliminado correctamente");
+			}
+		});
+	});
+}
+
 $.limpiar=function(boton){
 	$.get("{% url 'redsocial:limpiar_notificaciones' %}", {boton: boton}, function(data){
 		setTimeout(function(){location.reload()},2000);
