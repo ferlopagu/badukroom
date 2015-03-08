@@ -56,6 +56,9 @@
 			<div class="panel-heading">
 				<h4>{{ dic.comentario.perfil.user.username }}</h4>
 				<h5>{{ dic.comentario.fecha}}</h5>
+				{% if dic.comentario.perfil.user.username == user.username %}
+					<a class="glyphicon glyphicon-remove eliminar_comentario /{{dic.comentario.id}}"></a>
+				{%endif%}
 			</div>
 			<div class="panel-body">
 					{{ dic.comentario.texto }}

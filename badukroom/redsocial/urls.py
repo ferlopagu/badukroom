@@ -4,7 +4,7 @@ Created on 21/01/2015
 @author: fla2727
 '''
 from django.conf.urls import patterns, url
-from redsocial.views import perfil, home, crea_comentario, buscador, agregar_ajax, contar_notificaciones, ver_notificaciones, aceptar_peticion, declinar_peticion, limpiar_notificaciones, eliminar_ajax, grupo, lista_grupos, responder, amigos, partidas, partidas_ajax, partidas_jugador, revisiones, crear_grupo, partidas_by_revisor, enviar_partida_revisar, aceptar_partida_revisar, ver_partida
+from redsocial.views import perfil, home, crea_comentario, buscador, agregar_ajax, contar_notificaciones, ver_notificaciones, aceptar_peticion, declinar_peticion, limpiar_notificaciones, eliminar_ajax, grupo, lista_grupos, responder, amigos, partidas, partidas_ajax, partidas_jugador, revisiones, crear_grupo, partidas_by_revisor, enviar_partida_revisar, aceptar_partida_revisar, ver_partida, eliminar_comentario_ajax
 from django.views.generic.base import TemplateView
 #from django.views.generic.base import TemplateView
 
@@ -33,5 +33,6 @@ urlpatterns = patterns ('' ,
     url(r'^by_revisor/(?P<nickname_kgs>\w+)/$', partidas_by_revisor, name="by_revisor"),
     url(r'^enviar_partida_revisar/', enviar_partida_revisar, name="enviar_partida_revisar"),
     url(r'^aceptar_partida_revisar/(?P<username>\w+)/$', aceptar_partida_revisar, name="aceptar_partida_revisar"),
+    url(r'^eliminar_comentario_ajax/', eliminar_comentario_ajax, name='eliminar_comentario_ajax'),
     url(r'^(?P<username>\w+)/$', perfil, name='perfil'),     
 )
