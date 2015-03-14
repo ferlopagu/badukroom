@@ -41,12 +41,14 @@ class Revisor(models.Model):
 class Partida(models.Model):
     fecha = models.DateField()
     jugador_negro = models.ForeignKey(Jugador, related_name='Jugador_jugador_negro')
+    rango_negro = models.CharField(max_length=50)
     jugador_blanco = models.ForeignKey(Jugador, related_name='Jugador_jugador_blanco')
+    rango_blanco = models.CharField(max_length=50)
     resultado = models.CharField(max_length=50)
     fichero = models.FileField(upload_to=MEDIA_ROOT+'sgf') #RESOLVER Al add dos ficheros con el mismo nombre el segundo se guarda con un nombre al que se add un sufijo y no coincidira con el del path
     #path = models.CharField(max_length=70, default=fichero.name,  blank=True) #fichero.name devuelve la ruta relativa del fichero: sgf/nombre_fichero, que mostraremos en los templates.
     path = models.CharField(max_length=70,  blank=True)
-    revisor=models.ForeignKey(Revisor, blank=True, null=True)
+    revisor=models.ForeignKey(Revisor, blank=True, null=True) #asignamos revisor y sera considerada partida revisada
     sgf_size=models.IntegerField(default=0)
     class Meta:
         unique_together=('jugador_negro', 'jugador_blanco','fecha', 'sgf_size')
@@ -84,3 +86,5 @@ class Partida(models.Model):
         else:
             super(Partida, self).save(*args, **kwargs)
         """
+class PartidaRepositorio(Partida):
+    es_profesional=models.BooleanField(default=False)

@@ -1,7 +1,31 @@
 {% extends "base_perfil_home.html" %} 
 {% load staticfiles %} 
 {% block columna_principal %}
+	{# Load the tag library #} 
+	{% load bootstrap3 %} 
+	{# Load CSS and JavaScript #}  
+	{# Display django.contrib.messages as Bootstrap alerts #} 
+	{% bootstrap_messages %}
 
+
+<div class="alert alert-info" role="alert">Bienvenido al Repositorio de Partidas, profesionales y amateur. Contribuye!</div>
+
+<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+  Subir partida
+</button>
+<div class="collapse" id="collapseExample">
+  <div class="well">
+    {% block content %}
+
+    <form action="{% url 'redsocial:crear_partida_repositorio' %}" role="form" method="post" enctype="multipart/form-data" {% if layout != 'vertical' %}class="form-{{ layout }}"{% endif %}>
+        {% csrf_token %}
+        {% bootstrap_form form layout=layout %}
+        {% buttons submit='OK' reset="Cancelar" %}{% endbuttons %}
+    </form>
+
+	{% endblock %}
+  </div>
+</div>
 <ul class="nav nav-tabs" role="tablist">
 	<li role="presentation" class="active"><a href="#recientes"
 		aria-controls="recientes" role="tab" data-toggle="tab">Recientes</a></li>
@@ -12,72 +36,85 @@
 			avanzada</a></li>
 </ul>
 
-
-
-<ul class="nav nav-pills" role="tablist" style="float:right">
-	<li><a href="#">Subir partida</a></li>
-</ul>
 <div class="tab-content">
     <div role="tabpanel" class="tab-pane active" id="recientes">
-		<table class="table">
-			<thead>
-				<tr>
-					<th>Jugador Negro</th>
-					<th>Jugador Blanco</th>
-					<th>Fecha</th>
-					<th>Resultado</th>
-					<th>Partida</th>
-				</tr>
-			</thead>
-			<tbody id="nuevos_datos">
-				{% for p in lista_partidas %}
-					<tr>
-						<td><a href="{% url 'redsocial:partidas_jugador' p.jugador_negro.id %}">{{p.jugador_negro}}</a></td>
-						<td><a href="{% url 'redsocial:partidas_jugador' p.jugador_blanco.id %}">{{p.jugador_blanco}}</a></td>
-						<td>{{p.fecha}}</td>
-						<td>{{p.resultado}}</td>
-						<td><a href="{% url 'redsocial:ver_partida' p.id %}">Visualizar</a></td>
-					</tr>
-				{% endfor %}
-			</tbody>
-		</table>
+    
+    	<nav class="navbar navbar-default" id="nav_botones_portada">
+				<div class="container-fluid">
+					<ul class="nav navbar-nav navbar-right">
+						<li class="active"><a href="#profesionales" aria-controls="profesionales" role="tab" data-toggle="tab">Profesionales</a></li>
+						<li><a href="#amateur" aria-controls="amateur" role="tab" data-toggle="tab">Amateur</a></li>
+					</ul>
+				</div>
+		</nav>
 		
-		<div id="next">
-			<a class="btn btn-primary" id="recargar" href="">Recargar</a>
-		</div>
+		<div class="tab-content">
+    		<div role="tabpanel" class="tab-pane active" id="profesionales">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Jugador Negro</th>
+							<th>Jugador Blanco</th>
+							<th>Fecha</th>
+							<th>Resultado</th>
+							<th>Partida</th>
+						</tr>
+					</thead>
+					<tbody id="nuevos_datos">
+						{% for p in lista_partidas %}
+							<tr>
+								<td><a href="{% url 'redsocial:partidas_jugador' p.jugador_negro.id %}">{{p.jugador_negro}}</a></td>
+								<td><a href="{% url 'redsocial:partidas_jugador' p.jugador_blanco.id %}">{{p.jugador_blanco}}</a></td>
+								<td>{{p.fecha}}</td>
+								<td>{{p.resultado}}</td>
+								<td><a href="{% url 'redsocial:ver_partida' p.id %}">Visualizar</a></td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+				<div id="next">
+					<a class="btn btn-primary" id="recargar" href="">Recargar</a>
+				</div>
+			</div>
+			
+    		<div role="tabpanel" class="tab-pane" id="amateur">
+    		<h1>Falta diferenciar las partidas entre profesionales y amateur en lo que a VISTA se refiere</h1>
+    		</div>
+    	</div>
+		
 	</div>
 
 	<div role="tabpanel" class="tab-pane" id="jugador">
-		<!--  
-		<div id="css_jugadores" style="display: inline-table">
-		{ for key, values in dic_jugadores.items }
-			
-			<ul class="list-group" >
-			<li class="list-group-item list-group-item-success">{key}</li>
-			{ for jugador in values }
-				
-				
-  				<li class="list-group-item" ><a href="{ url 'redsocial:partidas_jugador' jugador.id }">{jugador.nombre}</a></li>
-
-
-			{ endfor }
-			</ul>
-		{endfor}
-		</div>
-		-->
-		{% for key, values in dic_jugadores.items %}
-			<div class="panel panel-info" style="display: inline-table">
-				<div class='panel-heading' id="{{key}}">
-					<a href="#{{key}}">{{key}}</a>
+		 <nav class="navbar navbar-default" id="nav_botones_portada">
+				<div class="container-fluid">
+					<ul class="nav navbar-nav navbar-right">
+						<li class="active"><a href="#jug_profesionales" aria-controls="jug_profesionales" role="tab" data-toggle="tab">Profesionales</a></li>
+						<li><a href="#jug_amateur" aria-controls="jug_amateur" role="tab" data-toggle="tab">Amateur</a></li>
+					</ul>
 				</div>
-				{% for jugador in values %}
-				<div class="panel-body">
-					<a href="{% url 'redsocial:partidas_jugador' jugador.id %}">{{jugador.nombre}}</a>
-				</div>
-				{% endfor %}
+		</nav>
+		<div class="tab-content">
+    		<div role="tabpanel" class="tab-pane active" id="jug_profesionales">
+				{% for key, values in dic_jugadores.items %}
+					<div class="panel panel-info" style="display: inline-table">
+						<div class='panel-heading' id="{{key}}">
+							<a href="#{{key}}">{{key}}</a>
+						</div>
+						{% for jugador in values %}
+						<div class="panel-body">
+							<a href="{% url 'redsocial:partidas_jugador' jugador.id %}">{{jugador.nombre}}</a>
+						</div>
+						{% endfor %}
+					</div>
+				{%endfor%}
 			</div>
-		{%endfor%}
+			
+			<div role="tabpanel" class="tab-pane" id="jug_amateur">
+				<p>Falta diferenciar los jugadores profesionales de los amateur</p>
+			</div>
+		</div>
 	</div>
+			
 
 	<div role="tabpanel" class="tab-pane" id="avanzada">
 		<h5>Estamos en BUSQUEDA AVANZADA</h5>
@@ -117,6 +154,7 @@
 						data : {
 							page_number : pageNum
 						},
+						method:"GET",
 						dataType : 'json', //add esto cuando vayamos a recivir del servidor un json
 						success : function(data) {
 							//alert(data.length);
