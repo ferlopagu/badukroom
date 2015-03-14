@@ -176,6 +176,12 @@
     
 {% block js%}
 <script type="text/javascript">
+
+$("#menu-sidebar").click(function(e) {
+	e.preventDefault();
+	$("#box").toggleClass("toggled");
+	});
+
 $.contar=function(){
 	$.get("{% url 'redsocial:contar_notificaciones' %}", function(data){
 		if(data!=0){
@@ -238,7 +244,8 @@ $.comentar=function(){
 
 $.responder=function(){
 	console.log("Entramos en responder");
-	$('.formulario_respuesta').submit(function(event) { // catch the form's submit event
+	$(document).on('submit', ".formulario_respuesta", function(event){
+	//$('.formulario_respuesta').submit(function(event) { // catch the form's submit event
 		event.preventDefault();
 		/* Con esto cogemos el atributo clase del input 'enviar' correspondiente al formulario que estamos mandando
 	    alert(
@@ -397,7 +404,8 @@ $.agregar=function(){
 }
 
 $.eliminar=function(){
-	$('#eliminar').on('click', function(event){
+	$(document).on('click', "#eliminar", function(event){
+	//$('#eliminar').on('click', function(event){
 		event.preventDefault();
 		var perfil=$('#nick').text();
 		$.ajax({
@@ -458,7 +466,8 @@ $.limpiarPeticiones=function(){
 }
 
 $.visualizarSGF=function(){
-	$('#visualizar').on('click', function(event) {
+	$(document).on('click', "#visualizar", function(event){
+	//$('#visualizar').on('click', function(event) {
 		alert("Estoy pulsando en visualizar");
 		event.preventDefault();
 		$("#partida").modal('show'); 
@@ -468,11 +477,238 @@ $.visualizarSGF=function(){
 var pageNum = 1; // The latest page loaded
 var hasNextPage = true; // Indicates whether to expect another page after this one
 
+//PRUEBA VARIABLE RECARGA
+var pageNum_tablon=1;
+var hasNextPage_tablon=true;
+var pageNum_perfil=1;
+var hasNextPage_perfil=true;
+var pageNum_grupo=1;
+var hasNextPage_grupo=true;
+var pageNum_partidas_recientes_profesionales=1;
+var hasNextPage_partidas_recientes_profesionales=true;
+var pageNum_partidas_recientes_amateur=1;
+var hasNextPage_partidas_recientes_amateur=true;
+var pageNum_partidas_by_jugador=1;
+var hasNextPage_partidas_by_jugador=true;
 
-	$.recargar = function() {
-		//alert("ola");
-		
+
+
+
+//FIN PRUEBAS VARIABLES RECARGA
+
+$.recargar = function() {
+	//alert("ola");		
+}
+
+restarFecha=function(){
+	$(".fecha_comentario").each(function() { //AL COMENTAR Y RECARGAR LA PAGINA NO SE VUELVE A EJECUTAR DE PRIMERAS
+			//alert("Entramos en restar fecha");
+			//Construimos el objeto Date de la fecha recibida
+			var string=$(this).text();
+			//alert(string);
+			var array=string.split("/");
+			var fecha_array=new Date("20"+array[2], array[1]-1, array[0], array[3], array[4], array[5]);
+			//alert(fecha_array);
+			var fecha=fecha_array.toLocaleDateString();
+			//alert(fecha);
+			//Fin construir el objeto Date
+			var ahora=new Date();
+			var diff= ahora.getTime()-fecha_array.getTime(); //cogemos diferencia en milisegundos
+			var diffSeconds = (diff / 1000).toFixed(0) % 60;
+			var diffMinutes = (diff / (60 * 1000)).toFixed(0) % 60;
+			var diffHours = (diff / (60 * 60 * 1000)).toFixed(0) % 24;
+			var diffDays = (diff / (24 * 60 * 60 * 1000)).toFixed(0);
+			//alert(diffSeconds + "\n" + diffMinutes + "\n" + diffHours + "\n" + "\n" + diffDays);
+			if (diffDays >= 1) {
+				console.log("Se comento el " + fecha_array);
+		        var options = {weekday: "long", month: "long", year: "numeric", day: "numeric"};
+		        var options2 = {hour:"2-digit", minute:"2-digit"};
+		        var fecha2=fecha_array.toLocaleDateString("es-ES", options);
+		        var fecha3=fecha_array.toLocaleTimeString("es-ES", options2);
+		        var fecha_string=fecha2.split(",");
+		        var fecha_def=fecha_string[1]+" a la(s) "+fecha3
+		        res = fecha_def;
+		        $(this).text(res);
+				//$(this).text(fecha_array);
+			} else if (diffHours >= 1 && diffHours < 24) {
+				console.log("Fue hace " + diffHours + " horas");
+				$(this).text("Hace "+diffHours+" hora(s)");
+			} else if (diffHours < 1 && diffMinutes > 1
+					&& diffMinutes < 60) {
+				console.log("Fue hace " + diffMinutes + " minutos");
+				$(this).text("Hace "+diffMinutes+" minuto(s)");
+			} else if (diffMinutes < 1 && diffSeconds > 1
+					&& diffSeconds < 60) {
+				console.log("Fue hace " + diffSeconds + " segundos");
+				$(this).text("Hace "+diffSeconds+" segundo(s)");
+			}
+	});
+}
+
+/*
+hace_cuanto=function(cadena){
+	alert(cadena);
+	var fecha =  new Date(cadena);
+	alert("Fecha cambiada en la funcion: "+fecha);
+    var fecha_array=new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate(), fecha.getHours(),         fecha.getMinutes(), fecha.getSeconds());
+    alert(fecha_array);    
+    var ahora=new Date();
+	var diff= ahora.getTime()-fecha_array.getTime(); //cogemos diferencia en milisegundos
+	var diffSeconds = (diff / 1000).toFixed(0) % 60;
+	var diffMinutes = (diff / (60 * 1000)).toFixed(0) % 60;
+	var diffHours = (diff / (60 * 60 * 1000)).toFixed(0) % 24;
+	var diffDays = (diff / (24 * 60 * 60 * 1000)).toFixed(0);
+	//alert(diffSeconds + "\n" + diffMinutes + "\n" + diffHours + "\n" + "\n" + diffDays);
+	if (diffDays >= 1) {
+		console.log("Se comento el " + fecha_array);
+		//$(this).text(fecha_array);
+        //var res=devolver_fecha_ajax(fecha_array);
+        //weekday, year, month, day, hour, minute, second
+        var options = {weekday: "long", month: "long", year: "numeric", day: "numeric"};
+        var options2 = {hour:"2-digit", minute:"2-digit"};
+        var fecha2=fecha_array.toLocaleDateString("es-ES", options);
+        var fecha3=fecha_array.toLocaleTimeString("es-ES", options2);
+        var fecha_string=fecha2.split(",");
+        var fecha_def=fecha_string[1]+" a la(s) "+fecha3
+        res = fecha_def;
+        $(this).text(res);
+	} else if (diffHours >= 1 && diffHours < 24) {
+		console.log("Fue hace " + diffHours + " horas");
+		//$(this).text("Hace "+diffHours+" hora(s)");
+        var res="Hace "+diffHours+" hora(s)";
+        $(this).text("Hace "+diffHours+" hora(s)");
+	} else if (diffHours < 1 && diffMinutes > 1 && diffMinutes < 60) {
+	    console.log("Fue hace " + diffMinutes + " minutos");
+		//$(this).text("Hace "+diffMinutes+" minuto(s)");
+        var res="Hace "+diffMinutes+" minuto(s)";
+        $(this).text("Hace "+diffMinutes+" minuto(s)");
+	} else if (diffMinutes < 1 && diffSeconds > 1 && diffSeconds < 60) {
+		console.log("Fue hace " + diffSeconds + " segundos");
+		//$(this).text("Hace "+diffSeconds+" segundo(s)");
+        var res="Hace "+diffSeconds+" segundo(s)";
+        $(this).text("Hace "+diffSeconds+" segundo(s)");
 	}
+    return res; 
+}	
+
+restarFecha=function(){
+		$(".fecha_comentario").each(function() {
+			alert($(this).text());
+			cadena=$(this).text();
+			var fecha =  new Date(cadena);
+			alert("Fecha cambiada en la funcion: "+fecha);
+		    var fecha_array=new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate(), fecha.getHours(),         fecha.getMinutes(), fecha.getSeconds());
+		    alert(fecha_array);    
+		    var ahora=new Date();
+			var diff= ahora.getTime()-fecha_array.getTime(); //cogemos diferencia en milisegundos
+			var diffSeconds = (diff / 1000).toFixed(0) % 60;
+			var diffMinutes = (diff / (60 * 1000)).toFixed(0) % 60;
+			var diffHours = (diff / (60 * 60 * 1000)).toFixed(0) % 24;
+			var diffDays = (diff / (24 * 60 * 60 * 1000)).toFixed(0);
+			//alert(diffSeconds + "\n" + diffMinutes + "\n" + diffHours + "\n" + "\n" + diffDays);
+			if (diffDays >= 1) {
+				console.log("Se comento el " + fecha_array);
+				//$(this).text(fecha_array);
+		        //var res=devolver_fecha_ajax(fecha_array);
+		        //weekday, year, month, day, hour, minute, second
+		        var options = {weekday: "long", month: "long", year: "numeric", day: "numeric"};
+		        var options2 = {hour:"2-digit", minute:"2-digit"};
+		        var fecha2=fecha_array.toLocaleDateString("es-ES", options);
+		        var fecha3=fecha_array.toLocaleTimeString("es-ES", options2);
+		        var fecha_string=fecha2.split(",");
+		        var fecha_def=fecha_string[1]+" a la(s) "+fecha3
+		        res = fecha_def;
+		        $(this).text(res);
+			} else if (diffHours >= 1 && diffHours < 24) {
+				console.log("Fue hace " + diffHours + " horas");
+				//$(this).text("Hace "+diffHours+" hora(s)");
+		        var res="Hace "+diffHours+" hora(s)";
+		        $(this).text("Hace "+diffHours+" hora(s)");
+			} else if (diffHours < 1 && diffMinutes > 1 && diffMinutes < 60) {
+			    console.log("Fue hace " + diffMinutes + " minutos");
+				//$(this).text("Hace "+diffMinutes+" minuto(s)");
+		        var res="Hace "+diffMinutes+" minuto(s)";
+		        $(this).text("Hace "+diffMinutes+" minuto(s)");
+			} else if (diffMinutes < 1 && diffSeconds > 1 && diffSeconds < 60) {
+				console.log("Fue hace " + diffSeconds + " segundos");
+				//$(this).text("Hace "+diffSeconds+" segundo(s)");
+		        var res="Hace "+diffSeconds+" segundo(s)";
+		        $(this).text("Hace "+diffSeconds+" segundo(s)");
+			}
+		    return res; 
+		});
+}
+*/
+
+cambiar_fecha_ajax=function(fecha){
+	var options = {weekday: "long", year: "numeric", month: "long", day: "numeric"};
+	var fecha1=fecha.toLocaleDateString("es-ES", options);
+	var fecha_string=fecha1.split(",");
+	var options2 = {hour:"2-digit", minute:"2-digit"};
+	var tiempo=fecha.toLocaleTimeString("es-ES", options2);
+	var fecha_def=fecha_string[1]+" a la(s) "+tiempo;
+	return fecha_def;
+}
+	
+	/*
+	devolver_fecha_ajax=function(cadena){
+	    fecha =  new Date(cadena);
+	    var options = {weekday: "long", month: "long", year: "numeric", day: "numeric"};
+	    fecha=fecha.toLocaleDateString("es-ES", options);
+	    //alert(fecha);
+	    fecha_string=fecha.split(",");
+	    fecha_def=fecha_string[1];
+	    return fecha_def
+	}
+
+	var cadena_ajax="Fri Mar 13 2015 12:57:24 GMT+0100 (CET)";
+	alert(devolver_fecha_ajax(cadena_ajax));
+
+
+	devolver_fecha_sin_ajax=function(cadena){
+	    var res="";
+	    //alert(cadena);
+	    var string=cadena;
+		var array=string.split("/");
+	    //alert(array);
+		var fecha_array=new Date("20"+array[2], array[1]-1, array[0], array[3], array[4], array[5]);
+		//alert(fecha_array);	
+		//alert(fecha);
+		//Fin construir el objeto Date
+		var ahora=new Date();
+		var diff= ahora.getTime()-fecha_array.getTime(); //cogemos diferencia en milisegundos
+		var diffSeconds = (diff / 1000).toFixed(0) % 60;
+		var diffMinutes = (diff / (60 * 1000)).toFixed(0) % 60;
+		var diffHours = (diff / (60 * 60 * 1000)).toFixed(0) % 24;
+		var diffDays = (diff / (24 * 60 * 60 * 1000)).toFixed(0);
+		//alert(diffSeconds + "\n" + diffMinutes + "\n" + diffHours + "\n" + "\n" + diffDays);
+		if (diffDays >= 1) {
+			console.log("Se comento el " + fecha_array);
+			//$(this).text(fecha_array);
+	        var res=devolver_fecha_ajax(fecha_array);
+		} else if (diffHours >= 1 && diffHours < 24) {
+			console.log("Fue hace " + diffHours + " horas");
+			//$(this).text("Hace "+diffHours+" hora(s)");
+	        var res="Hace "+diffHours+" hora(s)";
+		} else if (diffHours < 1 && diffMinutes > 1 && diffMinutes < 60) {
+		    console.log("Fue hace " + diffMinutes + " minutos");
+			//$(this).text("Hace "+diffMinutes+" minuto(s)");
+	        var res="Hace "+diffMinutes+" minuto(s)";
+		} else if (diffMinutes < 1 && diffSeconds > 1 && diffSeconds < 60) {
+			console.log("Fue hace " + diffSeconds + " segundos");
+			//$(this).text("Hace "+diffSeconds+" segundo(s)");
+	        var res="Hace "+diffSeconds+" segundo(s)";
+		}
+	    return res;
+	}
+
+
+	var cadena_sin_ajax="13/03/15/12/57/59";
+	alert(devolver_fecha_sin_ajax(cadena_sin_ajax));
+*/
+	
+	
+
 
 </script>
 {% endblock js%}

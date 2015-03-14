@@ -13,12 +13,6 @@
 {% block columna_principal %}
 
 {% block menu_filtrar%}
-<ul class="nav nav-pills" role="tablist">
-	<li class="active"><a href="#">Recientes</a></li>
-	<li><a href="#">Fuerza</a></li>
-	<li><a href="#">Revisor</a></li>
-	<li><a href="#">Información</a></li>
-</ul>
 
 <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
   Enviar partida a revisar
@@ -36,44 +30,276 @@
   </div>
 </div>
 
+<nav class="navbar navbar-default" id="nav_botones_portada">
+	<div class="container-fluid">
+		<ul class="nav navbar-nav navbar-right">
+			<li class="active"><a href="#recientes" aria-controls="recientes"
+				role="tab" data-toggle="tab">Recientes</a></li>
+			<li><a href="#fuerza" aria-controls="fuerza"
+				role="tab" data-toggle="tab">Por fuerza</a></li>
+			<li><a href="#revisor" aria-controls="revisor" role="tab"
+				data-toggle="tab">Por revisor</a></li>
+			<li><a href="#informacion" aria-controls="informacion" role="tab"
+				data-toggle="tab">Informacion de uso</a></li>
+		</ul>
+	</div>
+</nav>
+
 {% endblock menu_filtrar%}
 
 {%block filtrar %}
 {%endblock filtrar%}
 
 {%block tabla%}
-<table class="table">
-	<thead>
-		<tr>
-			<th>Revisor</th>
-			<th>Jugador Negro</th>
-			<th>Jugador Blanco</th>
-			<th>Fecha</th>
-			<th>Resultado</th>
-			<th>Partida</th>
-		</tr>
-	</thead>
-	<tbody id="nuevos_datos">
-		{%block resultados%}
-		{% for p in partidas_revisadas %}
-			<tr>
-				<td><a href="{% url 'redsocial:by_revisor' p.revisor.nickname_kgs %}">{{p.revisor.nickname_kgs}}</a></td>
-				<td><a href="{% url 'redsocial:partidas_jugador' p.jugador_negro.id %}">{{p.jugador_negro}}</a></td>
-				<td><a href="{% url 'redsocial:partidas_jugador' p.jugador_blanco.id %}">{{p.jugador_blanco}}</a></td>
-				<td>{{p.fecha}}</td>
-				<td>{{p.resultado}}</td>
-				<td><a href="{% url 'redsocial:ver_partida' p.id %}">Visualizar</a></td>
-			</tr>
-		{% endfor %}
-		{%endblock resultados%}
-	</tbody>
-</table>
-<div id="next">
-	<a class="btn btn-primary" id="recargar_revisiones" href="">Recargar</a>
+<div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="recientes">
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Revisor</th>
+					<th>Jugador Negro</th>
+					<th>Jugador Blanco</th>
+					<th>Fecha</th>
+					<th>Resultado</th>
+					<th>Partida</th>
+				</tr>
+			</thead>
+			<tbody id="nuevos_datos">
+				{%block resultados%}
+				{% for p in partidas_revisadas %}
+					<tr>
+						<td><a href="{% url 'redsocial:by_revisor' p.revisor.nickname_kgs %}">{{p.revisor.nickname_kgs}} [{{p.revisor.perfil.rango}}]</a></td>
+						<td><a href="{% url 'redsocial:partidas_jugador' p.jugador_negro.id %}">{{p.jugador_negro}} [{{p.rango_negro}}]</a></td>
+						<td><a href="{% url 'redsocial:partidas_jugador' p.jugador_blanco.id %}">{{p.jugador_blanco}} [{{p.rango_blanco}}]</a></td>
+						<td>{{p.fecha}}</td>
+						<td>{{p.resultado}}</td>
+						<td><a href="{% url 'redsocial:ver_partida' p.id %}">Visualizar</a></td>
+					</tr>
+				{% endfor %}
+				{%endblock resultados%}
+			</tbody>
+		</table>
+		<div id="next">
+			<a class="btn btn-primary" id="recargar_revisiones" href="">Recargar</a>
+		</div>
+		{%endblock tabla%}
+	</div>
+	
+	<div role="tabpanel" class="tab-pane" id="fuerza">
+		<p>Fuerza</p>
+		<nav class="navbar navbar-default" id="nav_botones_portada">
+			<div class="container-fluid">
+				<ul class="nav navbar-nav navbar-right">
+					<li class="active"><a href="#deRevisor" aria-controls="deRevisor"
+						role="tab" data-toggle="tab">Del Revisor</a></li>
+					<li><a href="#deJugador" aria-controls="deJugador"
+						role="tab" data-toggle="tab">Del jugador</a></li>
+				</ul>
+			</div>
+		</nav>
+		
+		<div class="tab-content">
+    		<div role="tabpanel" class="tab-pane active" id="deRevisor">
+    			<ul class="nav nav-tabs">
+					<li class="revisor" role="presentation"><a href="#">9d</a></li>
+					<li class="revisor" role="presentation"><a href="#">8d</a></li>
+					<li class="revisor" role="presentation"><a href="#">7d</a></li>
+					<li class="revisor" role="presentation"><a href="#">6d</a></li>
+					<li class="revisor" role="presentation"><a href="#">5d</a></li>
+					<li class="revisor" role="presentation"><a href="#">4d</a></li>
+					<li class="revisor" role="presentation"><a href="#">3d</a></li>
+					<li class="revisor" role="presentation"><a href="#">2d</a></li>
+					<li class="revisor" role="presentation"><a href="#">1d</a></li>
+					<li class="revisor" role="presentation"><a href="#">1k</a></li>
+					<li class="revisor" role="presentation"><a href="#">2k</a></li>
+					<li class="revisor" role="presentation"><a href="#">3k</a></li>
+					<li class="revisor" role="presentation"><a href="#">4k</a></li>
+					<li class="revisor" role="presentation"><a href="#">5k</a></li>
+					<li class="revisor" role="presentation"><a href="#">6k</a></li>
+					<li class="revisor" role="presentation"><a href="#">7k</a></li>
+					<li class="revisor" role="presentation"><a href="#">8k</a></li>
+					<li class="revisor" role="presentation"><a href="#">9k</a></li>
+					<li class="revisor" role="presentation"><a href="#">10k</a></li>
+					<li class="revisor" role="presentation"><a href="#">11k</a></li>
+					<li class="revisor" role="presentation"><a href="#">12k</a></li>
+					<li class="revisor" role="presentation"><a href="#">13k</a></li>
+					<li class="revisor" role="presentation"><a href="#">14k</a></li>
+					<li class="revisor" role="presentation"><a href="#">15k</a></li>
+					<li class="revisor" role="presentation"><a href="#">16k</a></li>
+					<li class="revisor" role="presentation"><a href="#">17k</a></li>
+					<li class="revisor" role="presentation"><a href="#">18k</a></li>
+					<li class="revisor" role="presentation"><a href="#">19k</a></li>
+					<li class="revisor" role="presentation"><a href="#">20k</a></li>
+					<li class="revisor" role="presentation"><a href="#">21k</a></li>
+					<li class="revisor" role="presentation"><a href="#">22k</a></li>
+					<li class="revisor" role="presentation"><a href="#">23k</a></li>
+					<li class="revisor" role="presentation"><a href="#">24k</a></li>
+					<li class="revisor" role="presentation"><a href="#">25k</a></li>
+					<li class="revisor" role="presentation"><a href="#">26k</a></li>
+					<li class="revisor" role="presentation"><a href="#">27k</a></li>
+					<li class="revisor" role="presentation"><a href="#">28k</a></li>
+					<li class="revisor" role="presentation"><a href="#">29k</a></li>
+					<li class="revisor" role="presentation"><a href="#">30k</a></li>
+				</ul>
+				
+				
+				<div id='span_revisor' class="alert alert-info" role="alert">Seleccione Categoria de Revisor</div>
+				
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Revisor</th>
+							<th>Jugador Negro</th>
+							<th>Jugador Blanco</th>
+							<th>Fecha</th>
+							<th>Resultado</th>
+							<th>Partida</th>
+						</tr>
+					</thead>
+					<tbody id="nuevos_datos_fuerza_revisor">
+					</tbody>
+				</table>
+				<div id="boton_recarga_fuerza_revisor">
+					<!--  <a class="btn btn-primary" id="recargar_revisiones_revisor" href="">Recargar</a> -->
+				</div>	
+    		</div>
+    		
+    		<div role="tabpanel" class="tab-pane" id="deJugador">
+    			<ul class="nav nav-tabs">
+					<li class="jugador" role="presentation"><a href="#">9d</a></li>
+					<li class="jugador" role="presentation"><a href="#">8d</a></li>
+					<li class="jugador" role="presentation"><a href="#">7d</a></li>
+					<li class="jugador" role="presentation"><a href="#">6d</a></li>
+					<li class="jugador" role="presentation"><a href="#">5d</a></li>
+					<li class="jugador" role="presentation"><a href="#">4d</a></li>
+					<li class="jugador" role="presentation"><a href="#">3d</a></li>
+					<li class="jugador" role="presentation"><a href="#">2d</a></li>
+					<li class="jugador" role="presentation"><a href="#">1d</a></li>
+					<li class="jugador" role="presentation"><a href="#">1k</a></li>
+					<li class="jugador" role="presentation"><a href="#">2k</a></li>
+					<li class="jugador" role="presentation"><a href="#">3k</a></li>
+					<li class="jugador" role="presentation"><a href="#">4k</a></li>
+					<li class="jugador" role="presentation"><a href="#">5k</a></li>
+					<li class="jugador" role="presentation"><a href="#">6k</a></li>
+					<li class="jugador" role="presentation"><a href="#">7k</a></li>
+					<li class="jugador" role="presentation"><a href="#">8k</a></li>
+					<li class="jugador" role="presentation"><a href="#">9k</a></li>
+					<li class="jugador" role="presentation"><a href="#">10k</a></li>
+					<li class="jugador" role="presentation"><a href="#">11k</a></li>
+					<li class="jugador" role="presentation"><a href="#">12k</a></li>
+					<li class="jugador" role="presentation"><a href="#">13k</a></li>
+					<li class="jugador" role="presentation"><a href="#">14k</a></li>
+					<li class="jugador" role="presentation"><a href="#">15k</a></li>
+					<li class="jugador" role="presentation"><a href="#">16k</a></li>
+					<li class="jugador" role="presentation"><a href="#">17k</a></li>
+					<li class="jugador" role="presentation"><a href="#">18k</a></li>
+					<li class="jugador" role="presentation"><a href="#">19k</a></li>
+					<li class="jugador" role="presentation"><a href="#">20k</a></li>
+					<li class="jugador" role="presentation"><a href="#">21k</a></li>
+					<li class="jugador" role="presentation"><a href="#">22k</a></li>
+					<li class="jugador" role="presentation"><a href="#">23k</a></li>
+					<li class="jugador" role="presentation"><a href="#">24k</a></li>
+					<li class="jugador" role="presentation"><a href="#">25k</a></li>
+					<li class="jugador" role="presentation"><a href="#">26k</a></li>
+					<li class="jugador" role="presentation"><a href="#">27k</a></li>
+					<li class="jugador" role="presentation"><a href="#">28k</a></li>
+					<li class="jugador" role="presentation"><a href="#">29k</a></li>
+					<li class="jugador" role="presentation"><a href="#">30k</a></li>
+				</ul>
+				
+				<div id='span_jugador' class="alert alert-info" role="alert">Seleccione Categoria de Jugador</div>
+				
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Revisor</th>
+							<th>Jugador Negro</th>
+							<th>Jugador Blanco</th>
+							<th>Fecha</th>
+							<th>Resultado</th>
+							<th>Partida</th>
+						</tr>
+					</thead>
+					<tbody id="nuevos_datos_fuerza_jugador">
+					</tbody>
+				</table>
+				<div id="boton_recarga_fuerza_jugador">
+				</div>	
+				
+    		</div>
+    		
+		</div>
+		
+	</div>
+	
+	<div role="tabpanel" class="tab-pane" id="revisor">
+		<p>Revisor:
+		<SELECT NAME="revisor" class="selec_revisor">
+			<OPTION VALUE="">--</OPTION> 
+			{% block revisores%}
+				{% for revisor in revisores %}
+				<OPTION VALUE="{{revisor.nickname_kgs}}">{{revisor}}</OPTION> 
+				{% endfor %}
+			{% endblock%}
+		</SELECT>
+		</p>
+
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Revisor</th>
+					<th>Jugador Negro</th>
+					<th>Jugador Blanco</th>
+					<th>Fecha</th>
+					<th>Resultado</th>
+					<th>Partida</th>
+				</tr>
+			</thead>
+			<tbody id="nuevos_datos_byRevisor">
+			</tbody>
+		</table>
+		
+		<div id="boton_recarga_by_revisor">
+		</div>
+
+	</div>
+	
+	<div role="tabpanel" class="tab-pane" id="informacion">
+		<h3>Bienvenido al sistema de Revisión de partidas.</h3>
+		<p>Este es un sistema que te permitirá mejorar en tu juego mediante la ayuda colaborativa de otros usuarios.
+		Es como una escalera de conocimiento donde siempre habrá alguien por debajo al que podrás ayudar, y alguien superior al que recurrir en busca de consejo.
+		</p>
+		
+		<p>Para poder revisar partidas de otros usuarios debes darte de alta como revisor, una vez hecho esto, otros usuarios podrán mandarte peticiones con partidas a revisar. NO ES OBLIGATORIO
+		darse de alta como revisor para pedir una revision. Por lo tanto si no vas a disponer del tiempo o ganas para revisar partidas, no te des de alta, solo complicaría que usuarios que mandasen partidas a revisar las reciban más tarde.
+		</p>
+		
+		<p>Sientete libre de mandar las partidas que quieras a revision, pero recuerda que hasta que no recibas la respuesta del revisor no podrás volver a mandar otra al mismo. Como consejo, diversifica entre los posibles revisores </p>
+		
+		<p>Por ultimo, ten paciencia sobre la peticion. Los revisores hacen esto altruistamente. Aun así, si pasados unos dias no tienes respuesta cancela el envio y prueba con otro revisor.</p>
+	
+		{% if soy_revisor == True %}
+			<div id="cambiar_revisor">
+				<div class="alert alert-info" role="alert">Ya eres revisor</div>
+				
+				<button id="dejar_revisor" type="button" class="btn btn-danger">Dejar de ser revisor</button>
+			</div>
+		{% else %}
+			<div id="cambiar_revisor">
+				<div class="alert alert-info" role="alert">Aun no eres revisor</div>
+				<form class="form-inline" >
+					<div class="form-group">
+						<label for="nick_revisor">Selecciona tu nick: </label> <input type="text"
+							class="form-control" id="nick_revisor" placeholder="Ichiro">
+					</div>
+					<button id="unirse_revisor" type="button" class="btn btn-info">Unirse
+						como revisor</button>
+					</form>
+		</div>
+		{% endif %}
+	
+	</div>
 </div>
-{%endblock tabla%}
-
-
 {% endblock columna_principal %} 
 {% block js2 %}
 <script type="text/javascript">
@@ -87,31 +313,368 @@
 		$.responder();
 		$.recargar();
 		
-		$('#recargar').on(
+		
+		var pageNum_revisiones_by_fuerza_jugador=1;
+		var hasNextPage_revisiones_by_fuerza_jugador=true;
+		//Funcion coger partidas por fuerza de jugador
+		$(".jugador").on('click', function(event){
+			event.preventDefault();
+			pageNum_revisiones_by_fuerza_jugador=1;//Volvemos a poner a uno
+			$("#nuevos_datos_fuerza_jugador").empty(); 
+			$("#boton_recarga_fuerza_jugador").empty();//quitamos los datos que hubiese
+			var rango_jugador=$(this).children().text();
+			//alert(rango_jugador);
+			$("#span_jugador").text(rango_jugador);
+			$.ajax({
+				url : "/redsocial/fuerza_jugador/",
+				data : {'rango':rango_jugador},
+				method:"GET",
+				//dataType : 'json', //add esto cuando vayamos a recivir del servidor un json
+				success : function(data) {
+					html = "";
+					for (i = 0; i < data.length; i++){
+						//TRATAMIENTO DE LA FECHA
+						//console.log(data[i].fields.fecha);
+						fecha =  new Date(data[i].fecha);
+						var options = {weekday: "long", year: "numeric", month: "long", day: "numeric"};
+						fecha=fecha.toLocaleDateString("es-ES", options);
+						fecha_string=fecha.split(",");
+						fecha_def=fecha_string[1];
+						//FIN TRATAMIENTO DEL FORMATO DE LA FECHA
+						html+="<tr><td><a href='/redsocial/by_revisor/"+data[i].revisor_nickname+"'>"+data[i].revisor_nickname +" ["+data[i].revisor_rango+"]</a></td>" //COMPLETAR EL JSON EN LA VISTA
+						+"<td><a href='/redsocial/jugadores/"+data[i].jugador_negro_id+"'>"+data[i].jugador_negro_nombre+" ["+data[i].rango_negro+"]</a></td>"
+						+"<td><a href='/redsocial/jugadores/"+data[i].jugador_blanco_id+"'>"+data[i].jugador_blanco_nombre+" ["+data[i].rango_blanco+"]</a></td>"
+						+"<td>"+fecha_def+"</td>"
+						+"<td>"+data[i].resultado+"</td>"
+						+"<td><a href='/redsocial/ver_partida/"+data[i].partida_id+"''>Visualizar</a></td></tr>";
+					}
+					html2="<div><a class='btn btn-primary' id='recargar_revisiones_fuerza_jugador' href=''>Recargar</a></div>";
+					$("#nuevos_datos_fuerza_jugador").append(html);
+					$("#boton_recarga_fuerza_jugador").append(html2);
+				}
+			});
+		});
+		//Funcion para recargar las siguientes partidas segun fuerza del jugador
+		$(document).on('click', "#recargar_revisiones_fuerza_jugador", function(event){
+			event.preventDefault();
+			if (hasNextPage_revisiones_by_fuerza_jugador === false) {
+				return false //ya no haria falta ya que al comprobar si son menos de diez se eliminara el boton
+			}
+			// Update the page number
+			pageNum_revisiones_by_fuerza_jugador = pageNum_revisiones_by_fuerza_jugador + 1;
+			//alert(pageNum_revisiones_by_fuerza_jugador);
+			var rango_jugador=$('#span_jugador').text();
+			$.ajax({
+				url :"/redsocial/fuerza_jugador/",
+				data : {
+					page_number : pageNum_revisiones_by_fuerza_jugador,
+					'rango':rango_jugador
+				},
+				method:"GET",
+				dataType : 'json', //add esto cuando vayamos a recivir del servidor un json
+				success : function(data) {
+					//alert(data.length);
+					if(data.length < 2){
+						//alert("No hay mas páginas");
+						$('#boton_recarga_fuerza_jugador').html("<div class='alert alert-info' role='alert'>Ya no hay más partidas que mostrar</div>");
+					}
+					hasNextPage = true;//.hasNext;
+					html = "";
+					console.log("Valor que tenia html: " + html);
+					for (i = 0; i < data.length; i++){
+								//TRATAMIENTO DE LA FECHA
+								fecha =  new Date(data[i].fecha);
+								var options = {weekday: "long", year: "numeric", month: "long", day: "numeric"};
+								fecha=fecha.toLocaleDateString("es-ES", options);
+								fecha_string=fecha.split(",");
+								fecha_def=fecha_string[1];
+								//FIN TRATAMIENTO DEL FORMATO DE LA FECHA
+								html+="<tr><td><a href='/redsocial/by_revisor/"+data[i].revisor_nickname+"'>"+data[i].revisor_nickname +" ["+data[i].revisor_rango+"]</a></td>" //COMPLETAR EL JSON EN LA VISTA
+								+"<td><a href='/redsocial/jugadores/"+data[i].jugador_negro_id+"'>"+data[i].jugador_negro_nombre+" ["+data[i].rango_negro+"]</a></td>"
+								+"<td><a href='/redsocial/jugadores/"+data[i].jugador_blanco_id+"'>"+data[i].jugador_blanco_nombre+" ["+data[i].rango_blanco+"]</a></td>"
+								+"<td>"+fecha_def+"</td>"
+								+"<td>"+data[i].resultado+"</td>"
+								+"<td><a href='/redsocial/ver_partida/"+data[i].partida_id+"''>Visualizar</a></td></tr>";
+					}
+					$("#nuevos_datos_fuerza_jugador").append(html);
+				},
+				error : function(data) {
+					hasNextPage_revisiones_by_fuerza_jugador = false;
+				},
+		        complete: function(data, textStatus){
+				}
+			});
+			
+		});
+		
+		var pageNum_revisiones_by_revisor_fuerza=1;
+		var hasNextPage_revisiones_by_revisor_fuerza=true;
+		//Funcion coger partidas por fuerza de revisor
+		$(".revisor").on('click', function(event){
+			event.preventDefault();
+			pageNum_revisiones_by_revisor_fuerza=1;//Volvemos a poner a uno
+			$("#nuevos_datos_fuerza_revisor").empty(); 
+			$("#boton_recarga_fuerza_revisor").empty();//quitamos los datos que hubiese
+			var rango_revisor=$(this).children().text();
+			//alert(rango_revisor);
+			$("#span_revisor").text(rango_revisor);
+			$.ajax({
+				url : "/redsocial/fuerza_revisor/",
+				data : {'rango':rango_revisor},
+				method:"GET",
+				//dataType : 'json', //add esto cuando vayamos a recivir del servidor un json
+				success : function(data) {
+					html = "";
+					for (i = 0; i < data.length; i++){
+						//TRATAMIENTO DE LA FECHA
+						//console.log(data[i].fields.fecha);
+						fecha =  new Date(data[i].fecha);
+						var options = {weekday: "long", year: "numeric", month: "long", day: "numeric"};
+						fecha=fecha.toLocaleDateString("es-ES", options);
+						fecha_string=fecha.split(",");
+						fecha_def=fecha_string[1];
+						//FIN TRATAMIENTO DEL FORMATO DE LA FECHA
+						html+="<tr><td><a href='/redsocial/by_revisor/"+data[i].revisor_nickname+"'>"+data[i].revisor_nickname +" ["+data[i].revisor_rango+"]</a></td>" //COMPLETAR EL JSON EN LA VISTA
+						+"<td><a href='/redsocial/jugadores/"+data[i].jugador_negro_id+"'>"+data[i].jugador_negro_nombre+" ["+data[i].rango_negro+"]</a></td>"
+						+"<td><a href='/redsocial/jugadores/"+data[i].jugador_blanco_id+"'>"+data[i].jugador_blanco_nombre+" ["+data[i].rango_blanco+"]</a></td>"
+						+"<td>"+fecha_def+"</td>"
+						+"<td>"+data[i].resultado+"</td>"
+						+"<td><a href='/redsocial/ver_partida/"+data[i].partida_id+"''>Visualizar</a></td></tr>";
+					}
+					html2="<div><a class='btn btn-primary' id='recargar_revisiones_fuerza_revisor' href=''>Recargar</a></div>";
+					$("#nuevos_datos_fuerza_revisor").append(html);
+					$("#boton_recarga_fuerza_revisor").append(html2);
+				}
+			});
+		});
+		//Funcion para recargar las siguientes partidas segun fuerza del revisor
+		$(document).on('click', "#recargar_revisiones_fuerza_revisor", function(event){
+			event.preventDefault();
+			if (hasNextPage_revisiones_by_revisor_fuerza === false) {
+				return false //ya no haria falta ya que al comprobar si son menos de diez se eliminara el boton
+			}
+			// Update the page number
+			pageNum_revisiones_by_revisor_fuerza = pageNum_revisiones_by_revisor_fuerza + 1;
+			//alert(pageNum_revisiones_by_revisor_fuerza);
+			var rango_revisor=$('#span_revisor').text();
+			$.ajax({
+				url :"/redsocial/fuerza_revisor/",
+				data : {
+					page_number : pageNum_revisiones_by_revisor_fuerza,
+					'rango':rango_revisor
+				},
+				method:"GET",
+				dataType : 'json', //add esto cuando vayamos a recivir del servidor un json
+				success : function(data) {
+					//alert(data.length);
+					if(data.length < 2){
+						//alert("No hay mas páginas");
+						$('#boton_recarga_fuerza_revisor').html("<div class='alert alert-info' role='alert'>Ya no hay más partidas que mostrar</div>");
+					}
+					hasNextPage = true;//.hasNext;
+					html = "";
+					console.log("Valor que tenia html: " + html);
+					for (i = 0; i < data.length; i++){
+								//TRATAMIENTO DE LA FECHA
+								fecha =  new Date(data[i].fecha);
+								var options = {weekday: "long", year: "numeric", month: "long", day: "numeric"};
+								fecha=fecha.toLocaleDateString("es-ES", options);
+								fecha_string=fecha.split(",");
+								fecha_def=fecha_string[1];
+								//FIN TRATAMIENTO DEL FORMATO DE LA FECHA
+								html+="<tr><td><a href='/redsocial/by_revisor/"+data[i].revisor_nickname+"'>"+data[i].revisor_nickname +" ["+data[i].revisor_rango+"]</a></td>" //COMPLETAR EL JSON EN LA VISTA
+								+"<td><a href='/redsocial/jugadores/"+data[i].jugador_negro_id+"'>"+data[i].jugador_negro_nombre+" ["+data[i].rango_negro+"]</a></td>"
+								+"<td><a href='/redsocial/jugadores/"+data[i].jugador_blanco_id+"'>"+data[i].jugador_blanco_nombre+" ["+data[i].rango_blanco+"]</a></td>"
+								+"<td>"+fecha_def+"</td>"
+								+"<td>"+data[i].resultado+"</td>"
+								+"<td><a href='/redsocial/ver_partida/"+data[i].partida_id+"''>Visualizar</a></td></tr>";
+					}
+					$("#nuevos_datos_fuerza_revisor").append(html);
+				},
+				error : function(data) {
+					hasNextPage_revisiones_by_revisor_fuerza = false;
+				},
+		        complete: function(data, textStatus){
+				}
+			});
+			
+		});
+		
+		//Funcion para coger partidas segun revisor en campo select
+		var pageNum_revisiones_by_revisor_select=1;
+		var hasNextPage_revisiones_by_revisor_select=true;
+		$(".selec_revisor").change(function(event){
+			pageNum_revisiones_by_revisor_select=1; //volvemos a poner a uno
+			$("#nuevos_datos_byRevisor").empty(); 
+			$("#boton_recarga_by_revisor").empty();//quitamos los datos que hubiese
+			//alert(pageNum_revisiones_by_revisor_select);
+			//alert("Entramos en select_revisor");
+			event.preventDefault();
+			var revisor=$(this).val();
+			//alert(revisor);
+			$.ajax({
+				url : "/redsocial/by_revisor/"+revisor+"/",
+				data : {},
+				method:"GET",
+				//dataType : 'json', //add esto cuando vayamos a recivir del servidor un json
+				success : function(data) {
+					html = "";
+					for (i = 0; i < data.length; i++){
+						//TRATAMIENTO DE LA FECHA
+						//console.log(data[i].fields.fecha);
+						fecha =  new Date(data[i].fecha);
+						var options = {weekday: "long", year: "numeric", month: "long", day: "numeric"};
+						fecha=fecha.toLocaleDateString("es-ES", options);
+						fecha_string=fecha.split(",");
+						fecha_def=fecha_string[1];
+						//FIN TRATAMIENTO DEL FORMATO DE LA FECHA
+						html+="<tr><td><a href='/redsocial/by_revisor/"+data[i].revisor_nickname+"'>"+data[i].revisor_nickname +" ["+data[i].revisor_rango+"]</a></td>" //COMPLETAR EL JSON EN LA VISTA
+						+"<td><a href='/redsocial/jugadores/"+data[i].jugador_negro_id+"'>"+data[i].jugador_negro_nombre+" ["+data[i].rango_negro+"]</a></td>"
+						+"<td><a href='/redsocial/jugadores/"+data[i].jugador_blanco_id+"'>"+data[i].jugador_blanco_nombre+" ["+data[i].rango_blanco+"]</a></td>"
+						+"<td>"+fecha_def+"</td>"
+						+"<td>"+data[i].resultado+"</td>"
+						+"<td><a href='/redsocial/ver_partida/"+data[i].partida_id+"''>Visualizar</a></td></tr>";
+					}
+					html2="<div><a class='btn btn-primary' id='recargar_revisiones_by_revisor' href=''>Recargar</a></div>";
+					$("#nuevos_datos_byRevisor").append(html);
+					$("#boton_recarga_by_revisor").append(html2);
+				}
+			});
+		});
+		//Funcion para recargar las siguientes partidas del revisor en el campo select
+		$(document).on('click', "#recargar_revisiones_by_revisor", function(event){
+			event.preventDefault();
+			console.log("Entramos en load items");
+			// If the next page doesn't exist, just quit now 
+			if (hasNextPage_revisiones_by_revisor_select === false) {
+				//alert("hasNextPage es false");
+				return false //ya no haria falta ya que al comprobar si son menos de diez se eliminara el boton
+			}
+			// Update the page number
+			pageNum_revisiones_by_revisor_select = pageNum_revisiones_by_revisor_select + 1;
+			//alert(pageNum_revisiones_by_revisor_select);
+			// Configure the url we're about to hit
+			var revisor=$('.selec_revisor').val();
+			$.ajax({
+				url :"/redsocial/by_revisor/"+revisor+"/",
+				data : {
+					page_number : pageNum_revisiones_by_revisor_select
+				},
+				method:"GET",
+				dataType : 'json', //add esto cuando vayamos a recivir del servidor un json
+				success : function(data) {
+					//alert(data.length);
+					if(data.length < 2){
+						//alert("No hay mas páginas");
+						$('#boton_recarga_by_revisor').html("<div class='alert alert-info' role='alert'>Ya no hay más partidas que mostrar</div>");
+					}
+					
+					//alert(JSON.stringify(data.fields));
+					//No se ejecuta lo de dentro y si el complete
+					//alert("entramos en success");
+					// Update global next page variable
+					hasNextPage = true;//.hasNext;
+					// Loop through all items
+					html = "";
+					console.log("Valor que tenia html: " + html);
+					//alert("Imprimimos json fields");
+					//alert(JSON.stringify(data.fields));
+					for (i = 0; i < data.length; i++){
+								//TRATAMIENTO DE LA FECHA
+								fecha =  new Date(data[i].fecha);
+								var options = {weekday: "long", year: "numeric", month: "long", day: "numeric"};
+								fecha=fecha.toLocaleDateString("es-ES", options);
+								fecha_string=fecha.split(",");
+								fecha_def=fecha_string[1];
+								//FIN TRATAMIENTO DEL FORMATO DE LA FECHA
+								html+="<tr><td><a href='/redsocial/by_revisor/"+data[i].revisor_nickname+"'>"+data[i].revisor_nickname +" ["+data[i].revisor_rango+"]</a></td>" //COMPLETAR EL JSON EN LA VISTA
+								+"<td><a href='/redsocial/jugadores/"+data[i].jugador_negro_id+"'>"+data[i].jugador_negro_nombre+" ["+data[i].rango_negro+"]</a></td>"
+								+"<td><a href='/redsocial/jugadores/"+data[i].jugador_blanco_id+"'>"+data[i].jugador_blanco_nombre+" ["+data[i].rango_blanco+"]</a></td>"
+								+"<td>"+fecha_def+"</td>"
+								+"<td>"+data[i].resultado+"</td>"
+								+"<td><a href='/redsocial/ver_partida/"+data[i].partida_id+"''>Visualizar</a></td></tr>";
+					}
+					$("#nuevos_datos_byRevisor").append(html);
+				},
+				error : function(data) {
+					// When I get a 400 back, fail safely
+					hasNextPage_revisiones_by_revisor_select = false;
+				},
+		        complete: function(data, textStatus){
+		            // Turn the scroll monitor back on
+		            //alert("Completado");
+				}
+			});
+			
+		});
+		
+		//Funcion para dejar de ser revision
+		$("#dejar_revisor").on('click', function(event){
+			event.preventDefault();
+			$.ajax({
+				url : "{% url 'redsocial:dejar_revisor' %}",
+				data : {},
+				method:"GET",
+				//dataType : 'json', //add esto cuando vayamos a recivir del servidor un json
+				success : function(data) {
+					var html="";
+					html+="<div class='alert alert-info' role='alert'>Aun no eres revisor</div>"
+						+"<form class='form-inline'><div class='form-group'>"
+						+"<label for='nick_revisor'>Selecciona tu nick: </label>"
+						+"<input type='text' class='form-control' id='nick_revisor' placeholder='Ichiro'></div>"
+						+"<button id='unirse_revisor' type='button' class='btn btn-info'>Unirse como revisor</button>"
+						+"</form>";
+					$("#cambiar_revisor").html(html);
+				}
+			});
+		});
+		
+		//Funcion para unirse a revisor
+		$("#unirse_revisor").on('click', function(event){
+			event.preventDefault();
+			
+			$.ajax({
+				url : "{% url 'redsocial:unirse_revisor' %}",
+				data : {'nick': $("#nick_revisor").attr("placeholder")},
+				method:"POST",
+				//dataType : 'json', //add esto cuando vayamos a recivir del servidor un json A LO MEJOR AL NO RECIBIR JSON DA PROBLEMA
+				success : function(data) {
+					var html="";
+					html+="<div class='alert alert-info' role='alert'>Ya eres revisor</div>"
+						+"<button id='dejar_revisor' type='button' class='btn btn-danger'>Dejar de ser revisor</button>";
+					$("#cambiar_revisor").html(html);
+				}
+			});
+		});
+		
+		//Funcion para recargar revisiones en la pestaña RECIENTES
+		var pageNum_revisiones_recientes=1;
+		var hasNextPage_revisiones_recientes=true;
+		$('#recargar_revisiones').on(
 				'click',
 				function(event) {
 					//alert("entramos en recargar");
 					event.preventDefault();
 					console.log("Entramos en load items");
 					// If the next page doesn't exist, just quit now 
-					if (hasNextPage === false) {
+					if (hasNextPage_revisiones_recientes === false) {
 						//alert("hasNextPage es false");
 						return false //ya no haria falta ya que al comprobar si son menos de diez se eliminara el boton
 					}
 					// Update the page number
-					pageNum = pageNum + 1;
+					pageNum_revisiones_recientes = pageNum_revisiones_recientes+ 1;
 					// Configure the url we're about to hit
 					$.ajax({
-						url : "{% url 'redsocial:partidas_ajax' %}",
+						url : "{% url 'redsocial:revisiones' %}",
 						data : {
-							page_number : pageNum
+							page_number : pageNum_revisiones_recientes
 						},
 						dataType : 'json', //add esto cuando vayamos a recivir del servidor un json
 						success : function(data) {
 							//alert(data.length);
-							if(data.length < 10){
+							if(data.length < 2){
 								//alert("No hay mas páginas");
-								$('#next').html("Ya no hay más partidas que mostrar");
+								$('#next').html("<div class='alert alert-info' role='alert'>Ya no hay más partidas que mostrar</div>");
 							}
 							
 							//alert(JSON.stringify(data.fields));
@@ -125,36 +688,25 @@
 							//alert("Imprimimos json fields");
 							//alert(JSON.stringify(data.fields));
 							for (i = 0; i < data.length; i++){
-								/*
-								html += "<tr>" + "<th>"
-								+ "<a href='redsocial/jugadores/"+ data[i].fields.jugador_negro[1] +"/'></a>"
-										+ data[i].fields.jugador_negro[0]+ "</th>"
-										+ "<th>" + data[i].fields.jugador_blanco[0]
-										+ "</th>" + "<th>" + data[i].fields.fecha
-										+ "</th>" + "<th>" + data[i].fields.resultado
-										+ "</th>" + "<th>"
-										+ data[i].fields.path+ "</th>"
-										+ "</tr>"; */
-								html+="<tr><td><a href='/redsocial/jugadores/"+data[i].fields.jugador_negro[1]+"'>"+data[i].fields.jugador_negro[0]+"</a></td>"
-								+"<td><a href='/redsocial/jugadores/"+data[i].fields.jugador_blanco[1]+"'>"+data[i].fields.jugador_blanco[0]+"</a></td>"
-								+"<td>"+data[i].fields.fecha+"</td>"
-								+"<td>"+data[i].fields.resultado+"</td>"
-								+"<td>"+data[i].fields.path+"</td>";
-										
-
-								/*
-								$("#newItems").before(
-								// Do something with your json object response
-									//console.log(i)
-									//console.log(data[i])
-									
-								);*/
+										//TRATAMIENTO DE LA FECHA
+										fecha =  new Date(data[i].fecha);
+										var options = {weekday: "long", year: "numeric", month: "long", day: "numeric"};
+										fecha=fecha.toLocaleDateString("es-ES", options);
+										fecha_string=fecha.split(",");
+										fecha_def=fecha_string[1];
+										//FIN TRATAMIENTO DEL FORMATO DE LA FECHA
+										html+="<tr><td><a href='/redsocial/by_revisor/"+data[i].revisor_nickname+"'>"+data[i].revisor_nickname +" ["+data[i].revisor_rango+"]</a></td>" //COMPLETAR EL JSON EN LA VISTA
+										+"<td><a href='/redsocial/jugadores/"+data[i].jugador_negro_id+"'>"+data[i].jugador_negro_nombre+" ["+data[i].rango_negro+"]</a></td>"
+										+"<td><a href='/redsocial/jugadores/"+data[i].jugador_blanco_id+"'>"+data[i].jugador_blanco_nombre+" ["+data[i].rango_negro+"]</a></td>"
+										+"<td>"+fecha_def+"</td>"
+										+"<td>"+data[i].resultado+"</td>"
+										+"<td><a href='/redsocial/ver_partida/"+data[i].partida_id+"''>Visualizar</a></td></tr>";
 							}
 							$("#nuevos_datos").append(html);
 						},
 						error : function(data) {
 							// When I get a 400 back, fail safely
-							hasNextPage = false;
+							hasNextPage_revisiones_recientes = false;
 						},
 				        complete: function(data, textStatus){
 				            // Turn the scroll monitor back on

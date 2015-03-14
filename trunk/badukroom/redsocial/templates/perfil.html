@@ -2,20 +2,19 @@
 {% load staticfiles %}
 
 {% block columna_principal %}
-{%for e in lista_dic_imagenes %} 
-<div class="jumbotron" style="background-image: url('{% static e.portada %}')">
+
+<div class="jumbotron" style="background-image: url('{% static perfil.path_portada %}')">
 	
-	<img id="imagen-principal" src='{% static e.perfil %}'>
+	<img id="imagen-principal" src='{% static perfil.path_principal %}'>
 	<!--  <img src="{% static e.portada %}"> -->
-	{% endfor %} 
+
 	
-	{% for e in lista_diccionario_comentarios %}
+
 	<div id="div_nombre">
-	<h2 class="h_nombre_perfil" id="nombre">{{e.perfil.user.first_name}}</h2>
-	<h2 class="h_nombre_perfil" id="apellidos">{{e.perfil.user.last_name}}</h2>
-	<!--  <h5 class="h_nombre_perfil" id="nick">@{e.perfil.user.username}</h5> -->
+	<h2 class="h_nombre_perfil" id="nombre">{{perfil.user.first_name}}</h2>
+	<h2 class="h_nombre_perfil" id="apellidos">{{perfil.user.last_name}}</h2>
 	</div>
-	{% endfor %}
+
 	
 			<div id="botones_portada">
 			<nav class="navbar navbar-default" id="nav_botones_portada">
@@ -35,7 +34,7 @@
 				    <li role="presentation"><a href="#grupos" aria-controls="grupos" role="tab" data-toggle="tab">Grupos</a></li>
 				  </ul>
 
-						</div>
+				</div>
 	</nav>
 			</div>
 
@@ -106,53 +105,51 @@
 			</form>
 		</div>
 	
-	{% for e in lista_diccionario_comentarios %}
-		{% for dic in e.comentarios %}
-			{%for e in lista_dic_imagenes %} 
+		<div id="nuevos_datos">
+			{%for c in comentarios %} 
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<img src='/static/{{e.perfil}}' width="40px" height="40px">
-					<h4>{{ dic.comentario.perfil.user.username }}</h4>
-					<h5>{{ dic.comentario.fecha}}</h5>
-					{% if dic.comentario.perfil.user.username == user.username %}
-						<a class="glyphicon glyphicon-remove eliminar_comentario /{{dic.comentario.id}}"></a>
+					<img src='/static/{{c.perfil.path_principal}}' width="40px" height="40px">
+					<h4>{{ c.perfil.user.username }}</h4>
+					<h4 class="fecha_comentario">{{ c.fecha|date:"d/m/y/H/i/s" }}</h4> <!-- Devolvemos la fecha en el mismo formato que con jquery -->
+					<!--  |date:"r" -->
+					<h5>{{ c.fecha}}</h5>
+					{% if c.perfil.user.username == user.username %}
+						<a class="glyphicon glyphicon-remove eliminar_comentario /{{c.id}}"></a>
 					{%endif%}
 				</div>
 				<div class="panel-body">
-						{{ dic.comentario.texto }}
-											{% if dic.comentario.partida.path != Null %}
-						<div data-wgo="/static/{{dic.comentario.partida.path}}">
+						{{ c.texto }}
+						{% if c.partida.path != Null %}
+						<div data-wgo="/static/{{c.partida.path}}">
 								Sorry, your browser doesn't support WGo.js. Download SGF <a
-								href="/static/{{dic.comentario.partida.path}}">directly</a>.
+								href="/static/{{c.partida.path}}">directly</a>.
 						</div>
 						
 						<div>
-						<a  href="/static/{{dic.comentario.partida.path}}" class="btn btn-info" role="button">Descargar</a>
+						<a  href="/static/{{c.partida.path}}" class="btn btn-info" role="button">Descargar</a>
 						</div>
 						{% endif %}
 				</div>
-						<!--  
-						<div data-wgo="/static/{{dic.comentario.partida.path}}">
-								Sorry, your browser doesn't support WGo.js. Download SGF <a
-								href="/static/{{dic.comentario.partida.path}}">directly</a>.
-						</div>
-				</div>
-				<a  href="/static/{{dic.comentario.partida.path}}" class="btn btn-info" role="button">Descargar</a>
-				-->
+
 				<div class="collapse navbar-collapse navbar-ex1-collapse">
 					<ul class="nav navbar-nav">
 						<li><a href="#">Me gusta</a></li>
 						<li><a id="#" href="#">Responder</a></li>
 					</ul>
 				</div>
-				{% for r in dic.respuestas %}
+				<!-- ESTO ES UNA PRUEBA -->
+				<div class="panel-body" id="div_body_respuesta">
+				{% for r in c.respuesta_set.all %}
 					<div class="panel-body" id="div_body_respuesta">
 					<img src='{% static r.perfil.path_principal %}' width="40px" height="40px">
 					{{ r.texto }}
+					<h4 class="fecha_comentario">{{ r.fecha|date:"d/m/y/H/i/s" }}</h4>
+					<!-- date:"d/m/y/H/i/s" -->
 					{% if r.partida.path != Null %}
 						<div data-wgo="/static/{{r.partida.path}}">
 								Sorry, your browser doesn't support WGo.js. Download SGF <a
-								href="/static/{{dic.comentario.partida.path}}">directly</a>.
+								href="/static/{{r.partida.path}}">directly</a>.
 						</div>
 						
 						<div>
@@ -160,22 +157,26 @@
 						</div>
 						{% endif %}
 					</div>
-				{% endfor %}
+				{% endfor%}
+				</div>
+				<!-- FIN DE LA PRUEBA -->
 				<div id="div_respuesta">
 					<img src='{% static user.perfil.path_principal %}' width="40px" height="40px">
 					<!--  <img src='/static/{{e.perfil}}' width="40px" height="40px"> -->
 					<form class="formulario_respuesta" id='formulario_respuesta' method="post" action="{% url 'redsocial:responder' %}" enctype="multipart/form-data">
 								{% csrf_token %} {{formulario_respuesta.as_p}}
 						<p>
-							<input class="{{dic.comentario.id}}" id='responder' type='submit' value='Responder' />
+							<input class="{{c.id}}" id='responder' type='submit' value='Responder' />
 						</p>
 					</form>
 					
 				</div>
 			</div>
 		{% endfor %} 
-	{% endfor %}
-{% endfor %}
+		</div>
+		<div id="next">
+			<a class="btn btn-primary" id="recargar_perfil" href="">Recargar</a>
+		</div>
     
     </div>
     <div role="tabpanel" class="tab-pane" id="informacion">
@@ -240,8 +241,9 @@
 
 {% block js2 %}
 <script type="text/javascript">
-	
-$(function(){
+
+$(document).ready(function(){
+	   //código a ejecutar cuando el DOM está listo para recibir instrucciones.
 	$.comentar();
 	$.buscador();
 	$.contar();
@@ -250,8 +252,334 @@ $(function(){
 	$.eliminar();
 	$.responder();
 	$.eliminar_comentario();
+	restarFecha();
+	
+	$('#recargar_perfil').on(
+			'click',
+			function(event) {
+				
+				//alert("entramos en recargar");
+				event.preventDefault();
+				console.log("Entramos en load items");
+				// If the next page doesn't exist, just quit now 
+				if (hasNextPage === false) {
+					//alert("hasNextPage es false");
+					return false //ya no haria falta ya que al comprobar si son menos de diez se eliminara el boton
+				}
+				// Update the page number
+				pageNum = pageNum + 1;
+				alert("Pagina a cargar: "+pageNum);
+				// Configure the url we're about to hit
+				$.ajax({
+					url : "{% url 'redsocial:perfil_ajax' perfil.user.username %}",
+					data : {
+						page_number : pageNum
+					},
+					dataType : 'json', //add esto cuando vayamos a recivir del servidor un json
+					success : function(data) {
+						
+						
+							
+						
+						alert("Funciona");
+						alert(data);
+						//alert(data.length);
+						if(data.length < 5){
+							//alert("No hay mas páginas");
+							$('#next').html("<div class='alert alert-info' role='alert'>Ya no hay más comentarios que mostrar</div>");
+						}
+						
+						//alert(JSON.stringify(data.fields));
+						//No se ejecuta lo de dentro y si el complete
+						//alert("entramos en success");
+						// Update global next page variable
+						hasNextPage = true;//.hasNext;
+						// Loop through all items
+						html = "";
+						console.log("Valor que tenia html: " + html);
+						//alert("Imprimimos json fields");
+						//alert(JSON.stringify(data.fields));
+						var html_lista_comentarios="";
+						for (i = 0; i < data.length; i++){
+							var html_comentario="<div class='panel panel-default'>";
+							var html_panelheading="";
+							var html_panelbody="";
+							var html_navbar="";
+							var html_lista_respuestas="";
+							
+							var html_form_respuesta="";
+							//TRATAMIENTO DE LA FECHA
+							//console.log(data[i].fields.fecha);
+							var fecha =  new Date(data[i].fecha);
+							/*
+							alert(fecha);
+							//console.log("Fecha: "+fecha.toUTCString());
+							var options = {weekday: "long", year: "numeric", month: "long", day: "numeric"};
+							var fecha1=fecha.toLocaleDateString("es-ES", options);
+							var fecha_string=fecha1.split(",");
+							
+							var options2 = {hour:"2-digit", minute:"2-digit"};
+							var tiempo=fecha.toLocaleTimeString("es-ES", options2);
+							var fecha_def=fecha_string[1]+" a la(s) "+tiempo;
+							*/
+							//console.log(fecha_def);
+							//FIN TRATAMIENTO DEL FORMATO DE LA FECHA
+							
+							//Creacion panelHeading
+							html_panelheading+="<div class='panel-heading'><img src='/static/"+data[i].path_principal+"' width='40px' height='40px'>"
+							+"<h4>"+data[i].nombre+"</h4><h4 class='fecha_comentario'>"+cambiar_fecha_ajax(fecha)+"</h4>";
+							
+							var username="{{user.username}}" //username del usuario logueado
+							if(data[i].username == username){
+								html_panelheading+="<a class='glyphicon glyphicon-remove eliminar_comentario /"+data[i].id+"'></a>"+"</div>";
+							}else{
+								html_panelheading+="</div>";
+							}
+							//Creacion panelBody
+							html_panelbody+="<div class='panel-body'>"+data[i].texto;
+							if(data[i].partida != ""){
+								html_panelbody+="<div data-wgo='/static/"+data[i].partida+"'></div>"
+								+"<div><a  href='/static/"+data[i].partida+"' class='btn btn-info' role='button'>Descargar</a></div>"+"</div>";
+							}else{
+								html_panelbody+="</div>";
+							}
+							//Creacion navbar me gusta
+							html_navbar+="<div class='collapse navbar-collapse navbar-ex1-collapse'>"
+							+"<ul class='nav navbar-nav'>"
+								+"<li><a href='#'>Me gusta</a></li>"
+								+"<li><a id='#' href='#'>Responder</a></li>"
+							+"</ul></div>";
+							//Creacion divs respuestas
+							html_lista_respuestas+="<div class='panel-body' id='div_body_respuesta'>";
+							for(j=0; j<data[i].respuestas.length; j++){
+								//console.log(data[i].respuestas[j].texto);
+								fechaR=new Date(data[i].respuestas[j].fecha);
+								var html_respuesta="";
+								html_respuesta+="<div class='panel-body' id='div_body_respuesta'>"
+								+"<img src='"+data[i].respuestas[j].imagen_perfil+"' width='40px' height='40px'>"
+								+"<h4 class='fecha_comentario'>"+cambiar_fecha_ajax(fechaR)+"</h4>"
+								+data[i].respuestas[j].texto;
+								//console.log(data[i].respuestas[j].partida);
+								if(data[i].respuestas[j].partida !=""){
+									//console.log("entramos en mostrar partida");
+									/*
+									html_respuesta+="<div class='wgo-player-main wgo-twocols wgo-large' data-wgo='/static/"+data[i].respuestas[j].partida+"'> Sorry, your browser doesn't support WGo.js. Download SGF <a href='/static/"+data[i].respuestas[j].partida+"'>directly</a>.</div>"
+									+"<div><a  href='/static/"+data[i].respuestas[j].partida+"' class='btn btn-info' role='button'>Descargar</a></div>"+"</div>";
+									*/
+									
+									html_respuesta+="<div class='player'>/static/"+data[i].respuestas[j].partida+"</div>"
+										+"<div><a  href='/static/"+data[i].respuestas[j].partida+"' class='btn btn-info' role='button'>Descargar</a></div>";
+								}else{
+									html_respuesta+= "</div>";
+								}
+								//html_lista_respuestas+=html_respuesta+"</div>";
+								html_lista_respuestas+=html_respuesta;
+							}
+							html_lista_respuestas+="</div>";
+							//Creacion formulario respuesta
+							var formulario='{{formulario_respuesta.as_p|escapejs}}';
+							var csrf_token="{% csrf_token %}";
+							html_form_respuesta+="<div id='div_respuesta'>"
+							+"<img src='{ static user.perfil.path_principal }' width='40px' height='40px'>"
+							+"<form class='formulario_respuesta' id='formulario_respuesta' method='post' action='/redsocial/responder/' enctype='multipart/form-data'>"
+							+ csrf_token + formulario
+							+"<p><input class='"+data[i].id+"' id='responder' type='submit' value='Responder' /></p>"
+							+"</form></div>";
+							//Se juntan todas las partes
+							html_comentario+=html_panelheading+html_panelbody+html_navbar+html_lista_respuestas;
+							html_lista_comentarios+=html_comentario+html_form_respuesta+"</div>"+"</div>";
+						}
+						html=html_lista_comentarios;
+						//Antes de crear los nuevos comentarios y respuestas cambiamos la clase player a los de la página anterior
+						$(".player").addClass("player2");
+						$(".player2").removeClass("player");
+						//Fin cambiar clase player
+						
+						$("#nuevos_datos").append(html);
+						
+						$( ".player" ).each(function( index ) {
+							console.log( index + ": " + $( this ).text() );
+							var elem = $(this);
+							console.log(elem);
+							var sgf = $(this).text();
+							console.log(sgf);
+							
+							var player= new WGo.BasicPlayer(this, {
+								sgfFile: $(this).text()
+								});
+							//player.loadSgf(sgf);
+							console.log("SGF CARGADO");
+							});
+						
+						/*
+						var elem=$("#player");
+						//var sgf = $(this).attr("class");
+						console.log(elem);
+						//console.log(sgf);
+						var sgf='/static/sgf/Quentin-ersev.sgf';
+						var player = new WGo.BasicPlayer(elem, {sgfFile: '/static/sgf/Quentin-ersev.sgf' });
+						console.log(player);
+						player.loadSgf(sgf);
+						*/
+						
+						
+					},
+					error : function(data) {
+						// When I get a 400 back, fail safely
+						hasNextPage = false;
+					},
+			        complete: function(data, textStatus){
+			            // Turn the scroll monitor back on
+			            //alert("Completado");
+;
+					}
+				});
+				//alert("Realizado con exito");
+			});
+	});
+	
+	
+/*
+$(function(){
+	
+	$.comentar();
+	$.buscador();
+	$.contar();
+	$.aceptarPeticion();
+	$.agregar();
+	$.eliminar();
+	$.responder();
+	$.eliminar_comentario();
+	
+	$('#recargar_perfil').on(
+			'click',
+			function(event) {
+				//alert("entramos en recargar");
+				event.preventDefault();
+				console.log("Entramos en load items");
+				// If the next page doesn't exist, just quit now 
+				if (hasNextPage === false) {
+					//alert("hasNextPage es false");
+					return false //ya no haria falta ya que al comprobar si son menos de diez se eliminara el boton
+				}
+				// Update the page number
+				pageNum = pageNum + 1;
+				// Configure the url we're about to hit
+				$.ajax({
+					url : "{% url 'redsocial:perfil_ajax' perfil.user.username %}",
+					data : {
+						page_number : pageNum
+					},
+					dataType : 'json', //add esto cuando vayamos a recivir del servidor un json
+					success : function(data) {
+						
+						alert("Funciona");
+						alert(data);
+						//alert(data.length);
+						if(data.length < 5){
+							//alert("No hay mas páginas");
+							$('#next').html("<div class='alert alert-info' role='alert'>Ya no hay más comentarios que mostrar</div>");
+						}
+						
+						//alert(JSON.stringify(data.fields));
+						//No se ejecuta lo de dentro y si el complete
+						//alert("entramos en success");
+						// Update global next page variable
+						hasNextPage = true;//.hasNext;
+						// Loop through all items
+						html = "";
+						console.log("Valor que tenia html: " + html);
+						//alert("Imprimimos json fields");
+						//alert(JSON.stringify(data.fields));
+						var html_lista_comentarios="";
+						for (i = 0; i < data.length; i++){
+							var html_comentario="<div class='panel panel-default'>";
+							var html_panelheading="";
+							var html_panelbody="";
+							var html_navbar="";
+							var html_lista_respuestas="";
+							var html_form_respuesta="";
+							//TRATAMIENTO DE LA FECHA
+							//console.log(data[i].fields.fecha);
+							fecha =  new Date(data[i].fecha);
+							//console.log("Fecha: "+fecha.toUTCString());
+							var options = {weekday: "long", year: "numeric", month: "long", day: "numeric"};
+							fecha=fecha.toLocaleDateString("es-ES", options);
+							fecha_string=fecha.split(",");
+							fecha_def=fecha_string[1];
+							//console.log(fecha_def);
+							//FIN TRATAMIENTO DEL FORMATO DE LA FECHA
+							
+							//Creacion panelHeading
+							html_panelheading+="<div class='panel-heading'><img src='/static/"+data[i].path_principal+"' width='40px' height='40px'>"
+							+"<h4>"+data[i].nombre+"</h4><h5>"+data[i].fecha+"</h5>";
+							
+							var username="{{user.username}}" //username del usuario logueado
+							if(data[i].username == username){
+								html_panelheading+="<a class='glyphicon glyphicon-remove eliminar_comentario /"+data[i].id+"'></a>"+"</div>";
+							}else{
+								html_panelheading+="</div>";
+							}
+							//Creacion panelBody
+							html_panelbody+="<div class='panel-body'>"+data[i].texto;
+							if(data[i].partida != ""){
+								html_panelbody+="<div data-wgo='/static/"+data[i].partida+"'></div>"
+								+"<div><a  href='/static/"+data[i].partida+"' class='btn btn-info' role='button'>Descargar</a></div>"+"</div>";
+							}else{
+								html_panelbody+="</div>";
+							}
+							//Creacion navbar me gusta
+							html_navbar+="<div class='collapse navbar-collapse navbar-ex1-collapse'>"
+							+"<ul class='nav navbar-nav'>"
+								+"<li><a href='#'>Me gusta</a></li>"
+								+"<li><a id='#' href='#'>Responder</a></li>"
+							+"</ul></div>";
+							//Creacion divs respuestas
+							html_lista_respuestas+="<div class='panel-body' id='div_body_respuesta'>";
+							for(j=0; j<data[i].respuestas; j++){
+								var html_respuesta="";
+								html_respuesta+="<div class='panel-body' id='div_body_respuesta'>"
+								+"<img src='"+data[i].respuestas[j].imagen_perfil+"' width='40px' height='40px'>"
+								+data[i].respuestas[j].texto;
+								
+								if(data[i].respuestas[j].partida !=""){
+									html_respuesta+="<div data-wgo='/static/"+data[i].partida+"'></div>"
+									+"<div><a  href='/static/"+data[i].partida+"' class='btn btn-info' role='button'>Descargar</a></div>"+"</div>";
+								}else{
+									html_respuesta+= "</div>";
+								}
+								html_lista_respuesta+=html_respuesta+"</div>";
+							}
+							//Creacion formulario respuesta
+							var formulario='{{formulario_respuesta.as_p|escapejs}}';
+							var csrf_token="{% csrf_token %}";
+							html_form_respuesta+="<div id='div_respuesta'>"
+							+"<img src='{ static user.perfil.path_principal }' width='40px' height='40px'>"
+							+"<form class='formulario_respuesta' id='formulario_respuesta' method='post' action='/redsocial/responder/' enctype='multipart/form-data'>"
+							+ csrf_token + formulario
+							+"<p><input class='"+data[i].id+"' id='responder' type='submit' value='Responder' /></p>"
+							+"</form></div>";
+							//Se juntan todas las partes
+							html_comentario+=html_panelheading+html_panelbody+html_navbar+html_lista_respuestas;
+							html_lista_comentarios+=html_comentario+html_form_respuesta+"</div>"+"</div>";
+						}
+						html=html_lista_comentarios;
+						$("#nuevos_datos").append(html);
+					},
+					error : function(data) {
+						// When I get a 400 back, fail safely
+						hasNextPage = false;
+					},
+			        complete: function(data, textStatus){
+			            // Turn the scroll monitor back on
+			            //alert("Completado");
+					}
+				});
+				//alert("Realizado con exito");
+			});
+	
 });
-
+	*/
 </script>
 
 {% endblock js2 %}

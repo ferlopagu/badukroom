@@ -4,7 +4,7 @@ Created on 21/01/2015
 @author: fla2727
 '''
 from django.conf.urls import patterns, url
-from redsocial.views import perfil, home, crea_comentario, buscador, agregar_ajax, contar_notificaciones, ver_notificaciones, aceptar_peticion, declinar_peticion, limpiar_notificaciones, eliminar_ajax, grupo, lista_grupos, responder, amigos, partidas, partidas_ajax, partidas_jugador, revisiones, crear_grupo, partidas_by_revisor, enviar_partida_revisar, aceptar_partida_revisar, ver_partida, eliminar_comentario_ajax
+from redsocial.views import perfil, home, crea_comentario, buscador, agregar_ajax, contar_notificaciones, ver_notificaciones, aceptar_peticion, declinar_peticion, limpiar_notificaciones, eliminar_ajax, grupo, lista_grupos, responder, amigos, partidas, partidas_ajax, partidas_jugador, revisiones, crear_grupo, partidas_by_revisor, enviar_partida_revisar, aceptar_partida_revisar, ver_partida, eliminar_comentario_ajax, perfil_ajax, home_ajax, crear_partida_repositorio, unirse_revisor, dejar_revisor, fuerza_revisor, fuerza_jugador
 from django.views.generic.base import TemplateView
 #from django.views.generic.base import TemplateView
 
@@ -34,5 +34,12 @@ urlpatterns = patterns ('' ,
     url(r'^enviar_partida_revisar/', enviar_partida_revisar, name="enviar_partida_revisar"),
     url(r'^aceptar_partida_revisar/(?P<username>\w+)/$', aceptar_partida_revisar, name="aceptar_partida_revisar"),
     url(r'^eliminar_comentario_ajax/', eliminar_comentario_ajax, name='eliminar_comentario_ajax'),
+    url(r'^perfil_ajax/(?P<username>\w+)/$', perfil_ajax, name="perfil_ajax"),
+    url(r'^home_ajax/', home_ajax, name="home_ajax"),
+    url(r'crear_partida_repositorio', crear_partida_repositorio, name="crear_partida_repositorio"),
+    url(r'unirse_revisor', unirse_revisor, name='unirse_revisor'),
+    url(r'dejar_revisor', dejar_revisor, name='dejar_revisor'),
+    url(r'fuerza_revisor', fuerza_revisor, name="fuerza_revisor"),
+    url(r'fuerza_jugador', fuerza_jugador, name="fuerza_jugador"),
     url(r'^(?P<username>\w+)/$', perfil, name='perfil'),     
 )

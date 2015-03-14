@@ -201,7 +201,9 @@ def informacion_partida(path):
 def informacion_partida2(lineas, path):
     """Recorremos las lineas para rellenar la informacion de cada partida"""
     pw=""
+    rw=""
     pb=""
+    rb=""
     date=""
     result=""
     for line in lineas:
@@ -212,12 +214,22 @@ def informacion_partida2(lineas, path):
                 for e in mo.groups():
                     pw=e
             #print "pw: "+str(pw)+"\n"+line
+        if rw=="" or rw==None:
+            mo = re.search("WR\[(\w*\s?\w*)\]", line)
+            if mo:
+                for e in mo.groups():
+                    rw=e
         if pb=="" or pb==None:
             #mo = re.search("PB\[(\w*)\]", line)
             mo = re.search("PB\[(\w*\s?\w*)\]", line)
             if mo:
                 for e in mo.groups():
                     pb=e
+        if rb=="" or rb==None:
+            mo = re.search("BR\[(\w*\s?\w*)\]", line)
+            if mo:
+                for e in mo.groups():
+                    rb=e
         if date=="" or date==None:
             mo = re.search("DT\[(\d+-\d+-\d+)]", line)
             if mo:
@@ -231,7 +243,9 @@ def informacion_partida2(lineas, path):
                     result=e
     dict_game={}
     dict_game["blanco"]=pw
+    dict_game["rango_blanco"]=rw
     dict_game["black"]=pb
+    dict_game["rango_negro"]=rb
     dict_game["fecha"]=date
     dict_game["result"]=result
     dict_game["path"]=path

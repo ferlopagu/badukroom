@@ -15,7 +15,7 @@ from django.contrib.auth.models import User
 import re
 from principal.metodosAux import informacion_partida, informacion_partida2, estamos_en_grupo
 from badukroom.settings import BASE_DIR
-from principal.models import Partida, Jugador, Revisor
+from principal.models import Partida, Jugador, Revisor, PartidaRepositorio
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.core.paginator import Paginator, InvalidPage
 import json
@@ -27,8 +27,107 @@ from redsocial.recomendacion import perfiles_gustos
 # Create your views here.
 #return render_to_response('inicio.html', locals())   
 
-#@login_required(login_url='/login')
 def perfil(request, username):
+    #p = get_object_or_404(Perfil, user__username=username) 
+    #comentarios=list(Comentario.objects.filter(perfil=p, grupo=None).order_by('fecha').reverse())
+    
+    p = get_object_or_404(Perfil, user__username=username) 
+    comentarios_list=list(Comentario.objects.filter(perfil=p, grupo=None).order_by('fecha').reverse())
+    paginator=Paginator(comentarios_list,5)
+    comentarios=paginator.page(1).object_list
+    
+    """comprobamos si el perfil que visualizamos somos nosotros, es un amigo o desconocido """
+    somos_nosotros=False
+    es_amigo=False
+    peticion_enviada=False
+    peticion_recibida=False
+    if username == request.user.username:
+        """ el perfil que vemos es el nuestro"""
+        somos_nosotros=True
+    else:
+        """comprobamos si es amigo"""
+        for amigo in p.amigos.all(): 
+            if amigo.user.username == request.user.username:
+                print request.user.username+" es amigo de "+amigo.user.username
+                es_amigo=True
+        if es_amigo==False:
+            """ si no es amigo tres casos:
+                    - Le hemos mandado una peticion de amistad, luego deberiamos ver 'La peticion fue enviada'
+                    - Hemos recibido una peticion suya, luego debemos ver 'Aceptar peticion' y 'Rechazar peticion'
+                    - No hay peticiones entre ambos, no somos amigos, luego debemos ver 'Agregar como amigo'
+            """
+            usuario_logueado= get_object_or_404(Perfil, user__username=request.user.username) 
+            if PeticionAmistad.objects.filter(emisor=usuario_logueado, receptor=p):
+                peticion_enviada=True
+                print 'Existe peticion de '+usuario_logueado.user.username+' a '+p.user.username
+            elif PeticionAmistad.objects.filter(emisor=p, receptor=usuario_logueado):
+                peticion_recibida=True
+                print 'Existe peticion de '+p.user.username+' a '+usuario_logueado.user.username
+            else:
+                print 'ni son amigos ni le envio la peticion'
+    """ FIN comprobamos si el perfil que visualizamos somos nosotros, es un amigo o desconocido """                       
+    diccionario_amigos={"somos_nosotros":somos_nosotros,"es_amigo":es_amigo, 'peticion_enviada':peticion_enviada, 'peticion_recibida':peticion_recibida}
+    lista_dic_amigo=[]
+    lista_dic_amigo.append(diccionario_amigos) #devolvemos lista con diccionario unico donde especifica si es amigo o no el perfil que visitamos
+    
+    amigos=p.amigos.all()
+    grupos=list(Grupo.objects.filter(miembros__user__username=p.user.username))
+    
+    formulario_respuesta=ComentarioForm() #formulario para responder a los comentarios
+    context = {'comentarios': comentarios, 'formulario_respuesta':formulario_respuesta,'lista_dic_amigo':lista_dic_amigo, 'perfil':p, 'amigos':amigos, 'grupos':grupos}
+    
+    if somos_nosotros==True: #somos nosotros luego add formulario para actualizar estado
+        formulario=ComentarioForm()
+        context['formulario']=formulario
+    return render_to_response('perfil.html',context,context_instance=RequestContext(request))
+
+def perfil_ajax(request, username):
+    p = get_object_or_404(Perfil, user__username=username) 
+    comentarios_list=list(Comentario.objects.filter(perfil=p, grupo=None).order_by('fecha').reverse())
+    paginator=Paginator(comentarios_list,5)
+    print("Entramos en perfil ajax")
+    if request.is_ajax():
+        if request.method=="GET":
+            if request.GET.get("page_number"):
+                print "entramos en get"
+                page_number=request.GET.get('page_number')
+                print page_number
+                try:
+                    comentarios=paginator.page(page_number).object_list
+                except InvalidPage:
+                    #return HttpResponseBadRequest(mimetype='json')
+                    comentarios=[]
+                lista_comentarios=[]
+                for c in comentarios:
+                    dic_comentario={}
+                    dic_comentario["id"]=c.id
+                    dic_comentario["nombre"]=c.perfil.user.first_name
+                    dic_comentario["username"]=c.perfil.user.username
+                    dic_comentario["path_principal"]=c.perfil.path_principal
+                    dic_comentario["grupo"]=c.grupo
+                    dic_comentario["fecha"]=c.fecha
+                    dic_comentario["texto"]=c.texto
+                    if c.partida != None:
+                        dic_comentario["partida"]=c.partida.path
+                    else:
+                        dic_comentario["partida"]=""
+                    resp=Respuesta.objects.filter(comentario=c)
+                    lista_respuestas=[]
+                    for r in resp:
+                        dic_respuesta={"texto":r.texto,"fecha":r.fecha, "imagen_perfil":r.perfil.path_principal}
+                        if r.partida != None:
+                            dic_respuesta["partida"]=r.partida.path
+                        else:
+                            dic_respuesta["partida"]=""
+                        lista_respuestas.append(dic_respuesta)
+                    dic_comentario["respuestas"]=lista_respuestas
+                    lista_comentarios.append(dic_comentario)
+                print JsonResponse(lista_comentarios, safe=False)
+                return JsonResponse(lista_comentarios, safe=False)
+
+
+#@login_required(login_url='/login')
+def perfil2(request, username):
     print request.user
  
     """
@@ -184,6 +283,111 @@ def comentarios_scroll(request):
 def home(request):
     #REvisar el bucle porque cuando no tiene amigos no muestra ni sus propios comentarios
     username=request.user.username
+    #lista_comentarios=[]
+    p = get_object_or_404(Perfil, user__username=username)
+    """
+    if p.amigos.all(): #si tiene amigos devolvemos los de sus amigos los suyos y actualizaciones en sus grupos
+        print "TIENE AMIGOS"
+        for amigo in p.amigos.all():
+            comentarios=Comentario.objects.filter(Q(perfil=amigo)|Q(perfil=p)|Q(grupo__miembros__user__username=p.user.username)).order_by('fecha').reverse()
+            for c in comentarios:
+                lista_comentarios.append(c)
+    else:#si no tiene amigos devolvemos los suyos y las actualizaciones en sus grupos
+        comentarios=Comentario.objects.filter(Q(perfil=p)| Q(grupo__miembros__user__username=p.user.username)).order_by('fecha').reverse()
+        for c in comentarios:
+            lista_comentarios.append(c)
+        print "NO TIENE AMIGOS"
+    print lista_comentarios
+    """
+    #lista_comentarios=list(Comentario.objects.filter( Q(perfil=p) | Q(perfil__in=p.amigos.all()) | Q(grupo__miembros=p) ).order_by('fecha').reverse())
+    """
+    Mostramos:
+    1- Actualizaciones nuestras
+    2- Actualizaciones de nuestros amigos en ningun grupo
+    3- Actualizaciones en nuestros grupos
+    """
+    lista_comentarios=list(Comentario.objects.filter( (Q(perfil=p) | Q(perfil__in=p.amigos.all(), grupo=None)) | Q(grupo__miembros=p)).distinct().order_by('fecha').reverse())
+    print lista_comentarios
+    paginator=Paginator(lista_comentarios,5)
+    comentarios=paginator.page(1).object_list
+    
+    #context = {'lista_comentarios': lista_comentarios}
+    formulario=ComentarioForm()
+    context = {'comentarios': comentarios,'formulario':formulario, 'perfil':p}
+    return render_to_response('home.html',context,context_instance=RequestContext(request))
+
+def home_ajax(request): #No se para que recojo la variable username si luego la redefino
+    username=request.user.username
+    comentarios_list=[]
+    p = get_object_or_404(Perfil, user__username=username)
+    """
+    if p.amigos.all(): #si tiene amigos devolvemos los de sus amigos los suyos y actualizaciones en sus grupos
+        print "TIENE AMIGOS"
+        for amigo in p.amigos.all():
+            comentarios=Comentario.objects.filter(Q(perfil=amigo)|Q(perfil=p)|Q(grupo__miembros__user__username=p.user.username)).order_by('fecha').reverse()
+            for c in comentarios:
+                comentarios_list.append(c)
+    else:#si no tiene amigos devolvemos los suyos y las actualizaciones en sus grupos
+        comentarios=Comentario.objects.filter(Q(perfil=p)| Q(grupo__miembros__user__username=p.user.username)).order_by('fecha').reverse()
+        for c in comentarios:
+            comentarios_list.append(c)
+        print "NO TIENE AMIGOS"
+    """
+    #lista_comentarios=Comentario.objects.filter((Q(perfil__amigos=p)|Q(perfil=p)),grupo__miembros=p).order_by('fecha').reverse()
+    comentarios_list=list(Comentario.objects.filter( (Q(perfil=p) | Q(perfil__in=p.amigos.all(), grupo=None)) | Q(grupo__miembros=p)).distinct().order_by('fecha').reverse())
+    
+    print comentarios_list
+    paginator=Paginator(comentarios_list,5)
+    
+    print("Entramos en perfil ajax")
+    if request.is_ajax():
+        if request.method=="GET":
+            if request.GET.get("page_number"):
+                print "entramos en get"
+                page_number=request.GET.get('page_number')
+                print page_number
+                try:
+                    comentarios=paginator.page(page_number).object_list
+                except InvalidPage:
+                    #return HttpResponseBadRequest(mimetype='json')
+                    comentarios=[]
+                lista_comentarios=[]
+                print comentarios
+                for c in comentarios:
+                    dic_comentario={}
+                    dic_comentario["id"]=c.id
+                    dic_comentario["nombre"]=c.perfil.user.first_name
+                    dic_comentario["username"]=c.perfil.user.username
+                    dic_comentario["path_principal"]=c.perfil.path_principal
+                    if c.grupo != None: #COMPROBAMOS SI EL GRUPO ES NONE
+                        dic_comentario["grupo"]=c.grupo.__unicode__()
+                    else:
+                        dic_comentario["grupo"]=c.grupo
+                    dic_comentario["fecha"]=c.fecha
+                    dic_comentario["texto"]=c.texto
+                    if c.partida != None:
+                        dic_comentario["partida"]=c.partida.path
+                    else:
+                        dic_comentario["partida"]=""
+                    resp=Respuesta.objects.filter(comentario=c)
+                    lista_respuestas=[]
+                    for r in resp:
+                        dic_respuesta={"texto":r.texto,"fecha":r.fecha, "imagen_perfil":r.perfil.path_principal}
+                        if r.partida != None:
+                            dic_respuesta["partida"]=r.partida.path
+                        else:
+                            dic_respuesta["partida"]=""
+                        lista_respuestas.append(dic_respuesta)
+                    dic_comentario["respuestas"]=lista_respuestas
+                    lista_comentarios.append(dic_comentario)
+                print lista_comentarios
+                return JsonResponse(lista_comentarios, safe=False)
+                print "no se retorna"
+
+@login_required(login_url='/login')
+def home2(request):
+    #REvisar el bucle porque cuando no tiene amigos no muestra ni sus propios comentarios
+    username=request.user.username
     lista_comentarios=[]
     p = get_object_or_404(Perfil, user__username=username)
     if p.amigos.all(): #si tiene amigos devolvemos los de sus amigos los suyos y actualizaciones en sus grupos
@@ -217,8 +421,6 @@ def home(request):
     formulario=ComentarioForm()
     context = {'lista_dic_commentarios_respuestas': lista_diccionario_comentarios_respuestas,'formulario':formulario}
     return render_to_response('home.html',context,context_instance=RequestContext(request))
-
-
     
 def crea_comentario(request):
     if request.is_ajax():
@@ -273,7 +475,7 @@ def crea_comentario(request):
                 path_fichero="sgf/"+nombre_fichero
                 """Fin seleccionar path correcto"""
                 partida = Partida(fecha=diccionario_informacion['fecha'], jugador_negro=jugador_negro, 
-                                  jugador_blanco=jugador_blanco, resultado=diccionario_informacion['result'], 
+                                  jugador_blanco=jugador_blanco,rango_negro=diccionario_informacion['rango_negro'],rango_blanco=diccionario_informacion['rango_blanco'], resultado=diccionario_informacion['result'], 
                                   fichero=request.FILES['fichero'])
                 partida.save()
                 #print partida.__unicode__()
@@ -382,7 +584,7 @@ def responder(request):
                 #jugador_blanco=Jugador(nombre=diccionario_informacion['blanco'])
                 #jugador_blanco.save()
                 partida = Partida(fecha=diccionario_informacion['fecha'], jugador_negro=jugador_negro, 
-                                  jugador_blanco=jugador_blanco, resultado=diccionario_informacion['result'], 
+                                  jugador_blanco=jugador_blanco,rango_negro=diccionario_informacion['rango_negro'],rango_blanco=diccionario_informacion['rango_blanco'], resultado=diccionario_informacion['result'], 
                                   fichero=request.FILES['fichero'])
                 partida.save()
                 print partida.__unicode__()
@@ -569,6 +771,61 @@ def limpiar_notificaciones(request):
         return HttpResponse('Error en la peticion Ajax')
            
 def grupo(request, grupo_id):
+    g = get_object_or_404(Grupo, pk=grupo_id)
+    comentarios_filter=list(Comentario.objects.filter(grupo=g).order_by('fecha').reverse())
+    paginator=Paginator(comentarios_filter,5)
+    lista_comentarios=paginator.page(1).object_list
+    if request.is_ajax():
+        if request.method=="GET":
+            if request.GET.get("page_number"):
+                page_number=request.GET.get('page_number')
+                try:
+                    comentarios=paginator.page(page_number).object_list
+                except InvalidPage:
+                    comentarios=[]
+                lista_comentarios=[]
+                for c in comentarios:
+                    dic_comentario={}
+                    dic_comentario["id"]=c.id
+                    dic_comentario["nombre"]=c.perfil.user.first_name
+                    dic_comentario["username"]=c.perfil.user.username
+                    dic_comentario["path_principal"]=c.perfil.path_principal
+                    if c.grupo != None: #COMPROBAMOS SI EL GRUPO ES NONE
+                        dic_comentario["grupo"]=c.grupo.__unicode__()
+                    else:
+                        dic_comentario["grupo"]=c.grupo
+                    dic_comentario["fecha"]=c.fecha
+                    dic_comentario["texto"]=c.texto
+                    if c.partida != None:
+                        dic_comentario["partida"]=c.partida.path
+                    else:
+                        dic_comentario["partida"]=""
+                    resp=Respuesta.objects.filter(comentario=c)
+                    lista_respuestas=[]
+                    for r in resp:
+                        dic_respuesta={"texto":r.texto,"fecha":r.fecha, "imagen_perfil":r.perfil.path_principal}
+                        if r.partida != None:
+                            dic_respuesta["partida"]=r.partida.path
+                        else:
+                            dic_respuesta["partida"]=""
+                        lista_respuestas.append(dic_respuesta)
+                    dic_comentario["respuestas"]=lista_respuestas
+                    lista_comentarios.append(dic_comentario)
+                print lista_comentarios
+                return JsonResponse(lista_comentarios, safe=False)
+    """ add form comentar"""
+    formulario=ComentarioForm()
+    """ comprobamos si el usuario es miembro o no del grupo """
+    miembro=False
+    p=get_object_or_404(Perfil, user__username=request.user.username)
+    if g.miembros.filter(user__username=p.user.username):
+        print "Somos miembros"
+        miembro=True
+    context = {'comentarios': lista_comentarios, 'formulario':formulario, 'grupo':g ,'miembro':miembro}
+    return render_to_response('grupo.html',context,context_instance=RequestContext(request))
+
+
+def grupo2(request, grupo_id):
     print request.user
     lista_diccionarios_def=[]
     g = get_object_or_404(Grupo, pk=grupo_id)
@@ -636,37 +893,20 @@ def amigos(request):
 def partidas(request):
     partidas=list(Partida.objects.all().order_by('fecha').reverse())
     paginator = Paginator(partidas, 10)
-    if request.is_ajax():
-        if request.method=="GET":
-            if request.GET.get('page_number'):
-                # Paginate based on the page number in the GET request
-                page_number = request.GET.get('page_number');
-                print page_number
-                try:
-                    page_objects = paginator.page(page_number).object_list
-                    print page_objects
-                except InvalidPage:
-                    return HttpResponseBadRequest(mimetype="json")
-                lista=[i for i in page_objects]
-                print lista
-                print "es lista"
-                print "Vamos a imprimir lista"
-                return HttpResponse("Prueba")
-                #print JsonResponse(lista, safe=False)
-                #print "es json"
-                #return JsonResponse(lista, safe=False)
-    else:
-        lista_partidas=paginator.page(1).object_list
-        """ Devolvemos diccionario con todos los jugadores del sistema nombres de jugadores"""
-        dic_jugadores={}
-        abecedario= ["A", "B", "C", "D", "E", "F", "G","H","I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
-        for letra in abecedario:
-            lista=list(Jugador.objects.filter(nombre__startswith=letra))
-            dic_jugadores[letra]=lista
-        print dic_jugadores
-        """ Fin devolver diccionario jugadores """
-        context ={'lista_partidas':lista_partidas, 'dic_jugadores':dic_jugadores}
-        return render_to_response('partidas.html', context, context_instance=RequestContext(request))
+
+    lista_partidas=paginator.page(1).object_list
+    """ Devolvemos diccionario con todos los jugadores del sistema nombres de jugadores"""
+    dic_jugadores={}
+    abecedario= ["A", "B", "C", "D", "E", "F", "G","H","I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
+    for letra in abecedario:
+        lista=list(Jugador.objects.filter(nombre__startswith=letra))
+        dic_jugadores[letra]=lista
+    print dic_jugadores
+    """ Fin devolver diccionario jugadores """
+    print lista
+    form=SgfForm()
+    context ={'lista_partidas':lista_partidas, 'dic_jugadores':dic_jugadores, 'form':form}
+    return render_to_response('partidas.html', context, context_instance=RequestContext(request))
     
 def partidas_ajax(request):
     #partidas=list(Partida.objects.values().order_by('fecha').reverse())
@@ -687,9 +927,6 @@ def partidas_ajax(request):
                     #puede ser que al ser multiplo de 10 ya no queden elementos en la pagina siguiente. Devolvemos lista vacia
                     page_objects=[]
                 lista=[i for i in page_objects]
-                print lista
-                print "es lista"
-                print "Vamos a imprimir lista"
                 #return JsonResponse(serializers.serialize('json',lista, use_natural_foreign_keys=True, safe=False)) esta opcion no funcionaba pusieramos en el codigo javascript que recibiamos json como si no
                 print HttpResponse(serializers.serialize('json',lista, use_natural_foreign_keys=True))
                 return HttpResponse(serializers.serialize('json',lista, use_natural_foreign_keys=True))
@@ -701,19 +938,87 @@ def partidas_jugador(request, id):
     return render_to_response('jugador.html', context, context_instance=RequestContext(request))
 
 def revisiones(request):
-    #p=Perfil.objects.get(user_username=request.user.username)
-    name='revisiones.html'
-    lista=list(Partida.objects.exclude(revisor=None))
-    form=EnvioForm()
-    #form.fields['revisor']=forms.Revisor.objects.all()
-    context={'partidas_revisadas':lista, 'form':form}
-    return render(request,name, context)
+    partidas=list(Partida.objects.exclude(revisor=None).order_by('fecha').reverse())
+    paginator = Paginator(partidas, 2)
+    if request.is_ajax():
+        if request.method=="GET":
+            page_number = request.GET.get('page_number');
+            try:
+                page_objects = paginator.page(page_number).object_list
+            except InvalidPage:
+                page_objects=[]
+            lista_partidas=[]
+            for p in page_objects:
+                dic_partida={}
+                dic_partida["revisor_nickname"]=p.revisor.nickname_kgs
+                dic_partida["revisor_rango"]=p.revisor.perfil.rango
+                dic_partida["jugador_negro_nombre"]=p.jugador_negro.nombre
+                dic_partida["jugador_negro_id"]=p.jugador_negro.id
+                dic_partida["jugador_blanco_nombre"]=p.jugador_blanco.nombre
+                dic_partida["jugador_blanco_id"]=p.jugador_blanco.id
+                dic_partida["rango_negro"]=p.rango_negro
+                dic_partida["rango_blanco"]=p.rango_blanco
+                dic_partida["fecha"]=p.fecha
+                dic_partida["resultado"]=p.resultado
+                dic_partida["partida_id"]=p.id
+                lista_partidas.append(dic_partida)
+            print lista_partidas
+            return JsonResponse(lista_partidas, safe=False)        
+    else:
+        soy_revisor=False
+        p=Perfil.objects.get(user__username=request.user.username)
+        if Revisor.objects.filter(perfil=p):
+            soy_revisor=True
+        name='revisiones.html'
+        lista=paginator.page(1).object_list
+        revisores=list(Revisor.objects.all())
+        form=EnvioForm()
+        #form.fields['revisor']=forms.Revisor.objects.all()
+        context={'partidas_revisadas':lista, 'form':form, 'revisores': revisores, 'soy_revisor':soy_revisor}
+        return render(request,name, context)
 
 def partidas_by_revisor(request, nickname_kgs):
+    print "Se llama a partidas_by_revisor"
+    partidas=list(Partida.objects.filter(revisor__nickname_kgs=nickname_kgs).order_by('fecha').reverse())
+    paginator = Paginator(partidas, 2)
+    if request.is_ajax():
+        if request.method=="GET":
+            page_number = request.GET.get('page_number');
+            try:
+                if page_number>1:
+                    page_objects = paginator.page(page_number).object_list
+                else:
+                    page_objects = paginator.page(1).object_list
+            except InvalidPage:
+                page_objects=[]
+            lista_partidas=[]
+            for p in page_objects:
+                dic_partida={}
+                dic_partida["revisor_nickname"]=p.revisor.nickname_kgs
+                dic_partida["revisor_rango"]=p.revisor.perfil.rango
+                dic_partida["jugador_negro_nombre"]=p.jugador_negro.nombre
+                dic_partida["jugador_negro_id"]=p.jugador_negro.id
+                dic_partida["jugador_blanco_nombre"]=p.jugador_blanco.nombre
+                dic_partida["jugador_blanco_id"]=p.jugador_blanco.id
+                dic_partida["rango_negro"]=p.rango_negro
+                dic_partida["rango_blanco"]=p.rango_blanco
+                dic_partida["fecha"]=p.fecha
+                dic_partida["resultado"]=p.resultado
+                dic_partida["partida_id"]=p.id
+                lista_partidas.append(dic_partida)
+            print lista_partidas
+            return JsonResponse(lista_partidas, safe=False)
+    else:
+        name='by_revisor.html'
+        lista=list(Partida.objects.filter(revisor__nickname_kgs=nickname_kgs))
+        context={'partidas_revisadas':lista}
+        return render(request, name, context)
+    """
     name='by_revisor.html'
     lista=list(Partida.objects.filter(revisor__nickname_kgs=nickname_kgs))
     context={'partidas_revisadas':lista}
     return render(request, name, context)
+    """
 
 def crear_grupo(request):
     if request.method=="POST":
@@ -772,7 +1077,7 @@ def enviar_partida_revisar(request):
             #jugador_blanco=Jugador(nombre=diccionario_informacion['blanco'])
             #jugador_blanco.save()
             partida = Partida(fecha=diccionario_informacion['fecha'], jugador_negro=jugador_negro, 
-                              jugador_blanco=jugador_blanco, resultado=diccionario_informacion['result'], 
+                              jugador_blanco=jugador_blanco, rango_negro=diccionario_informacion['rango_negro'],rango_blanco=diccionario_informacion['rango_blanco'], resultado=diccionario_informacion['result'], 
                               fichero=request.FILES['fichero'])
             partida.save()
             print partida.__unicode__()
@@ -815,7 +1120,7 @@ def aceptar_partida_revisar(request, username):
         #jugador_blanco=Jugador(nombre=diccionario_informacion['blanco'])
         #jugador_blanco.save()
         partida = Partida(fecha=diccionario_informacion['fecha'], jugador_negro=jugador_negro, 
-                          jugador_blanco=jugador_blanco, resultado=diccionario_informacion['result'], 
+                          jugador_blanco=jugador_blanco, rango_negro=diccionario_informacion['rango_negro'],rango_blanco=diccionario_informacion['rango_blanco'], resultado=diccionario_informacion['result'], 
                           fichero=request.FILES['fichero'], revisor=revisor)
         partida.save()
         print partida.__unicode__()
@@ -857,4 +1162,116 @@ def eliminar_comentario_ajax(request):
             return HttpResponse("Eliminado con éxito")
     else:
         return HttpResponse("Problema con peticion ajax")
+
+#AUN SIN COMPROBAR
+def crear_partida_repositorio(request):
+    if request.is_ajax():
+        if request.method=='POST':
+            profesionales=["1p", "2p", "3p", "4p", "5p", "6p", "7p", "8p", "9p"]
+            path_fichero=BASE_DIR+"/static/sgf/"+request.FILES['fichero'].__str__()
+            lineas=request.FILES['fichero'].chunks()
+            diccionario_informacion=informacion_partida2(lineas, path_fichero)
+            print diccionario_informacion
+            jugador_negro, created = Jugador.objects.get_or_create(nombre=diccionario_informacion['black'])
+            jugador_blanco, created = Jugador.objects.get_or_create(nombre=diccionario_informacion['blanco'])
+            partida = PartidaRepositorio(fecha=diccionario_informacion['fecha'], jugador_negro=jugador_negro, 
+                              jugador_blanco=jugador_blanco,rango_negro=diccionario_informacion['rango_negro'],rango_blanco=diccionario_informacion['rango_blanco'], resultado=diccionario_informacion['result'], 
+                              fichero=request.FILES['fichero'])
+            if partida.rango_negro in profesionales or partida.rango_blanco in profesionales:
+                partida.es_profesional=True
+            partida.save()
+            print partida.__unicode__()
+            print 'partida salvada con exito'
+            """ Fin crear la partida """
+            return HttpResponse("Ha sido un exito")
+        else:
+            print "no entramos en POST"
+    else:
+        print "no entramos en ajax"
+
+
+def unirse_revisor(request):
+    if request.is_ajax():
+        if request.method=='POST':
+            print request.POST
+            p=Perfil.objects.get(user__username=request.user.username)
+            revisor=Revisor(perfil=p, nickname_kgs=request.POST['nick'])
+            revisor.save()
+            print revisor.__unicode__()
+            return HttpResponse("Ha sido un exito")
+def dejar_revisor(request):
+    if request.is_ajax():
+        if request.method=='GET':
+            p=Perfil.objects.get(user__username=request.user.username)
+            revisor=Revisor.objects.get(perfil=p)
+            revisor.delete()
+            return HttpResponse("Ha sido un exito")
+
+def fuerza_revisor(request):  
+    if request.is_ajax():
+        if request.method=="GET":
+            page_number = request.GET.get('page_number');
+            try:
+                rango_revisor=request.GET.get('rango')
+                partidas=list(Partida.objects.filter(revisor__perfil__rango=rango_revisor).order_by('fecha').reverse())
+                paginator = Paginator(partidas, 2)
+                if page_number>1:
+                    page_objects = paginator.page(page_number).object_list
+                else:
+                    page_objects = paginator.page(1).object_list
+            except InvalidPage:
+                page_objects=[]
+            lista_partidas=[]
+            for p in page_objects:
+                dic_partida={}
+                dic_partida["revisor_nickname"]=p.revisor.nickname_kgs
+                dic_partida["revisor_rango"]=p.revisor.perfil.rango
+                dic_partida["jugador_negro_nombre"]=p.jugador_negro.nombre
+                dic_partida["jugador_negro_id"]=p.jugador_negro.id
+                dic_partida["jugador_blanco_nombre"]=p.jugador_blanco.nombre
+                dic_partida["jugador_blanco_id"]=p.jugador_blanco.id
+                dic_partida["rango_negro"]=p.rango_negro
+                dic_partida["rango_blanco"]=p.rango_blanco
+                dic_partida["fecha"]=p.fecha
+                dic_partida["resultado"]=p.resultado
+                dic_partida["partida_id"]=p.id
+                lista_partidas.append(dic_partida)
+            print lista_partidas
+            return JsonResponse(lista_partidas, safe=False)
+
+def fuerza_jugador(request):
+        if request.is_ajax():
+            if request.method=="GET":
+                page_number = request.GET.get('page_number');
+                try:
+                    rango_jugador=request.GET.get('rango')
+                    partidas=list(Partida.objects.filter(Q(rango_negro=rango_jugador)|Q(rango_blanco=rango_jugador)).exclude(revisor=None).order_by('fecha').reverse())
+                    print partidas
+                    paginator = Paginator(partidas, 2)
+                    if page_number>1:
+                        print "entro page_number mayor 1"
+                        page_objects = paginator.page(page_number).object_list
+                    else:
+                        print "entro en else"
+                        page_objects = paginator.page(1).object_list
+                except InvalidPage:
+                    page_objects=[]
+                print page_objects
+                lista_partidas=[]
+                for p in page_objects:
+                    dic_partida={}
+                    dic_partida["revisor_nickname"]=p.revisor.nickname_kgs
+                    dic_partida["revisor_rango"]=p.revisor.perfil.rango
+                    dic_partida["jugador_negro_nombre"]=p.jugador_negro.nombre
+                    dic_partida["jugador_negro_id"]=p.jugador_negro.id
+                    dic_partida["jugador_blanco_nombre"]=p.jugador_blanco.nombre
+                    dic_partida["jugador_blanco_id"]=p.jugador_blanco.id
+                    dic_partida["rango_negro"]=p.rango_negro
+                    dic_partida["rango_blanco"]=p.rango_blanco
+                    dic_partida["fecha"]=p.fecha
+                    dic_partida["resultado"]=p.resultado
+                    dic_partida["partida_id"]=p.id
+                    lista_partidas.append(dic_partida)
+                print lista_partidas
+                return JsonResponse(lista_partidas, safe=False)
     
