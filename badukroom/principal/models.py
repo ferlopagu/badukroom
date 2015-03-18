@@ -24,6 +24,7 @@ class Jugador(models.Model):
     objects = JugadorManager() #para la serializacion
     #primary_key=True
     nombre=models.CharField(max_length=50, unique=True)
+    es_profesional=models.BooleanField(default=False)
     
     def natural_key(self):
         return (self.nombre, self.id)
@@ -77,14 +78,7 @@ class Partida(models.Model):
             super(Partida, self).save(*args, **kwargs)
         else:
             super(Partida, self).save(*args, **kwargs)
-        
-        """
-        if self.path == "" or self.path==None:
-            print "modificamos el path"
-            self.path = 'sgf/'+self.fichero.name.__str__() #Sobreescribimos el save para que actualice el path con el nombre del fichero
-            super(Partida, self).save(*args, **kwargs)
-        else:
-            super(Partida, self).save(*args, **kwargs)
-        """
+
 class PartidaRepositorio(Partida):
     es_profesional=models.BooleanField(default=False)
+    

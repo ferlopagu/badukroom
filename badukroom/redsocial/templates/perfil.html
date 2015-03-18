@@ -131,13 +131,14 @@
 						</div>
 						{% endif %}
 				</div>
-
+				<!--  
 				<div class="collapse navbar-collapse navbar-ex1-collapse">
 					<ul class="nav navbar-nav">
 						<li><a href="#">Me gusta</a></li>
 						<li><a id="#" href="#">Responder</a></li>
 					</ul>
 				</div>
+				-->
 				<!-- ESTO ES UNA PRUEBA -->
 				<div class="panel-body" id="div_body_respuesta">
 				{% for r in c.respuesta_set.all %}
@@ -244,6 +245,196 @@
 
 $(document).ready(function(){
 	   //código a ejecutar cuando el DOM está listo para recibir instrucciones.
+	   
+	    var $win = $(window);
+
+        $win.scroll(function () {
+            /*if ($win.scrollTop() == 0)
+                alert('Scrolled to Page Top');
+            else*/ 
+            if ($win.height() + $win.scrollTop()
+                           == $(document).height()) {
+                //alert('Scrolled to Page Bottom');
+              //alert("entramos en recargar");
+				event.preventDefault();
+				console.log("Entramos en load items");
+				// If the next page doesn't exist, just quit now 
+				if (hasNextPage === false) {
+					//alert("hasNextPage es false");
+					return false //ya no haria falta ya que al comprobar si son menos de diez se eliminara el boton
+				}
+				// Update the page number
+				pageNum = pageNum + 1;
+				alert("Pagina a cargar: "+pageNum);
+				// Configure the url we're about to hit
+				$.ajax({
+					url : "{% url 'redsocial:perfil_ajax' perfil.user.username %}",
+					data : {
+						page_number : pageNum
+					},
+					dataType : 'json', //add esto cuando vayamos a recivir del servidor un json
+					success : function(data) {
+						
+						
+							
+						
+						alert("Funciona");
+						alert(data);
+						//alert(data.length);
+						if(data.length < 5){
+							//alert("No hay mas páginas");
+							$('#next').html("<div class='alert alert-info' role='alert'>Ya no hay más comentarios que mostrar</div>");
+						}
+						
+						//alert(JSON.stringify(data.fields));
+						//No se ejecuta lo de dentro y si el complete
+						//alert("entramos en success");
+						// Update global next page variable
+						hasNextPage = true;//.hasNext;
+						// Loop through all items
+						html = "";
+						console.log("Valor que tenia html: " + html);
+						//alert("Imprimimos json fields");
+						//alert(JSON.stringify(data.fields));
+						var html_lista_comentarios="";
+						for (i = 0; i < data.length; i++){
+							var html_comentario="<div class='panel panel-default'>";
+							var html_panelheading="";
+							var html_panelbody="";
+							var html_navbar="";
+							var html_lista_respuestas="";
+							
+							var html_form_respuesta="";
+							//TRATAMIENTO DE LA FECHA
+							//console.log(data[i].fields.fecha);
+							var fecha =  new Date(data[i].fecha);
+							/*
+							alert(fecha);
+							//console.log("Fecha: "+fecha.toUTCString());
+							var options = {weekday: "long", year: "numeric", month: "long", day: "numeric"};
+							var fecha1=fecha.toLocaleDateString("es-ES", options);
+							var fecha_string=fecha1.split(",");
+							
+							var options2 = {hour:"2-digit", minute:"2-digit"};
+							var tiempo=fecha.toLocaleTimeString("es-ES", options2);
+							var fecha_def=fecha_string[1]+" a la(s) "+tiempo;
+							*/
+							//console.log(fecha_def);
+							//FIN TRATAMIENTO DEL FORMATO DE LA FECHA
+							
+							//Creacion panelHeading
+							html_panelheading+="<div class='panel-heading'><img src='/static/"+data[i].path_principal+"' width='40px' height='40px'>"
+							+"<h4>"+data[i].nombre+"</h4><h4 class='fecha_comentario'>"+cambiar_fecha_ajax(fecha)+"</h4>";
+							
+							var username="{{user.username}}" //username del usuario logueado
+							if(data[i].username == username){
+								html_panelheading+="<a class='glyphicon glyphicon-remove eliminar_comentario /"+data[i].id+"'></a>"+"</div>";
+							}else{
+								html_panelheading+="</div>";
+							}
+							//Creacion panelBody
+							html_panelbody+="<div class='panel-body'>"+data[i].texto;
+							if(data[i].partida != ""){
+								html_panelbody+="<div data-wgo='/static/"+data[i].partida+"'></div>"
+								+"<div><a  href='/static/"+data[i].partida+"' class='btn btn-info' role='button'>Descargar</a></div>"+"</div>";
+							}else{
+								html_panelbody+="</div>";
+							}
+							//Creacion navbar me gusta
+							/*
+							html_navbar+="<div class='collapse navbar-collapse navbar-ex1-collapse'>"
+							+"<ul class='nav navbar-nav'>"
+								+"<li><a href='#'>Me gusta</a></li>"
+								+"<li><a id='#' href='#'>Responder</a></li>"
+							+"</ul></div>";
+							*/
+							//Creacion divs respuestas
+							html_lista_respuestas+="<div class='panel-body' id='div_body_respuesta'>";
+							for(j=0; j<data[i].respuestas.length; j++){
+								//console.log(data[i].respuestas[j].texto);
+								fechaR=new Date(data[i].respuestas[j].fecha);
+								var html_respuesta="";
+								html_respuesta+="<div class='panel-body' id='div_body_respuesta'>"
+								+"<img src='"+data[i].respuestas[j].imagen_perfil+"' width='40px' height='40px'>"
+								+"<h4 class='fecha_comentario'>"+cambiar_fecha_ajax(fechaR)+"</h4>"
+								+data[i].respuestas[j].texto;
+								//console.log(data[i].respuestas[j].partida);
+								if(data[i].respuestas[j].partida !=""){
+									//console.log("entramos en mostrar partida");
+									/*
+									html_respuesta+="<div class='wgo-player-main wgo-twocols wgo-large' data-wgo='/static/"+data[i].respuestas[j].partida+"'> Sorry, your browser doesn't support WGo.js. Download SGF <a href='/static/"+data[i].respuestas[j].partida+"'>directly</a>.</div>"
+									+"<div><a  href='/static/"+data[i].respuestas[j].partida+"' class='btn btn-info' role='button'>Descargar</a></div>"+"</div>";
+									*/
+									
+									html_respuesta+="<div class='player'>/static/"+data[i].respuestas[j].partida+"</div>"
+										+"<div><a  href='/static/"+data[i].respuestas[j].partida+"' class='btn btn-info' role='button'>Descargar</a></div>";
+								}else{
+									html_respuesta+= "</div>";
+								}
+								//html_lista_respuestas+=html_respuesta+"</div>";
+								html_lista_respuestas+=html_respuesta;
+							}
+							html_lista_respuestas+="</div>";
+							//Creacion formulario respuesta
+							var formulario='{{formulario_respuesta.as_p|escapejs}}';
+							var csrf_token="{% csrf_token %}";
+							html_form_respuesta+="<div id='div_respuesta'>"
+							+"<img src='{ static user.perfil.path_principal }' width='40px' height='40px'>"
+							+"<form class='formulario_respuesta' id='formulario_respuesta' method='post' action='/redsocial/responder/' enctype='multipart/form-data'>"
+							+ csrf_token + formulario
+							+"<p><input class='"+data[i].id+"' id='responder' type='submit' value='Responder' /></p>"
+							+"</form></div>";
+							//Se juntan todas las partes
+							html_comentario+=html_panelheading+html_panelbody+html_navbar+html_lista_respuestas;
+							html_lista_comentarios+=html_comentario+html_form_respuesta+"</div>"+"</div>";
+						}
+						html=html_lista_comentarios;
+						//Antes de crear los nuevos comentarios y respuestas cambiamos la clase player a los de la página anterior
+						$(".player").addClass("player2");
+						$(".player2").removeClass("player");
+						//Fin cambiar clase player
+						
+						$("#nuevos_datos").append(html);
+						
+						$( ".player" ).each(function( index ) {
+							console.log( index + ": " + $( this ).text() );
+							var elem = $(this);
+							console.log(elem);
+							var sgf = $(this).text();
+							console.log(sgf);
+							
+							var player= new WGo.BasicPlayer(this, {
+								sgfFile: $(this).text()
+								});
+							//player.loadSgf(sgf);
+							console.log("SGF CARGADO");
+							});
+						
+						/*
+						var elem=$("#player");
+						//var sgf = $(this).attr("class");
+						console.log(elem);
+						//console.log(sgf);
+						var sgf='/static/sgf/Quentin-ersev.sgf';
+						var player = new WGo.BasicPlayer(elem, {sgfFile: '/static/sgf/Quentin-ersev.sgf' });
+						console.log(player);
+						player.loadSgf(sgf);
+						*/
+						
+						
+					},
+					error : function(data) {
+						// When I get a 400 back, fail safely
+						hasNextPage = false;
+					},
+			        complete: function(data, textStatus){
+
+					}
+				});
+            }
+        });
+	   
+	   
 	$.comentar();
 	$.buscador();
 	$.contar();
@@ -344,11 +535,13 @@ $(document).ready(function(){
 								html_panelbody+="</div>";
 							}
 							//Creacion navbar me gusta
+							/*
 							html_navbar+="<div class='collapse navbar-collapse navbar-ex1-collapse'>"
 							+"<ul class='nav navbar-nav'>"
 								+"<li><a href='#'>Me gusta</a></li>"
 								+"<li><a id='#' href='#'>Responder</a></li>"
 							+"</ul></div>";
+							*/
 							//Creacion divs respuestas
 							html_lista_respuestas+="<div class='panel-body' id='div_body_respuesta'>";
 							for(j=0; j<data[i].respuestas.length; j++){
@@ -580,6 +773,11 @@ $(function(){
 	
 });
 	*/
+	
+	$(function () {
+
+    });
+	
 </script>
 
 {% endblock js2 %}

@@ -7,13 +7,13 @@ from redsocial.models import Comentario, Respuesta, PeticionAmistad, Notificacio
 from login.models import Perfil
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
-from redsocial.forms import ComentarioForm, GrupoForm, EnvioForm, SgfForm
+from redsocial.forms import ComentarioForm, GrupoForm, EnvioForm, SgfForm, FechasForm
 from django.http import JsonResponse
 from datetime import datetime
 from django.http.response import HttpResponseRedirect
 from django.contrib.auth.models import User
 import re
-from principal.metodosAux import informacion_partida, informacion_partida2, estamos_en_grupo
+from principal.metodosAux import informacion_partida, informacion_partida2, estamos_en_grupo, formatoFecha
 from badukroom.settings import BASE_DIR
 from principal.models import Partida, Jugador, Revisor, PartidaRepositorio
 from django.http import HttpResponse, HttpResponseBadRequest
@@ -891,21 +891,33 @@ def amigos(request):
     return render_to_response('amigos.html', context, context_instance=RequestContext(request))
 
 def partidas(request):
-    partidas=list(Partida.objects.all().order_by('fecha').reverse())
-    paginator = Paginator(partidas, 10)
-
-    lista_partidas=paginator.page(1).object_list
+    partidas_p=list(PartidaRepositorio.objects.filter(es_profesional=True).order_by('fecha').reverse())
+    paginator_p = Paginator(partidas_p, 10)
+    lista_partidas_profesionales=paginator_p.page(1).object_list
+    
+    partidas_a=list(PartidaRepositorio.objects.filter(es_profesional=False).order_by('fecha').reverse())
+    paginator_a = Paginator(partidas_a, 10)
+    lista_partidas_amateur=paginator_a.page(1).object_list
+    
     """ Devolvemos diccionario con todos los jugadores del sistema nombres de jugadores"""
-    dic_jugadores={}
+    dic_jugadores_p={}
+    dic_jugadores_a={}
     abecedario= ["A", "B", "C", "D", "E", "F", "G","H","I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
     for letra in abecedario:
-        lista=list(Jugador.objects.filter(nombre__startswith=letra))
-        dic_jugadores[letra]=lista
-    print dic_jugadores
+        lista_p=[]
+        lista_a=[]
+        for j in Jugador.objects.filter(nombre__startswith=letra):
+            if j.es_profesional==True:
+                lista_p.append(j)
+            else:
+                lista_a.append(j)
+        dic_jugadores_p[letra]=lista_p
+        dic_jugadores_a[letra]=lista_a
+    
     """ Fin devolver diccionario jugadores """
-    print lista
     form=SgfForm()
-    context ={'lista_partidas':lista_partidas, 'dic_jugadores':dic_jugadores, 'form':form}
+    form_fecha=FechasForm()
+    context ={'lista_partidas_profesionales':lista_partidas_profesionales, 'lista_partidas_amateur':lista_partidas_amateur,'dic_jugadores_p':dic_jugadores_p, 'dic_jugadores_a':dic_jugadores_a, 'form':form, 'form_fecha':form_fecha}
     return render_to_response('partidas.html', context, context_instance=RequestContext(request))
     
 def partidas_ajax(request):
@@ -1094,7 +1106,7 @@ def enviar_partida_revisar(request):
             notificacion2=Notificacion(receptor=p, mensaje="Tu partida ha sido asignada con éxito, te rogamos esperes unos días antes de volver a enviarla a otro revisor.")
             notificacion2.save()
             print "Notificaciones enviadas con exito"
-            return ver_notificaciones(request)
+            return ver_notificaciones(request) #ESTO HAY QUE CAMBIARLO
         else:
             print "Ya existe una revision pendiente"
             return ver_notificaciones(request)
@@ -1165,29 +1177,35 @@ def eliminar_comentario_ajax(request):
 
 #AUN SIN COMPROBAR
 def crear_partida_repositorio(request):
-    if request.is_ajax():
-        if request.method=='POST':
-            profesionales=["1p", "2p", "3p", "4p", "5p", "6p", "7p", "8p", "9p"]
-            path_fichero=BASE_DIR+"/static/sgf/"+request.FILES['fichero'].__str__()
-            lineas=request.FILES['fichero'].chunks()
-            diccionario_informacion=informacion_partida2(lineas, path_fichero)
-            print diccionario_informacion
-            jugador_negro, created = Jugador.objects.get_or_create(nombre=diccionario_informacion['black'])
-            jugador_blanco, created = Jugador.objects.get_or_create(nombre=diccionario_informacion['blanco'])
-            partida = PartidaRepositorio(fecha=diccionario_informacion['fecha'], jugador_negro=jugador_negro, 
-                              jugador_blanco=jugador_blanco,rango_negro=diccionario_informacion['rango_negro'],rango_blanco=diccionario_informacion['rango_blanco'], resultado=diccionario_informacion['result'], 
-                              fichero=request.FILES['fichero'])
-            if partida.rango_negro in profesionales or partida.rango_blanco in profesionales:
-                partida.es_profesional=True
-            partida.save()
-            print partida.__unicode__()
-            print 'partida salvada con exito'
-            """ Fin crear la partida """
-            return HttpResponse("Ha sido un exito")
-        else:
-            print "no entramos en POST"
+    if request.method=='POST':
+        profesionales=["1p", "2p", "3p", "4p", "5p", "6p", "7p", "8p", "9p"]
+        path_fichero=BASE_DIR+"/static/sgf/"+request.FILES['fichero'].__str__()
+        lineas=request.FILES['fichero'].chunks()
+        diccionario_informacion=informacion_partida2(lineas, path_fichero)
+        print diccionario_informacion
+        jugador_negro, created = Jugador.objects.get_or_create(nombre=diccionario_informacion['black'])
+        jugador_blanco, created = Jugador.objects.get_or_create(nombre=diccionario_informacion['blanco'])
+        partida = PartidaRepositorio(fecha=diccionario_informacion['fecha'], jugador_negro=jugador_negro, 
+                          jugador_blanco=jugador_blanco,rango_negro=diccionario_informacion['rango_negro'],rango_blanco=diccionario_informacion['rango_blanco'], resultado=diccionario_informacion['result'], 
+                          fichero=request.FILES['fichero'])
+        if partida.rango_negro in profesionales:
+            jugador_negro.es_profesional=True
+            jugador_negro.save()
+            partida.es_profesional=True
+        if partida.rango_blanco in profesionales:
+            jugador_blanco.es_profesional=True
+            jugador_blanco.save()
+            partida.es_profesional=True
+        partida.save()
+        print partida.__unicode__()
+        print 'partida salvada con exito'
+        """ Fin crear la partida """
+        #return HttpResponse("Ha sido un exito")
+        name="partidas.html"
+        context={}
+        return render(request,name, context)
     else:
-        print "no entramos en ajax"
+        print "no entramos en POST"
 
 
 def unirse_revisor(request):
@@ -1274,4 +1292,81 @@ def fuerza_jugador(request):
                     lista_partidas.append(dic_partida)
                 print lista_partidas
                 return JsonResponse(lista_partidas, safe=False)
-    
+
+def recargar_repositorio_ajax(request):
+    if request.is_ajax():
+        if request.method=="GET":
+            if request.GET.get('page_number'):
+                if request.GET.get('profesional'):
+                    partidas=list(PartidaRepositorio.objects.filter(es_profesional=True).order_by('fecha').reverse())
+                    paginator = Paginator(partidas, 10)
+                    print "recargamos las profesionales"
+                else: #pedimos recargar el amateur
+                    partidas=list(PartidaRepositorio.objects.filter(es_profesional=False).order_by('fecha').reverse())
+                    paginator = Paginator(partidas, 10)
+                    print "recargamos las amateur"
+                page_number = request.GET.get('page_number');
+                print page_number
+                try:
+                    page_objects = paginator.page(page_number).object_list
+                    print page_objects
+                except InvalidPage:
+                    #return HttpResponseBadRequest(mimetype="json")
+                    #puede ser que al ser multiplo de 10 ya no queden elementos en la pagina siguiente. Devolvemos lista vacia
+                    page_objects=[]
+                lista=[i for i in page_objects]
+                #return JsonResponse(serializers.serialize('json',lista, use_natural_foreign_keys=True, safe=False)) esta opcion no funcionaba pusieramos en el codigo javascript que recibiamos json como si no
+                print HttpResponse(serializers.serialize('json',lista, use_natural_foreign_keys=True))
+                return HttpResponse(serializers.serialize('json',lista, use_natural_foreign_keys=True))
+
+def partidas_entre_fechas(request):
+    if request.is_ajax():
+        if request.method=="GET":
+            print request.GET
+            lista_partidas=[]
+            fecha_inicio=formatoFecha(request.GET.get('id_inicio'))
+            print fecha_inicio
+            fecha_fin=formatoFecha(request.GET.get('id_fin'))
+            print fecha_fin
+
+            partidas=list(PartidaRepositorio.objects.filter(fecha__range=[fecha_inicio, fecha_fin]).order_by("fecha").reverse())
+            print partidas
+            paginator = Paginator(partidas, 2)
+            if request.GET.get('page_number'):
+                page_number=request.GET.get('page_number')
+                page_objects = paginator.page(page_number).object_list
+                print "entremos con pagenumber"
+            else:
+                page_objects = paginator.page(1).object_list
+                print "entramos sin page number"
+            for p in page_objects:
+                dic_partida={}
+                dic_partida["jugador_negro_nombre"]=p.jugador_negro.nombre
+                dic_partida["jugador_negro_id"]=p.jugador_negro.id
+                dic_partida["jugador_blanco_nombre"]=p.jugador_blanco.nombre
+                dic_partida["jugador_blanco_id"]=p.jugador_blanco.id
+                dic_partida["rango_negro"]=p.rango_negro
+                dic_partida["rango_blanco"]=p.rango_blanco
+                dic_partida["fecha"]=p.fecha
+                dic_partida["resultado"]=p.resultado
+                dic_partida["partida_id"]=p.id
+                lista_partidas.append(dic_partida)
+            print lista_partidas
+            return JsonResponse(lista_partidas, safe=False)
+
+def rest_perfil(request, username):
+    p = get_object_or_404(Perfil, user__username=username)
+    dic={}
+    dic["username"]=username
+    dic["nombre"]=p.user.first_name+" "+p.user.last_name
+    dic["rango"]=p.rango
+    dic["fecha_nacimiento"]=p.fecha_nacimiento
+    dic["imagen_principal"]=p.path_principal
+    amigos=[]
+    for a in p.amigos.all():
+        dic_amigo={}
+        dic_amigo['username']=a.user.username
+        dic_amigo['nombre']=a.user.first_name+" "+a.user.last_name
+        amigos.append(dic_amigo)
+    dic["amigos"]=amigos
+    return JsonResponse(dic)

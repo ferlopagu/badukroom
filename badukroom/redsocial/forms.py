@@ -7,7 +7,8 @@ from django import forms
 from django.forms import ModelForm
 from redsocial.models import Comentario, Respuesta, Grupo
 from principal.models import Revisor
-
+import datetime
+from datetime import date
 """
 class ComentarioForm(ModelForm):
     class Meta:
@@ -36,3 +37,7 @@ class EnvioForm(forms.Form):
 
 class SgfForm(forms.Form):
     fichero=forms.FileField(label="Sgf", required=True)
+
+class FechasForm(forms.Form):
+    inicio=forms.DateField(initial='01/01/1875',required=True)
+    fin=forms.DateField(initial=datetime.datetime.now(),required=True)

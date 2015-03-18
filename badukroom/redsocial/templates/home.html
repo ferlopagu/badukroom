@@ -36,12 +36,6 @@
 						{% endif %}
 				</div>
 
-				<div class="collapse navbar-collapse navbar-ex1-collapse">
-					<ul class="nav navbar-nav">
-						<li><a href="#">Me gusta</a></li>
-						<li><a id="#" href="#">Responder</a></li>
-					</ul>
-				</div>
 				<!-- ESTO ES UNA PRUEBA -->
 				<div class="panel-body" id="div_body_respuesta">
 				{% for r in c.respuesta_set.all %}
@@ -217,11 +211,13 @@
 								
 								
 								//Creacion navbar me gusta
+								/*
 								html_navbar+="<div class='collapse navbar-collapse navbar-ex1-collapse'>"
 								+"<ul class='nav navbar-nav'>"
 									+"<li><a href='#'>Me gusta</a></li>"
 									+"<li><a id='#' href='#'>Responder</a></li>"
 								+"</ul></div>";
+								*/
 								//Creacion divs respuestas
 								html_lista_respuestas+="<div class='panel-body' id='div_body_respuesta'>";
 								for(j=0; j<data[i].respuestas.length; j++){

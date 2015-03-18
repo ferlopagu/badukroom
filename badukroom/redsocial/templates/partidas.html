@@ -60,11 +60,11 @@
 							<th>Partida</th>
 						</tr>
 					</thead>
-					<tbody id="nuevos_datos">
-						{% for p in lista_partidas %}
+					<tbody id="nuevos_datos_pro">
+						{% for p in lista_partidas_profesionales %}
 							<tr>
-								<td><a href="{% url 'redsocial:partidas_jugador' p.jugador_negro.id %}">{{p.jugador_negro}}</a></td>
-								<td><a href="{% url 'redsocial:partidas_jugador' p.jugador_blanco.id %}">{{p.jugador_blanco}}</a></td>
+								<td><a href="{% url 'redsocial:partidas_jugador' p.jugador_negro.id %}">{{p.jugador_negro}} [{{p.rango_negro}}]</a></td>
+								<td><a href="{% url 'redsocial:partidas_jugador' p.jugador_blanco.id %}">{{p.jugador_blanco}} [{{p.rango_blanco}}]</a></td>
 								<td>{{p.fecha}}</td>
 								<td>{{p.resultado}}</td>
 								<td><a href="{% url 'redsocial:ver_partida' p.id %}">Visualizar</a></td>
@@ -72,13 +72,37 @@
 						{% endfor %}
 					</tbody>
 				</table>
-				<div id="next">
-					<a class="btn btn-primary" id="recargar" href="">Recargar</a>
+				<div id="next_pro">
+					<a class="btn btn-primary" id="recargar_repositorio_pro" href="">Recargar</a>
 				</div>
 			</div>
 			
     		<div role="tabpanel" class="tab-pane" id="amateur">
-    		<h1>Falta diferenciar las partidas entre profesionales y amateur en lo que a VISTA se refiere</h1>
+    			<table class="table">
+					<thead>
+						<tr>
+							<th>Jugador Negro</th>
+							<th>Jugador Blanco</th>
+							<th>Fecha</th>
+							<th>Resultado</th>
+							<th>Partida</th>
+						</tr>
+					</thead>
+					<tbody id="nuevos_datos_am">
+						{% for p in lista_partidas_amateur %}
+							<tr>
+								<td><a href="{% url 'redsocial:partidas_jugador' p.jugador_negro.id %}">{{p.jugador_negro}} [{{p.rango_negro}}]</a></td>
+								<td><a href="{% url 'redsocial:partidas_jugador' p.jugador_blanco.id %}">{{p.jugador_blanco}} [{{p.rango_blanco}}]</a></td>
+								<td>{{p.fecha}}</td>
+								<td>{{p.resultado}}</td>
+								<td><a href="{% url 'redsocial:ver_partida' p.id %}">Visualizar</a></td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+				<div id="next_am">
+					<a class="btn btn-primary" id="recargar_repositorio_amateur" href="">Recargar</a>
+				</div>
     		</div>
     	</div>
 		
@@ -95,7 +119,7 @@
 		</nav>
 		<div class="tab-content">
     		<div role="tabpanel" class="tab-pane active" id="jug_profesionales">
-				{% for key, values in dic_jugadores.items %}
+				{% for key, values in dic_jugadores_p.items %}
 					<div class="panel panel-info" style="display: inline-table">
 						<div class='panel-heading' id="{{key}}">
 							<a href="#{{key}}">{{key}}</a>
@@ -110,15 +134,53 @@
 			</div>
 			
 			<div role="tabpanel" class="tab-pane" id="jug_amateur">
-				<p>Falta diferenciar los jugadores profesionales de los amateur</p>
+				<div role="tabpanel" class="tab-pane active" id="jug_profesionales">
+					{% for key, values in dic_jugadores_a.items %}
+						<div class="panel panel-info" style="display: inline-table">
+							<div class='panel-heading' id="{{key}}">
+								<a href="#{{key}}">{{key}}</a>
+							</div>
+							{% for jugador in values %}
+							<div class="panel-body">
+								<a href="{% url 'redsocial:partidas_jugador' jugador.id %}">{{jugador.nombre}}</a>
+							</div>
+							{% endfor %}
+						</div>
+					{%endfor%}
+				</div>
 			</div>
 		</div>
 	</div>
 			
 
 	<div role="tabpanel" class="tab-pane" id="avanzada">
-		<h5>Estamos en BUSQUEDA AVANZADA</h5>
-		Fecha: <input type="date" step="1" min="1714-01-01" max="2020-12-31" value="2015-01-01">
+		    {% block fechas %}
+		    <form id="formulario_fechas" class="form form-inline" role="form" method="GET" autocomplete="off">
+		        {% csrf_token %}
+		        {% bootstrap_field form_fecha.inicio  size='sm' %}
+		        {% bootstrap_field form_fecha.fin size='sm' %}
+		        {% bootstrap_form_errors form layout='inline' %}
+		        {% buttons submit='Actualizar' %}{% endbuttons %}
+		    </form>
+			{% endblock %}
+		
+		<table class="table">
+					<thead>
+						<tr>
+							<th>Jugador Negro</th>
+							<th>Jugador Blanco</th>
+							<th>Fecha</th>
+							<th>Resultado</th>
+							<th>Partida</th>
+						</tr>
+					</thead>
+					<tbody id="nuevos_datos_fechas">
+					</tbody>
+				</table>
+		
+		
+		<div id='next_partida_fechas'>
+		</div>
 	</div>
 </div>
 
@@ -135,6 +197,201 @@
 		$.responder();
 		$.recargar();
 		
+		//Funcion para recargar revisiones en la pestaña RECIENTES
+		var pageNum_repositorio_pro=1;
+		var hasNextPage_repositorio_pro=true;
+		$('#recargar_repositorio_pro').on(
+				'click',
+				function(event) {
+					event.preventDefault();
+					console.log("Entramos en load items");
+					// Update the page number
+					pageNum_repositorio_pro = pageNum_repositorio_pro + 1;
+					// Configure the url we're about to hit
+					$.ajax({
+						url : "{% url 'redsocial:recargar_repositorio_ajax' %}",
+						data : {
+							page_number : pageNum_repositorio_pro,
+							'profesional':'lo es'
+						},
+						dataType : 'json', //add esto cuando vayamos a recivir del servidor un json
+						success : function(data) {
+							if(data.length < 2){
+								$('#next_pro').html("<div class='alert alert-info' role='alert'>Ya no hay más partidas que mostrar</div>");
+							}
+							// Loop through all items
+							html = "";
+							console.log("Valor que tenia html: " + html);
+							for (i = 0; i < data.length; i++){
+										//TRATAMIENTO DE LA FECHA
+										fecha =  new Date(data[i].fecha);
+										var options = {weekday: "long", year: "numeric", month: "long", day: "numeric"};
+										fecha=fecha.toLocaleDateString("es-ES", options);
+										fecha_string=fecha.split(",");
+										fecha_def=fecha_string[1];
+										//FIN TRATAMIENTO DEL FORMATO DE LA FECHA
+										html+="<tr><td><a href='/redsocial/jugadores/"+data[i].jugador_negro_id+"'>"+data[i].jugador_negro_nombre+" ["+data[i].rango_negro+"]</a></td>"
+										+"<td><a href='/redsocial/jugadores/"+data[i].jugador_blanco_id+"'>"+data[i].jugador_blanco_nombre+" ["+data[i].rango_negro+"]</a></td>"
+										+"<td>"+fecha_def+"</td>"
+										+"<td>"+data[i].resultado+"</td>"
+										+"<td><a href='/redsocial/ver_partida/"+data[i].partida_id+"''>Visualizar</a></td></tr>";
+							}
+							$("#nuevos_datos_pro").append(html);
+						},
+						error : function(data) {
+							// When I get a 400 back, fail safely
+						},
+				        complete: function(data, textStatus){
+				            // Turn the scroll monitor back on
+				            //alert("Completado");
+						}
+					});
+					//alert("Realizado con exito");
+				});
+		
+		//Funcion para recargar repositorio amateur 
+		var pageNum_repositorio_amateur=1;
+		$('#recargar_repositorio_amateur').on(
+				'click',
+				function(event) {
+					//alert("entramos en recargar");
+					event.preventDefault();
+					// Update the page number
+					pageNum_repositorio_amateur = pageNum_repositorio_amateur + 1;
+					// Configure the url we're about to hit
+					$.ajax({
+						url : "{% url 'redsocial:recargar_repositorio_ajax' %}",
+						data : {
+							page_number : pageNum_repositorio_amateur
+						},
+						dataType : 'json', //add esto cuando vayamos a recivir del servidor un json
+						success : function(data) {
+							//alert(data.length);
+							if(data.length < 2){
+								$('#next_am').html("<div class='alert alert-info' role='alert'>Ya no hay más partidas que mostrar</div>");
+							}
+							// Loop through all items
+							html = "";
+							console.log("Valor que tenia html: " + html);
+							for (i = 0; i < data.length; i++){
+										//TRATAMIENTO DE LA FECHA
+										fecha =  new Date(data[i].fecha);
+										var options = {weekday: "long", year: "numeric", month: "long", day: "numeric"};
+										fecha=fecha.toLocaleDateString("es-ES", options);
+										fecha_string=fecha.split(",");
+										fecha_def=fecha_string[1];
+										//FIN TRATAMIENTO DEL FORMATO DE LA FECHA
+										html+="<tr><td><a href='/redsocial/jugadores/"+data[i].jugador_negro_id+"'>"+data[i].jugador_negro_nombre+" ["+data[i].rango_negro+"]</a></td>"
+										+"<td><a href='/redsocial/jugadores/"+data[i].jugador_blanco_id+"'>"+data[i].jugador_blanco_nombre+" ["+data[i].rango_negro+"]</a></td>"
+										+"<td>"+fecha_def+"</td>"
+										+"<td>"+data[i].resultado+"</td>"
+										+"<td><a href='/redsocial/ver_partida/"+data[i].partida_id+"''>Visualizar</a></td></tr>";
+							}
+							$("#nuevos_datos_am").append(html);
+						},
+						error : function(data) {
+							// When I get a 400 back, fail safely
+						},
+				        complete: function(data, textStatus){
+				            // Turn the scroll monitor back on
+				            //alert("Completado");
+						}
+					});
+					//alert("Realizado con exito");
+				});
+		
+		//Traer las partidas entre dos fechas
+		$("#formulario_fechas").on('submit', function(event){
+			alert("Enviamos formulario fechas");
+			$('#next_partida_fechas').empty();
+			event.preventDefault();
+			var inicio=$('#id_inicio').val();
+			var fin=$('#id_fin').val();
+			alert(inicio);
+			$.ajax({ // create an AJAX call...
+				url: "{% url 'redsocial:partidas_entre_fechas' %}",
+				type: "GET",
+				data:{'id_inicio':inicio, 'id_fin':fin},
+				success: function(data){ // on success..
+					if(data.length < 2){
+						$('#next_partida_fechas').html("<div class='alert alert-info' role='alert'>Ya no hay más partidas que mostrar</div>");
+					}else{
+						html2="<div><a class='btn btn-primary' id='recargar_repositorio_fechas' href=''>Recargar</a></div>";
+						$('#next_partida_fechas').html(html2);
+					}
+					// Loop through all items
+					html = "";
+					console.log("Valor que tenia html: " + html);
+					for (i = 0; i < data.length; i++){
+								//TRATAMIENTO DE LA FECHA
+								fecha =  new Date(data[i].fecha);
+								var options = {weekday: "long", year: "numeric", month: "long", day: "numeric"};
+								fecha=fecha.toLocaleDateString("es-ES", options);
+								fecha_string=fecha.split(",");
+								fecha_def=fecha_string[1];
+								//FIN TRATAMIENTO DEL FORMATO DE LA FECHA
+								html+="<tr><td><a href='/redsocial/jugadores/"+data[i].jugador_negro_id+"'>"+data[i].jugador_negro_nombre+" ["+data[i].rango_negro+"]</a></td>"
+								+"<td><a href='/redsocial/jugadores/"+data[i].jugador_blanco_id+"'>"+data[i].jugador_blanco_nombre+" ["+data[i].rango_negro+"]</a></td>"
+								+"<td>"+fecha_def+"</td>"
+								+"<td>"+data[i].resultado+"</td>"
+								+"<td><a href='/redsocial/ver_partida/"+data[i].partida_id+"''>Visualizar</a></td></tr>";
+					}
+					$("#nuevos_datos_fechas").append(html);
+				}  
+			});
+		});
+		
+		//recargar partidas entre dos fechas
+		var pageNum_repositorio_fechas=1;
+		$(document).on('click', "#recargar_repositorio_fechas", function(event){
+		//$('#recargar_repositorio_fechas').on(
+				//'click',
+				//function(event) {
+					event.preventDefault();
+					alert("Entramos a recargar fechas");
+					pageNum_repositorio_fechas = pageNum_repositorio_fechas + 1;
+					var inicio=$('#id_inicio').val();
+					var fin=$('#id_fin').val();
+					$.ajax({
+						url : "{% url 'redsocial:partidas_entre_fechas' %}",
+						data : {
+							page_number : pageNum_repositorio_fechas, 'id_inicio':inicio, 'id_fin':fin
+						},
+						dataType : 'json', //add esto cuando vayamos a recivir del servidor un json
+						success : function(data) {
+							if(data.length < 2){
+								$('#next_partida_fechas').html("<div class='alert alert-info' role='alert'>Ya no hay más partidas que mostrar</div>");
+							}
+							html = "";
+							for (i = 0; i < data.length; i++){
+										//TRATAMIENTO DE LA FECHA
+										fecha =  new Date(data[i].fecha);
+										var options = {weekday: "long", year: "numeric", month: "long", day: "numeric"};
+										fecha=fecha.toLocaleDateString("es-ES", options);
+										fecha_string=fecha.split(",");
+										fecha_def=fecha_string[1];
+										//FIN TRATAMIENTO DEL FORMATO DE LA FECHA
+										html+="<tr><td><a href='/redsocial/jugadores/"+data[i].jugador_negro_id+"'>"+data[i].jugador_negro_nombre+" ["+data[i].rango_negro+"]</a></td>"
+										+"<td><a href='/redsocial/jugadores/"+data[i].jugador_blanco_id+"'>"+data[i].jugador_blanco_nombre+" ["+data[i].rango_negro+"]</a></td>"
+										+"<td>"+fecha_def+"</td>"
+										+"<td>"+data[i].resultado+"</td>"
+										+"<td><a href='/redsocial/ver_partida/"+data[i].partida_id+"''>Visualizar</a></td></tr>";
+							}
+							$("#nuevos_datos_fechas").append(html);
+						},
+						error : function(data) {
+							// When I get a 400 back, fail safely
+						},
+				        complete: function(data, textStatus){
+				            // Turn the scroll monitor back on
+				            //alert("Completado");
+						}
+					});
+					//alert("Realizado con exito");
+				});
+		
+		
+		/*
 		$('#recargar').on(
 				'click',
 				function(event) {
@@ -188,7 +445,7 @@
 								//FIN TRATAMIENTO DEL FORMATO DE LA FECHA
 								
 								
-								/*
+								*
 								html += "<tr>" + "<th>"
 								+ "<a href='redsocial/jugadores/"+ data[i].fields.jugador_negro[1] +"/'></a>"
 										+ data[i].fields.jugador_negro[0]+ "</th>"
@@ -197,7 +454,7 @@
 										+ "</th>" + "<th>" + data[i].fields.resultado
 										+ "</th>" + "<th>"
 										+ data[i].fields.path+ "</th>"
-										+ "</tr>"; */
+										+ "</tr>"; *
 								html+="<tr><td><a href='/redsocial/jugadores/"+data[i].fields.jugador_negro[1]+"'>"+data[i].fields.jugador_negro[0]+"</a></td>"
 								+"<td><a href='/redsocial/jugadores/"+data[i].fields.jugador_blanco[1]+"'>"+data[i].fields.jugador_blanco[0]+"</a></td>"
 								+"<td>"+fecha_def+"</td>"
@@ -207,13 +464,13 @@
 								
 								
 
-								/*
+								*
 								$("#newItems").before(
 								// Do something with your json object response
 									//console.log(i)
 									//console.log(data[i])
 									
-								);*/
+								);*
 							}
 							$("#nuevos_datos").append(html);
 						},
@@ -228,6 +485,7 @@
 					});
 					//alert("Realizado con exito");
 				});
+		*/
 	});
 </script>
 
