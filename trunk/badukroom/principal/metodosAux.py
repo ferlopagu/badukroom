@@ -397,3 +397,11 @@ def descarga_sgf():
     #wget -A pdf,jpg -m -p -E -k -K -np http://site/path/
     os.system('wget -A sgf,SGF -r -l 1  %s' % url)
 #descarga_sgf()
+
+#recibimos una cadena 'dd/mm/yyyy' retorna 'yyyy-mm-dd'
+def formatoFecha(cadena):
+    array=cadena.split("/")
+    fecha=array[2]+"-"+array[1]+"-"+array[0]
+    return fecha
+
+    
