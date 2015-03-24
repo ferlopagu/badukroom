@@ -1,8 +1,0 @@
-User-agent: *
-Allow: /
-User-agent: Fitter, happier, more productive, 
-Allow: /
-User-agent: comfortable,not drinking too much, regular exercise at the gym
-Allow: /
-
-
