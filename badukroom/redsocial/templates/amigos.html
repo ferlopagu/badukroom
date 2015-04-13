@@ -59,7 +59,7 @@
 										{%if tupla.0 != 0 %}
 										<div class="panel panel-default" style="display: inline-table">
 											<div class='panel-heading'>
-												<img src='/static/{{p.1.path_principal}}' width="40px" height="40px">
+												<img src='/static/{{tupla.1.path_principal}}' width="40px" height="40px">
 												<a href="/redsocial/{{tupla.1.user.username}}">{{ tupla.1.user.first_name }} {{tupla.1.user.last_name}}</a>
 											</div>
 											<div class="panel-body">
@@ -80,3 +80,4 @@
 								
 								
 								{%endblock%}
+

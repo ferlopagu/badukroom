@@ -87,6 +87,7 @@ def topMatches(prefs, person, n=4, similarity=similitud, jugadores=jugadores):
     scores.reverse()
     return scores[0:n] #Con esto podriamos recomendar personas con mayor similitud contigo en los ghustos por los jugadores
 
+""" Este metodo nos devuelve las personas """
 def getRecommendations(person, prefs=critics, similarity=similitud, jugadores=jugadores): #aparentemente pondera bien
     totals={}
     simSums={}
@@ -195,7 +196,7 @@ def getRecommendations_jugadores(person, dic_gustos , similarity=similitud_gusto
 def perfiles_amigos():
     diccionario_gustos={}
     #lista= list(Perfil.objects.all().filter(Q(amigos__in = perfil.amigos.all())| Q(id=perfil.id)))
-    for p in Perfil.objects.all():
+    for p in Perfil.objects.all(): #Excluir del diccionario los perfiles a mis amigos quizas
         diccionario_gustos[p]=list(p.amigos.all())
     print diccionario_gustos
     return diccionario_gustos
@@ -209,26 +210,31 @@ def similitud_amigos_comun_2(diccionario_amigos, person1, person2):
 
 def topMatches_amigos_comun(diccionario_amigos, person, n=4, similarity=similitud_amigos_comun_2):
     #scores=[(similarity(jugadores, prefs, person, other), other) for other in prefs if other != person]
-    scores=[(similarity(diccionario_amigos, person, other), other) for other in diccionario_amigos if other != person]
+    scores=[(similarity(diccionario_amigos, person, other), other) for other in diccionario_amigos if other != person] #Quizas Comprobar que no existe other en los amigos de person Menos Probable probar primero modificar diccionario
     scores.sort()
     scores.reverse()
     return scores[0:n] #Con esto podriamos recomendar personas con mayor similitud contigo en los ghustos por los jugadores
 """ Fin recomendar perfiles segun amigos en comun """
 
 if __name__ == '__main__':
+    #""" PRUEBAS BASE DE DATOS
     import django
     django.setup()
     perfil1=Perfil.objects.get(user__username='fla2727')
+    """
     diccionario_amigos=perfiles_amigos()
     perfil2=Perfil.objects.get(user__username='lolo')
     print(similitud_amigos_comun_2(diccionario_amigos, perfil1, perfil2))
     lista=topMatches_amigos_comun(diccionario_amigos, perfil1)
     for e in lista:
         print e
-    #dic_gustos=perfiles_gustos()
+    """
+    dic_gustos=perfiles_gustos()
     #similitud_gustos(dic_gustos, perfil1, perfil2)
-    #print topMatches_gustos(dic_gustos, perfil1)
-    #print(getRecommendations_jugadores(perfil1, dic_gustos))
+    print topMatches_gustos(dic_gustos, perfil1) #devuelve los perfiles mas afines segun jugadores en comun
+    print(getRecommendations_jugadores(perfil1, dic_gustos)) #Nos devuleve Los jugadores recomendados por los perfiles mas afines
+    diccionario_amigos=perfiles_amigos()
+    print topMatches_amigos_comun(diccionario_amigos, perfil1) #Devuelve perfiles con quien tenemos mas amigos en comun
     """
     print critics
     #print(sim_distance(critics, 'Fla', 'Priscila'))
@@ -239,3 +245,4 @@ if __name__ == '__main__':
     similitud_amigos_comun(lista_amigos,amigos, 'Fla', 'Antonio')
     print topMatches(amigos, 'Fla',4, similitud_amigos_comun, lista_amigos)
     """
+    

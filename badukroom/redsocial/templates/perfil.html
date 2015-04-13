@@ -256,7 +256,7 @@ $(document).ready(function(){
                            == $(document).height()) {
                 //alert('Scrolled to Page Bottom');
               //alert("entramos en recargar");
-				event.preventDefault();
+				//event.preventDefault();
 				console.log("Entramos en load items");
 				// If the next page doesn't exist, just quit now 
 				if (hasNextPage === false) {
@@ -265,7 +265,7 @@ $(document).ready(function(){
 				}
 				// Update the page number
 				pageNum = pageNum + 1;
-				alert("Pagina a cargar: "+pageNum);
+				//alert("Pagina a cargar: "+pageNum);
 				// Configure the url we're about to hit
 				$.ajax({
 					url : "{% url 'redsocial:perfil_ajax' perfil.user.username %}",
@@ -274,12 +274,8 @@ $(document).ready(function(){
 					},
 					dataType : 'json', //add esto cuando vayamos a recivir del servidor un json
 					success : function(data) {
-						
-						
-							
-						
-						alert("Funciona");
-						alert(data);
+						//alert("Funciona");
+						//alert(data);
 						//alert(data.length);
 						if(data.length < 5){
 							//alert("No hay mas páginas");

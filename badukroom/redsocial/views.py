@@ -24,6 +24,7 @@ from django.template.defaultfilters import safe
 from django.views.generic.base import TemplateView
 from .recomendacion import perfiles_amigos, topMatches_amigos_comun, topMatches_gustos, getRecommendations_jugadores
 from redsocial.recomendacion import perfiles_gustos
+from login.forms import PerfilForm, UserForm
 # Create your views here.
 #return render_to_response('inicio.html', locals())   
 
@@ -1370,3 +1371,45 @@ def rest_perfil(request, username):
         amigos.append(dic_amigo)
     dic["amigos"]=amigos
     return JsonResponse(dic)
+
+#PAGINA DE CONFIGURACION
+"""
+class MyForm(forms.ModelForm):
+
+    class Meta:
+    model = MyModel
+
+# views.py  
+
+
+@login_required
+def update_profile_view(request):
+    try:
+        profile = Profile.objects.get(user=request.user)
+    except Profile.DoesNotExist:
+        profile = None
+
+    form = ProfileForm(request.POST or None, instance=profile)
+
+    if request.method == 'POST':            
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/main_page/')
+    return render(request, 'update_profile.html', {'form':form})
+
+
+"""
+@login_required
+def configuracion(request): 
+    instance_perfil = Perfil.objects.get(user=request.user)
+    instance_user = User.objects.get(id=instance_perfil.user.id)
+    form_perfil = PerfilForm(request.POST or None,request.FILES or None, instance=instance_perfil)
+    form_user=UserForm(request.POST or None, instance=instance_user)
+    if request.method=='POST':
+        if form_perfil.is_valid() and form_user.is_valid():
+            form_perfil.save()
+            form_user.save()
+            return HttpResponse('salvado con exito la informacion')
+    context={'form_perfil': form_perfil, 'form_user':form_user}
+    name='configuracion.html'
+    return render(request,name, context)
