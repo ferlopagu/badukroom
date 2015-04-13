@@ -1,0 +1,21 @@
+{% extends "base_perfil_home.html" %} 
+{% block columna_principal %}
+	{# Load the tag library #} 
+	{% load bootstrap3 %} 
+	{# Display django.contrib.messages as Bootstrap alerts #} 
+	{% bootstrap_messages %}
+		<div class="well">
+		<form id='formulario_actualizacion' method="post"
+						enctype="multipart/form-data" action=''>
+								{% csrf_token %} {% bootstrap_form form_user layout='horizontal' size="sm" %} 
+								{% csrf_token %} {% bootstrap_form form_perfil layout='vertical' size="sm" %} 
+		{% buttons  layout='vertical'%}
+		<button type="submit" class="btn btn-primary" name='actualizar_perfil'>{% bootstrap_icon "star" %}Guardar cambios</button>
+		{% endbuttons %}
+	
+					</form>
+		</div>
+										
+								
+{%endblock%}
+
