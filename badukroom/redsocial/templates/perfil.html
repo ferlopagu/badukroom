@@ -42,9 +42,8 @@
 
 <div id="botones">
 		{% for option in lista_dic_amigo %} 
-			{% if option.somos_nosotros == True %}
-				<h6></h6>
-				<!-- Esta opcion sobra -->
+			{% if somos_nosotros == True %}
+				<!-- No add boton -->
 			{% elif option.es_amigo == True %} 
 				<a id="eliminar" href="#" class="btn btn-info" role="button">Eliminar amigo</a> 
 			{% elif option.peticion_enviada == True %} 
@@ -95,7 +94,7 @@
 
 <div class="tab-content">
     <div role="tabpanel" class="tab-pane active" id="tablon">
-	    
+	    {% if somos_nosotros == True %}
 	    <div class="well">
 			<form id='formulario' method="post" action="{% url 'redsocial:creaComentario' %}" enctype="multipart/form-data">
 				{% csrf_token %} {{formulario.as_p}}
@@ -104,6 +103,7 @@
 				</p>
 			</form>
 		</div>
+		{% endif %} 
 	
 		<div id="nuevos_datos">
 			{%for c in comentarios %} 

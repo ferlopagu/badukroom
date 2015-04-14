@@ -1,0 +1,95 @@
+{% extends "base_perfil_home.html" %}
+{% load staticfiles %}
+{% block columna_principal %}
+
+<h2>Mensajes</h2>
+
+<ul class="nav nav-tabs" role="tablist">
+	<li role="presentation" class="active"><a href="#bandeja" aria-controls="bandeja" role="tab" data-toggle="tab">Bandeja de Entrada</a></li>
+	<li role="presentation"><a href="#otros" aria-controls="otros" role="tab" data-toggle="tab">Otros</a></li>
+</ul>
+
+
+<div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="bandeja">
+    	<div class="column col-md-4 " id="panel_izquierdo">
+    		<div id='paneles_amigos'>
+    		{% for amigo in lista_amigos %}
+	    		<div class="panel panel-default">
+					  <div class="panel-body">
+					    <img src='{% static amigo.path_principal %}' width="40px" height="40px"> 
+					    <a href="" id='{{amigo.id}}' class='amigo'>{{amigo.user.first_name}}</a>
+					  </div>
+				</div>
+    		{% endfor %}
+    		</div>
+    	</div>
+    	
+    	<div class="column col-md-8 " id="panel_derechoo">
+    	<ul class="list-group" id="conversacion">
+    	{% for m in lista_mensajes %}
+    		<li class="list-group-item"><h4>{{m.emisor.user.first_name}}: {{m.mensaje}}</h4>  <h6>{{m.fecha}}</h6></li>
+    	{% endfor%}
+    	</ul>
+    	
+    	<div class="well">
+			<form id='formulario' method="post" action="{ url 'redsocial:enviarMensaje' id }" enctype="multipart/form-data">
+				{% csrf_token %} {{formulario.as_p}}
+				<p>
+					<input id='enviarMensaje' type='submit' value='Enviar' />
+				</p>
+			</form>
+		</div>
+    	
+    	</div>
+    </div>
+    
+    <div role="tabpanel" class="tab-pane" id="otros">
+    h3
+    </div>
+    
+</div>
+
+{% endblock columna_principal %}
+
+{% block js2 %}
+<script type="text/javascript">	
+	$(function(){
+		$.buscador();
+		$.contar();
+		
+		//RESOLVER DE NUEVO COMO SE MUESTRAN LAS FECHAS
+		$(".amigo").on("click", function(event){
+			event.preventDefault();
+			//LLAMADA AJAX QUE NOS DEVOLVERA LOS MENSAJES CON ESE AMIGO
+			var p_id = $(this).attr("id");
+			alert("Id del amigo "+p_id);
+			$.ajax({
+				url : "{% url 'redsocial:mis_mensajes' %}",
+				method:"POST",
+				data : {
+					"p_id" : p_id
+				},
+				dataType : 'json', //add esto cuando vayamos a recivir del servidor un json
+				success : function(data) {
+					var html="";
+					if(data.length==0){
+						html="No hay mensajes que mostrar";
+						$("#conversacion").html(html);
+					}else{
+						for (i = 0; i < data.length; i++){
+							html+="<li class='list-group-item'><h4>"+data[i].emisor+": "+data[i].mensaje+"</h4>  <h6>"+data[i].fecha+"</h6></li>";
+						}
+						$("#conversacion").html(html);
+					}
+					alert("Conversacion cambiada");
+				}
+			});
+		});
+		
+		
+	});
+
+	
+</script>
+{% endblock js2 %}
