@@ -18,11 +18,13 @@ class Notificacion(models.Model):
     mensaje=models.CharField(max_length=300)
     revision=models.BooleanField(default=False)
 
+
 class PeticionRevision(models.Model):
     emisor=models.ForeignKey(Perfil, related_name='sender1')
     receptor=models.ForeignKey(Perfil, related_name='receiver1')
     mensaje=models.CharField(max_length=300)
     revision=models.BooleanField(default=False)
+    partida_id=models.IntegerField() #campo para quedarnos con el id de la partida
 
 class Grupo(models.Model):
     titulo=models.CharField(max_length=300)
@@ -54,3 +56,8 @@ class Respuesta(models.Model):
     partida=models.ForeignKey(Partida, null=True, blank=True)
     #fichero=models.FileField(upload_to=MEDIA_ROOT+'sgf', blank=True)
 
+class Mensaje(models.Model):
+    emisor=models.ForeignKey(Perfil, related_name='emisorMensaje')
+    receptor=models.ForeignKey(Perfil, related_name='receptorMensaje')
+    mensaje=models.CharField(max_length=300)
+    fecha=models.DateTimeField()
