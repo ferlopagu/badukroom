@@ -52,20 +52,11 @@
 					<div>
 						<ul class="nav navbar-nav">
 						 	<li><a href="{% url 'redsocial:perfil' user.username %}">Perfil</a></li> 
-							<li><a href="{% url 'redsocial:lista_grupos' %}">Grupos</a></li>
+							<li><a href="{% url 'redsocial:lista_todos_grupos' %}">Grupos</a></li>
 							<li><a href="{% url 'redsocial:partidas' %}">Partidas</a></li>
 							<li><a href="{% url 'redsocial:revisiones' %}">Revisiones</a></li>
 							<li>
-							<!--  
-								<form class="navbar-form navbar-right" role="search" method="get" action="{% url 'redsocial:buscar' %}">
-									<div class="form-group">
-										<input id='buscar_texto' type="text" class="form-control" placeholder="Amigos, Grupos, Partidas...">
-									</div>
-									<button id='buscar' type="submit" class="btn btn-default" id=''>Buscar</button> 
-									<-- <a href="{% url 'redsocial:buscar' %}" class="btn btn-default" id='buscar' >Buscar</a>  --
-								</form>
-							-->
-							{%block formula%}
+								{%block formula%}
 								<form id='formulario_busqueda' class="navbar-form navbar-right" method="POST" autocomplete="off"
 									action="{% url 'redsocial:buscar' %}">
 									{% csrf_token %} 
@@ -73,7 +64,7 @@
 									{% buttons %}
 									<button id='buscar' type="submit" class="btn btn-primary">{% bootstrap_icon "search" %} Buscar</button>
 									{% endbuttons %}
-									{% endblock formula %}
+								{% endblock formula %}
 								</form>
 								
 								<div class="list-group" id="list-group">
@@ -87,13 +78,12 @@
 					<div>
 						<ul class="nav navbar-nav  navbar-right" >
 							<!--  <li><img src='/static/imagenes/1.baduk.jpg' width="40px" height="40px"></li> -->
-							<li><img src='{% static user.perfil.path_principal %}' width="40px" height="40px"></li> 
+							<li><img src='/media/{{user.perfil.path_principal}}' width="40px" height="40px"></li> 
 							<li><a href="{% url 'redsocial:perfil' user.username %}">{{ user.first_name }}</a></li>
 							<li class="dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown">Más Opciones <span class="caret"></span></a>
 								<ul class="dropdown-menu">
 									<li><a href="{% url 'redsocial:configuracion' %}">Configuracion</a></li>
-									<li><a href="#">Ayuda</a></li>
 									<li><a href="{% url 'logout:logout_view' %}">Salir</a></li>
 								</ul>
 							</li>					

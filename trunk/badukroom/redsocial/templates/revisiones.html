@@ -69,11 +69,13 @@
 				{% for p in partidas_revisadas %}
 					<tr>
 						<td><a href="{% url 'redsocial:by_revisor' p.revisor.nickname_kgs %}">{{p.revisor.nickname_kgs}} [{{p.revisor.perfil.rango}}]</a></td>
-						<td><a href="{% url 'redsocial:partidas_jugador' p.jugador_negro.id %}">{{p.jugador_negro}} [{{p.rango_negro}}]</a></td>
-						<td><a href="{% url 'redsocial:partidas_jugador' p.jugador_blanco.id %}">{{p.jugador_blanco}} [{{p.rango_blanco}}]</a></td>
+						<!--  <td><a href="{ url 'redsocial:partidas_jugador' p.jugador_negro.id }">{{p.jugador_negro}} [{{p.rango_negro}}]</a></td>-->
+						<td>{{p.jugador_negro}} [{{p.rango_negro}}]</td>
+						<!-- <td><a href="{ url 'redsocial:partidas_jugador' p.jugador_blanco.id }">{{p.jugador_blanco}} [{{p.rango_blanco}}]</a></td>-->
+						<td>{{p.jugador_blanco}} [{{p.rango_blanco}}]</td>
 						<td>{{p.fecha}}</td>
 						<td>{{p.resultado}}</td>
-						<td><a href="{% url 'redsocial:ver_partida' p.id %}">Visualizar</a></td>
+						<td><a href="{% url 'redsocial:ver_partida_revisada' p.id %}">Visualizar</a></td>
 					</tr>
 				{% endfor %}
 				{%endblock resultados%}
@@ -342,11 +344,13 @@
 						fecha_def=fecha_string[1];
 						//FIN TRATAMIENTO DEL FORMATO DE LA FECHA
 						html+="<tr><td><a href='/redsocial/by_revisor/"+data[i].revisor_nickname+"'>"+data[i].revisor_nickname +" ["+data[i].revisor_rango+"]</a></td>" //COMPLETAR EL JSON EN LA VISTA
-						+"<td><a href='/redsocial/jugadores/"+data[i].jugador_negro_id+"'>"+data[i].jugador_negro_nombre+" ["+data[i].rango_negro+"]</a></td>"
-						+"<td><a href='/redsocial/jugadores/"+data[i].jugador_blanco_id+"'>"+data[i].jugador_blanco_nombre+" ["+data[i].rango_blanco+"]</a></td>"
+						//+"<td><a href='/redsocial/jugadores/"+data[i].jugador_negro_id+"'>"+data[i].jugador_negro_nombre+" ["+data[i].rango_negro+"]</a></td>"
+						//+"<td><a href='/redsocial/jugadores/"+data[i].jugador_blanco_id+"'>"+data[i].jugador_blanco_nombre+" ["+data[i].rango_blanco+"]</a></td>"
+						+"<td>"+data[i].jugador_negro_nombre+" ["+data[i].rango_negro+"]</td>"
+						+"<td>"+data[i].jugador_blanco_nombre+" ["+data[i].rango_blanco+"]</td>"
 						+"<td>"+fecha_def+"</td>"
 						+"<td>"+data[i].resultado+"</td>"
-						+"<td><a href='/redsocial/ver_partida/"+data[i].partida_id+"''>Visualizar</a></td></tr>";
+						+"<td><a href='/redsocial/ver_revision/"+data[i].partida_id+"''>Visualizar</a></td></tr>";
 					}
 					html2="<div><a class='btn btn-primary' id='recargar_revisiones_fuerza_jugador' href=''>Recargar</a></div>";
 					$("#nuevos_datos_fuerza_jugador").append(html);
@@ -390,11 +394,13 @@
 								fecha_def=fecha_string[1];
 								//FIN TRATAMIENTO DEL FORMATO DE LA FECHA
 								html+="<tr><td><a href='/redsocial/by_revisor/"+data[i].revisor_nickname+"'>"+data[i].revisor_nickname +" ["+data[i].revisor_rango+"]</a></td>" //COMPLETAR EL JSON EN LA VISTA
-								+"<td><a href='/redsocial/jugadores/"+data[i].jugador_negro_id+"'>"+data[i].jugador_negro_nombre+" ["+data[i].rango_negro+"]</a></td>"
-								+"<td><a href='/redsocial/jugadores/"+data[i].jugador_blanco_id+"'>"+data[i].jugador_blanco_nombre+" ["+data[i].rango_blanco+"]</a></td>"
+								//+"<td><a href='/redsocial/jugadores/"+data[i].jugador_negro_id+"'>"+data[i].jugador_negro_nombre+" ["+data[i].rango_negro+"]</a></td>"
+								//+"<td><a href='/redsocial/jugadores/"+data[i].jugador_blanco_id+"'>"+data[i].jugador_blanco_nombre+" ["+data[i].rango_blanco+"]</a></td>"
+								+"<td>"+data[i].jugador_negro_nombre+" ["+data[i].rango_negro+"]</td>"
+								+"<td>"+data[i].jugador_blanco_nombre+" ["+data[i].rango_blanco+"]</td>"
 								+"<td>"+fecha_def+"</td>"
 								+"<td>"+data[i].resultado+"</td>"
-								+"<td><a href='/redsocial/ver_partida/"+data[i].partida_id+"''>Visualizar</a></td></tr>";
+								+"<td><a href='/redsocial/ver_revision/"+data[i].partida_id+"''>Visualizar</a></td></tr>";
 					}
 					$("#nuevos_datos_fuerza_jugador").append(html);
 				},
@@ -435,11 +441,13 @@
 						fecha_def=fecha_string[1];
 						//FIN TRATAMIENTO DEL FORMATO DE LA FECHA
 						html+="<tr><td><a href='/redsocial/by_revisor/"+data[i].revisor_nickname+"'>"+data[i].revisor_nickname +" ["+data[i].revisor_rango+"]</a></td>" //COMPLETAR EL JSON EN LA VISTA
-						+"<td><a href='/redsocial/jugadores/"+data[i].jugador_negro_id+"'>"+data[i].jugador_negro_nombre+" ["+data[i].rango_negro+"]</a></td>"
-						+"<td><a href='/redsocial/jugadores/"+data[i].jugador_blanco_id+"'>"+data[i].jugador_blanco_nombre+" ["+data[i].rango_blanco+"]</a></td>"
+						//+"<td><a href='/redsocial/jugadores/"+data[i].jugador_negro_id+"'>"+data[i].jugador_negro_nombre+" ["+data[i].rango_negro+"]</a></td>"
+						//+"<td><a href='/redsocial/jugadores/"+data[i].jugador_blanco_id+"'>"+data[i].jugador_blanco_nombre+" ["+data[i].rango_blanco+"]</a></td>"
+						+"<td>"+data[i].jugador_negro_nombre+" ["+data[i].rango_negro+"]</td>"
+						+"<td>"+data[i].jugador_blanco_nombre+" ["+data[i].rango_blanco+"]</td>"
 						+"<td>"+fecha_def+"</td>"
 						+"<td>"+data[i].resultado+"</td>"
-						+"<td><a href='/redsocial/ver_partida/"+data[i].partida_id+"''>Visualizar</a></td></tr>";
+						+"<td><a href='/redsocial/ver_revision/"+data[i].partida_id+"''>Visualizar</a></td></tr>";
 					}
 					html2="<div><a class='btn btn-primary' id='recargar_revisiones_fuerza_revisor' href=''>Recargar</a></div>";
 					$("#nuevos_datos_fuerza_revisor").append(html);
@@ -483,11 +491,13 @@
 								fecha_def=fecha_string[1];
 								//FIN TRATAMIENTO DEL FORMATO DE LA FECHA
 								html+="<tr><td><a href='/redsocial/by_revisor/"+data[i].revisor_nickname+"'>"+data[i].revisor_nickname +" ["+data[i].revisor_rango+"]</a></td>" //COMPLETAR EL JSON EN LA VISTA
-								+"<td><a href='/redsocial/jugadores/"+data[i].jugador_negro_id+"'>"+data[i].jugador_negro_nombre+" ["+data[i].rango_negro+"]</a></td>"
-								+"<td><a href='/redsocial/jugadores/"+data[i].jugador_blanco_id+"'>"+data[i].jugador_blanco_nombre+" ["+data[i].rango_blanco+"]</a></td>"
+								//+"<td><a href='/redsocial/jugadores/"+data[i].jugador_negro_id+"'>"+data[i].jugador_negro_nombre+" ["+data[i].rango_negro+"]</a></td>"
+								//+"<td><a href='/redsocial/jugadores/"+data[i].jugador_blanco_id+"'>"+data[i].jugador_blanco_nombre+" ["+data[i].rango_blanco+"]</a></td>"
+								+"<td>"+data[i].jugador_negro_nombre+" ["+data[i].rango_negro+"]</td>"
+								+"<td>"+data[i].jugador_blanco_nombre+" ["+data[i].rango_blanco+"]</td>"
 								+"<td>"+fecha_def+"</td>"
 								+"<td>"+data[i].resultado+"</td>"
-								+"<td><a href='/redsocial/ver_partida/"+data[i].partida_id+"''>Visualizar</a></td></tr>";
+								+"<td><a href='/redsocial/ver_revision/"+data[i].partida_id+"''>Visualizar</a></td></tr>";
 					}
 					$("#nuevos_datos_fuerza_revisor").append(html);
 				},
@@ -529,11 +539,13 @@
 						fecha_def=fecha_string[1];
 						//FIN TRATAMIENTO DEL FORMATO DE LA FECHA
 						html+="<tr><td><a href='/redsocial/by_revisor/"+data[i].revisor_nickname+"'>"+data[i].revisor_nickname +" ["+data[i].revisor_rango+"]</a></td>" //COMPLETAR EL JSON EN LA VISTA
-						+"<td><a href='/redsocial/jugadores/"+data[i].jugador_negro_id+"'>"+data[i].jugador_negro_nombre+" ["+data[i].rango_negro+"]</a></td>"
-						+"<td><a href='/redsocial/jugadores/"+data[i].jugador_blanco_id+"'>"+data[i].jugador_blanco_nombre+" ["+data[i].rango_blanco+"]</a></td>"
+						//+"<td><a href='/redsocial/jugadores/"+data[i].jugador_negro_id+"'>"+data[i].jugador_negro_nombre+" ["+data[i].rango_negro+"]</a></td>"
+						//+"<td><a href='/redsocial/jugadores/"+data[i].jugador_blanco_id+"'>"+data[i].jugador_blanco_nombre+" ["+data[i].rango_blanco+"]</a></td>"
+						+"<td>"+data[i].jugador_negro_nombre+" ["+data[i].rango_negro+"]</td>"
+						+"<td>"+data[i].jugador_blanco_nombre+" ["+data[i].rango_blanco+"]</td>"
 						+"<td>"+fecha_def+"</td>"
 						+"<td>"+data[i].resultado+"</td>"
-						+"<td><a href='/redsocial/ver_partida/"+data[i].partida_id+"''>Visualizar</a></td></tr>";
+						+"<td><a href='/redsocial/ver_revision/"+data[i].partida_id+"''>Visualizar</a></td></tr>";
 					}
 					html2="<div><a class='btn btn-primary' id='recargar_revisiones_by_revisor' href=''>Recargar</a></div>";
 					$("#nuevos_datos_byRevisor").append(html);
@@ -588,11 +600,13 @@
 								fecha_def=fecha_string[1];
 								//FIN TRATAMIENTO DEL FORMATO DE LA FECHA
 								html+="<tr><td><a href='/redsocial/by_revisor/"+data[i].revisor_nickname+"'>"+data[i].revisor_nickname +" ["+data[i].revisor_rango+"]</a></td>" //COMPLETAR EL JSON EN LA VISTA
-								+"<td><a href='/redsocial/jugadores/"+data[i].jugador_negro_id+"'>"+data[i].jugador_negro_nombre+" ["+data[i].rango_negro+"]</a></td>"
-								+"<td><a href='/redsocial/jugadores/"+data[i].jugador_blanco_id+"'>"+data[i].jugador_blanco_nombre+" ["+data[i].rango_blanco+"]</a></td>"
+								//+"<td><a href='/redsocial/jugadores/"+data[i].jugador_negro_id+"'>"+data[i].jugador_negro_nombre+" ["+data[i].rango_negro+"]</a></td>"
+								//+"<td><a href='/redsocial/jugadores/"+data[i].jugador_blanco_id+"'>"+data[i].jugador_blanco_nombre+" ["+data[i].rango_blanco+"]</a></td>"
+								+"<td>"+data[i].jugador_negro_nombre+" ["+data[i].rango_negro+"]</td>"
+								+"<td>"+data[i].jugador_blanco_nombre+" ["+data[i].rango_blanco+"]</td>"
 								+"<td>"+fecha_def+"</td>"
 								+"<td>"+data[i].resultado+"</td>"
-								+"<td><a href='/redsocial/ver_partida/"+data[i].partida_id+"''>Visualizar</a></td></tr>";
+								+"<td><a href='/redsocial/ver_revision/"+data[i].partida_id+"''>Visualizar</a></td></tr>";
 					}
 					$("#nuevos_datos_byRevisor").append(html);
 				},
@@ -632,10 +646,11 @@
 		//Funcion para unirse a revisor
 		$("#unirse_revisor").on('click', function(event){
 			event.preventDefault();
-			
+			var nick_revisor=$("#nick_revisor").val();
+			alert("nuevo nick revisor es: "+nick_revisor);
 			$.ajax({
 				url : "{% url 'redsocial:unirse_revisor' %}",
-				data : {'nick': $("#nick_revisor").attr("placeholder")},
+				data : {'nick': nick_revisor},
 				method:"POST",
 				//dataType : 'json', //add esto cuando vayamos a recivir del servidor un json A LO MEJOR AL NO RECIBIR JSON DA PROBLEMA
 				success : function(data) {
@@ -696,11 +711,13 @@
 										fecha_def=fecha_string[1];
 										//FIN TRATAMIENTO DEL FORMATO DE LA FECHA
 										html+="<tr><td><a href='/redsocial/by_revisor/"+data[i].revisor_nickname+"'>"+data[i].revisor_nickname +" ["+data[i].revisor_rango+"]</a></td>" //COMPLETAR EL JSON EN LA VISTA
-										+"<td><a href='/redsocial/jugadores/"+data[i].jugador_negro_id+"'>"+data[i].jugador_negro_nombre+" ["+data[i].rango_negro+"]</a></td>"
-										+"<td><a href='/redsocial/jugadores/"+data[i].jugador_blanco_id+"'>"+data[i].jugador_blanco_nombre+" ["+data[i].rango_negro+"]</a></td>"
+										//+"<td><a href='/redsocial/jugadores/"+data[i].jugador_negro_id+"'>"+data[i].jugador_negro_nombre+" ["+data[i].rango_negro+"]</a></td>"
+										//+"<td><a href='/redsocial/jugadores/"+data[i].jugador_blanco_id+"'>"+data[i].jugador_blanco_nombre+" ["+data[i].rango_negro+"]</a></td>"
+										+"<td>"+data[i].jugador_negro_nombre+" ["+data[i].rango_negro+"]</td>"
+										+"<td>"+data[i].jugador_blanco_nombre+" ["+data[i].rango_blanco+"]</td>"
 										+"<td>"+fecha_def+"</td>"
 										+"<td>"+data[i].resultado+"</td>"
-										+"<td><a href='/redsocial/ver_partida/"+data[i].partida_id+"''>Visualizar</a></td></tr>";
+										+"<td><a href='/redsocial/ver_revision/"+data[i].partida_id+"''>Visualizar</a></td></tr>";
 							}
 							$("#nuevos_datos").append(html);
 						},

@@ -2,21 +2,7 @@
 {% load staticfiles %} 
 {% block columna_principal %}
 
-{% block menu_filtrar%}
-<ul class="nav nav-pills" role="tablist">
-	<li class="active"><a href="#">Recientes</a></li>
-	<li><a href="#">Fuerza</a></li>
-	<li><a href="#">Revisor</a></li>
-	<li><a href="#">Información</a></li>
-</ul>
-
-<ul class="nav nav-pills" role="tablist" style="float:right">
-	<li><a href="#">Subir partida</a></li>
-</ul>
-{% endblock menu_filtrar%}
-
-{%block filtrar %}
-{%endblock filtrar%}
+<h1>Revisiones de: {{nick}} [{{rango}}]</h1>
 
 {%block tabla%}
 <table class="table">
@@ -35,18 +21,21 @@
 		{% for p in partidas_revisadas %}
 			<tr>
 				<td><a href="{% url 'redsocial:by_revisor' p.revisor.nickname_kgs %}">{{p.revisor.nickname_kgs}}</a></td>
-				<td><a href="{% url 'redsocial:partidas_jugador' p.jugador_negro.id %}">{{p.jugador_negro}}</a></td>
-				<td><a href="{% url 'redsocial:partidas_jugador' p.jugador_blanco.id %}">{{p.jugador_blanco}}</a></td>
+				<!--  <td><a href="{ url 'redsocial:partidas_jugador' p.jugador_negro.id }">{{p.jugador_negro}}</a></td> -->
+				<!--  <td><a href="{ url 'redsocial:partidas_jugador' p.jugador_blanco.id }">{{p.jugador_blanco}}</a></td> -->
+				<td>{{p.jugador_negro}} [{{p.rango_negro}}]</td>
+				<td>{{p.jugador_blanco}} [{{p.rango_blanco}}]</td> 
 				<td>{{p.fecha}}</td>
 				<td>{{p.resultado}}</td>
-				<td><a href="{ static 'redsocial:partida' id }">{{p.path}}</a></td>
+				<td><a href="{% url 'redsocial:ver_partida_revisada' p.id %}">Visualizar</a></td>
 			</tr>
 		{% endfor %}
 		{%endblock resultados%}
 	</tbody>
 </table>
 <div id="next">
-	<li><a id="recargar" href="">Recargar</a></li>
+	<!--  <li><a id="recargar" href="">Recargar</a></li> -->
+	<a class="btn btn-primary" id="recargar" href="">Recargar</a>
 </div>
 {%endblock tabla%}
 
@@ -67,78 +56,48 @@
 		$('#recargar').on(
 				'click',
 				function(event) {
-					//alert("entramos en recargar");
 					event.preventDefault();
+					
+					//Almacenamos el nick del revisor
+					alert(location.href);
+					var dir_ip = location.href;
+					var array_dir = dir_ip.split("/");
+					alert(array_dir);
+					var nickname=array_dir[array_dir.length-2]; //el -2 es por la url al finalizar con una barra al final
+					alert(nickname);
+					
 					console.log("Entramos en load items");
-					// If the next page doesn't exist, just quit now 
 					if (hasNextPage === false) {
-						//alert("hasNextPage es false");
 						return false //ya no haria falta ya que al comprobar si son menos de diez se eliminara el boton
 					}
-					// Update the page number
 					pageNum = pageNum + 1;
-					// Configure the url we're about to hit
 					$.ajax({
-						url : "{% url 'redsocial:partidas_ajax' %}",
+						url : "/redsocial/by_revisor/"+nickname+"/",
 						data : {
 							page_number : pageNum
 						},
 						dataType : 'json', //add esto cuando vayamos a recivir del servidor un json
 						success : function(data) {
-							//alert(data.length);
 							if(data.length < 10){
-								//alert("No hay mas páginas");
-								$('#next').html("Ya no hay más partidas que mostrar");
+								$('#next').html("<div class='alert alert-info' role='alert'>Ya no hay más partidas que mostrar</div>");
 							}
-							
-							//alert(JSON.stringify(data.fields));
-							//No se ejecuta lo de dentro y si el complete
-							//alert("entramos en success");
-							// Update global next page variable
-							hasNextPage = true;//.hasNext;
-							// Loop through all items
+							hasNextPage = true;
 							html = "";
 							console.log("Valor que tenia html: " + html);
-							//alert("Imprimimos json fields");
-							//alert(JSON.stringify(data.fields));
 							for (i = 0; i < data.length; i++){
-								/*
-								html += "<tr>" + "<th>"
-								+ "<a href='redsocial/jugadores/"+ data[i].fields.jugador_negro[1] +"/'></a>"
-										+ data[i].fields.jugador_negro[0]+ "</th>"
-										+ "<th>" + data[i].fields.jugador_blanco[0]
-										+ "</th>" + "<th>" + data[i].fields.fecha
-										+ "</th>" + "<th>" + data[i].fields.resultado
-										+ "</th>" + "<th>"
-										+ data[i].fields.path+ "</th>"
-										+ "</tr>"; */
-								html+="<tr><td><a href='/redsocial/jugadores/"+data[i].fields.jugador_negro[1]+"'>"+data[i].fields.jugador_negro[0]+"</a></td>"
-								+"<td><a href='/redsocial/jugadores/"+data[i].fields.jugador_blanco[1]+"'>"+data[i].fields.jugador_blanco[0]+"</a></td>"
-								+"<td>"+data[i].fields.fecha+"</td>"
-								+"<td>"+data[i].fields.resultado+"</td>"
-								+"<td>"+data[i].fields.path+"</td>";
-										
-
-								/*
-								$("#newItems").before(
-								// Do something with your json object response
-									//console.log(i)
-									//console.log(data[i])
-									
-								);*/
+								html+="<tr><td><a href='/redsocial/by_revisor/"+data[i].revisor_nickname+"'>"+data[i].revisor_nickname +" ["+data[i].revisor_rango+"]</a></td>" //COMPLETAR EL JSON EN LA VISTA
+								+"<td>"+data[i].jugador_negro_nombre+" ["+data[i].rango_negro+"]</td>"
+								+"<td>"+data[i].jugador_blanco_nombre+" ["+data[i].rango_blanco+"]</td>"
+								+"<td>"+fecha_def+"</td>"
+								+"<td>"+data[i].resultado+"</td>"
+								+"<td><a href='/redsocial/ver_revision/"+data[i].partida_id+"''>Visualizar</a></td></tr>";
 							}
 							$("#nuevos_datos").append(html);
 						},
 						error : function(data) {
-							// When I get a 400 back, fail safely
 							hasNextPage = false;
-						},
-				        complete: function(data, textStatus){
-				            // Turn the scroll monitor back on
-				            //alert("Completado");
 						}
 					});
-					//alert("Realizado con exito");
 				});
 	});
 </script>

@@ -303,6 +303,7 @@
 		//Traer las partidas entre dos fechas
 		$("#formulario_fechas").on('submit', function(event){
 			alert("Enviamos formulario fechas");
+			$("#nuevos_datos_fechas").empty();
 			$('#next_partida_fechas').empty();
 			event.preventDefault();
 			var inicio=$('#id_inicio').val();

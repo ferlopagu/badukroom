@@ -16,7 +16,7 @@ from django.contrib.auth.models import User
 import re
 from principal.metodosAux import informacion_partida, informacion_partida2, estamos_en_grupo, formatoFecha
 from badukroom.settings import BASE_DIR
-from principal.models import Partida, Jugador, Revisor, PartidaRepositorio
+from principal.models import Partida, Jugador, Revisor, Sgf, PartidaRevisada
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.core.paginator import Paginator, InvalidPage
 import json
@@ -289,18 +289,24 @@ def crea_comentario(request):
                 lineas=request.FILES['fichero'].chunks()
                 diccionario_informacion=informacion_partida2(lineas, path_fichero)
                 print diccionario_informacion
+                """
                 jugador_negro, created = Jugador.objects.get_or_create(nombre=diccionario_informacion['black'])
                 jugador_blanco, created = Jugador.objects.get_or_create(nombre=diccionario_informacion['blanco'])
-                """Seleccionamos path correcto"""
+                #Seleccionamos path correcto
                 cadenas=diccionario_informacion['path'].split("/")
                 nombre_fichero=cadenas[len(cadenas)-1]
                 path_fichero="sgf/"+nombre_fichero
-                """Fin seleccionar path correcto"""
+                #Fin seleccionar path correcto
                 partida = Partida(fecha=diccionario_informacion['fecha'], jugador_negro=jugador_negro, 
                                   jugador_blanco=jugador_blanco,rango_negro=diccionario_informacion['rango_negro'],rango_blanco=diccionario_informacion['rango_blanco'], resultado=diccionario_informacion['result'], 
                                   fichero=request.FILES['fichero'])
                 partida.save()
-                """ Fin crear la partida """
+                #Fin crear la partida
+                """
+                
+                partida = Sgf(fecha=diccionario_informacion['fecha'],jugador_negro=diccionario_informacion['black'], 
+                               jugador_blanco=diccionario_informacion['blanco'], fichero=request.FILES['fichero'])
+                partida.save()
                 perfil=perfil
                 partida=partida
                 texto=form.cleaned_data['texto']
@@ -355,13 +361,20 @@ def responder(request):
                 """ Estamos leyendo la partida y sacando la informacion util para crearla"""
                 lineas=request.FILES['fichero'].chunks()
                 diccionario_informacion=informacion_partida2(lineas, path_fichero)
+                
+                """
                 jugador_negro, created = Jugador.objects.get_or_create(nombre=diccionario_informacion['black'])
                 jugador_blanco, created = Jugador.objects.get_or_create(nombre=diccionario_informacion['blanco'])
                 partida = Partida(fecha=diccionario_informacion['fecha'], jugador_negro=jugador_negro, 
                                   jugador_blanco=jugador_blanco,rango_negro=diccionario_informacion['rango_negro'],rango_blanco=diccionario_informacion['rango_blanco'], resultado=diccionario_informacion['result'], 
                                   fichero=request.FILES['fichero'])
                 partida.save()
-                """ Fin crear la partida """
+                # Fin crear la partida
+                """
+                partida = Sgf(fecha=diccionario_informacion['fecha'],jugador_negro=diccionario_informacion['black'], 
+                               jugador_blanco=diccionario_informacion['blanco'], fichero=request.FILES['fichero'])
+                partida.save()
+                
                 perfil=perfil
                 partida=partida
                 texto=form.cleaned_data['texto']
@@ -566,6 +579,12 @@ def lista_grupos(request):
     context = {'lista_grupos': grupos,'form':form}
     return render_to_response('lista_grupos.html',context,context_instance=RequestContext(request))
 
+def lista_todos_grupos(request):
+    grupos=list(Grupo.objects.values('titulo','descripcion','pk').all().order_by("titulo"))
+    form=GrupoForm()
+    context = {'lista_grupos': grupos,'form':form}
+    return render_to_response('lista_grupos_total.html',context,context_instance=RequestContext(request))
+
 def amigos(request):
     p=get_object_or_404(Perfil, user__username=request.user.username)
     amigos=list(p.amigos.all())
@@ -580,11 +599,13 @@ def amigos(request):
 
 def partidas(request):
     """ Obtenemos partidas repositorio profesionales"""
-    partidas_p=list(PartidaRepositorio.objects.filter(es_profesional=True).order_by('fecha').reverse())
+    #partidas_p=list(PartidaRepositorio.objects.filter(es_profesional=True).order_by('fecha').reverse())
+    partidas_p=list(Partida.objects.filter(es_profesional=True).order_by('fecha').reverse())
     paginator_p = Paginator(partidas_p, 10)
     lista_partidas_profesionales=paginator_p.page(1).object_list
     """ Obtenemos partidas repositorio amateur """
-    partidas_a=list(PartidaRepositorio.objects.filter(es_profesional=False).order_by('fecha').reverse())
+    #partidas_a=list(PartidaRepositorio.objects.filter(es_profesional=False).order_by('fecha').reverse())
+    partidas_a=list(Partida.objects.filter(es_profesional=False).order_by('fecha').reverse())
     paginator_a = Paginator(partidas_a, 10)
     lista_partidas_amateur=paginator_a.page(1).object_list
     
@@ -626,13 +647,45 @@ def partidas_ajax(request):
                 return HttpResponse(serializers.serialize('json',lista, use_natural_foreign_keys=True))
             
 def partidas_jugador(request, id):
+    #partidas=list(PartidaRepositorio.objects.filter(Q(jugador_negro__id=id) | Q(jugador_blanco__id=id)))
+    partidas=list(Partida.objects.filter(Q(jugador_negro__id=id) | Q(jugador_blanco__id=id)))
+    paginator= Paginator(partidas, 2)
+    jugador=Jugador.objects.get(id=id)
+    if request.is_ajax():
+        if request.method=="GET":
+            page_number=request.GET.get("page_number");
+            try:
+                page_objects = paginator.page(page_number).object_list
+            except InvalidPage:
+                page_objects=[]
+            lista_partidas=[]
+            for p in page_objects:
+                dic_partida={}
+                dic_partida["jugador_negro_nombre"]=p.jugador_negro.nombre
+                dic_partida["jugador_negro_id"]=p.jugador_negro.id
+                dic_partida["jugador_blanco_nombre"]=p.jugador_blanco.nombre
+                dic_partida["jugador_blanco_id"]=p.jugador_blanco.id
+                dic_partida["rango_negro"]=p.rango_negro
+                dic_partida["rango_blanco"]=p.rango_blanco
+                dic_partida["fecha"]=p.fecha
+                dic_partida["resultado"]=p.resultado
+                dic_partida["partida_id"]=p.id
+                lista_partidas.append(dic_partida)
+            return JsonResponse(lista_partidas, safe=False)          
+    else:
+        lista=paginator.page(1).object_list
+        context={'partidas': lista, 'jugador':jugador.nombre}
+        return render_to_response('jugador.html', context, context_instance=RequestContext(request))
+        
+    """    VERSION ANTIGUA
     partidas=list(Partida.objects.filter(Q(jugador_negro__id=id) | Q(jugador_blanco__id=id)))
     jugador=Jugador.objects.get(id=id)
     context={'partidas': partidas, 'jugador':jugador.nombre}
     return render_to_response('jugador.html', context, context_instance=RequestContext(request))
+    """
 
 def revisiones(request):
-    partidas=list(Partida.objects.exclude(revisor=None).order_by('fecha').reverse())
+    partidas=list(PartidaRevisada.objects.all().order_by('fecha').reverse())
     paginator = Paginator(partidas, 2)
     if request.is_ajax():
         if request.method=="GET":
@@ -670,7 +723,7 @@ def revisiones(request):
         return render(request,name, context)
 
 def partidas_by_revisor(request, nickname_kgs):
-    partidas=list(Partida.objects.filter(revisor__nickname_kgs=nickname_kgs).order_by('fecha').reverse())
+    partidas=list(PartidaRevisada.objects.filter(revisor__nickname_kgs=nickname_kgs).order_by('fecha').reverse())
     paginator = Paginator(partidas, 2)
     if request.is_ajax():
         if request.method=="GET":
@@ -687,10 +740,10 @@ def partidas_by_revisor(request, nickname_kgs):
                 dic_partida={}
                 dic_partida["revisor_nickname"]=p.revisor.nickname_kgs
                 dic_partida["revisor_rango"]=p.revisor.perfil.rango
-                dic_partida["jugador_negro_nombre"]=p.jugador_negro.nombre
-                dic_partida["jugador_negro_id"]=p.jugador_negro.id
-                dic_partida["jugador_blanco_nombre"]=p.jugador_blanco.nombre
-                dic_partida["jugador_blanco_id"]=p.jugador_blanco.id
+                dic_partida["jugador_negro_nombre"]=p.jugador_negro
+                #dic_partida["jugador_negro_id"]=p.jugador_negro.id
+                dic_partida["jugador_blanco_nombre"]=p.jugador_blanco
+                #dic_partida["jugador_blanco_id"]=p.jugador_blanco.id
                 dic_partida["rango_negro"]=p.rango_negro
                 dic_partida["rango_blanco"]=p.rango_blanco
                 dic_partida["fecha"]=p.fecha
@@ -701,8 +754,9 @@ def partidas_by_revisor(request, nickname_kgs):
             return JsonResponse(lista_partidas, safe=False)
     else:
         name='by_revisor.html'
-        lista=list(Partida.objects.filter(revisor__nickname_kgs=nickname_kgs))
-        context={'partidas_revisadas':lista}
+        lista=list(PartidaRevisada.objects.filter(revisor__nickname_kgs=nickname_kgs))
+        revisor=Revisor.objects.get(nickname_kgs=nickname_kgs)
+        context={'partidas_revisadas':lista, 'nick':nickname_kgs, 'rango':revisor.perfil.rango}
         return render(request, name, context)
 
 def crear_grupo(request):
@@ -747,15 +801,21 @@ def enviar_partida_revisar(request):
             path_fichero=BASE_DIR+"/static/sgf/"+request.FILES['fichero'].__str__()
             lineas=request.FILES['fichero'].chunks()
             diccionario_informacion=informacion_partida2(lineas, path_fichero) 
+            """
             jugador_negro, created = Jugador.objects.get_or_create(nombre=diccionario_informacion['black'])
             jugador_blanco, created = Jugador.objects.get_or_create(nombre=diccionario_informacion['blanco'])
             partida = Partida(fecha=diccionario_informacion['fecha'], jugador_negro=jugador_negro, 
                               jugador_blanco=jugador_blanco, rango_negro=diccionario_informacion['rango_negro'],rango_blanco=diccionario_informacion['rango_blanco'], resultado=diccionario_informacion['result'], 
                               fichero=request.FILES['fichero'])
             partida.save()
+            """
+            partida = Sgf(fecha=diccionario_informacion['fecha'],jugador_negro=diccionario_informacion['black'], 
+                               jugador_blanco=diccionario_informacion['blanco'], fichero=request.FILES['fichero'])
+            partida.save()
+            
             """ Fin crear la partida """
             """Mandamos las notificaciones"""
-            mensaje_a_revisor="Tienes una nueva partida para revisar, puedes descargarla aqui: <a href='/static/"+partida.path+"'>Descargar</a>."
+            mensaje_a_revisor="Tienes una nueva partida para revisar, puedes descargarla aqui: <a href='/media/"+partida.path+"'>Descargar</a>."
             peticion=PeticionRevision(receptor=revisor.perfil, emisor=p, mensaje=mensaje_a_revisor, revision=True, partida_id=partida.id)
             peticion.save()
             notificacion2=Notificacion(receptor=p, mensaje="Tu partida ha sido asignada con éxito, te rogamos esperes unos días antes de volver a enviarla a otro revisor.")
@@ -776,21 +836,24 @@ def aceptar_partida_revisar(request, username):
         path_fichero=BASE_DIR+"/static/sgf/"+request.FILES['fichero'].__str__()
         lineas=request.FILES['fichero'].chunks()
         diccionario_informacion=informacion_partida2(lineas, path_fichero) 
-        jugador_negro, created = Jugador.objects.get_or_create(nombre=diccionario_informacion['black'])
-        jugador_blanco, created = Jugador.objects.get_or_create(nombre=diccionario_informacion['blanco'])
-        partida = Partida(fecha=diccionario_informacion['fecha'], jugador_negro=jugador_negro, 
-                          jugador_blanco=jugador_blanco, rango_negro=diccionario_informacion['rango_negro'],rango_blanco=diccionario_informacion['rango_blanco'], resultado=diccionario_informacion['result'], 
+        partida = PartidaRevisada(fecha=diccionario_informacion['fecha'], jugador_negro=diccionario_informacion['black'], 
+                          jugador_blanco=diccionario_informacion['blanco'], rango_negro=diccionario_informacion['rango_negro'],rango_blanco=diccionario_informacion['rango_blanco'], resultado=diccionario_informacion['result'], 
                           fichero=request.FILES['fichero'], revisor=revisor)
         partida.save()
         """ Fin crear la partida """
         """Mandamos las notificaciones"""
-        mensaje_a_usuario="La partida ha sido revisada, puedes descargarla aqui: <a href='/static/"+partida.path+"'>Descargar</a>. O visualizarla desde el apartado de Revisiones"
+        mensaje_a_usuario="La partida ha sido revisada, puedes descargarla aqui: <a href='/media/"+partida.path+"'>Descargar</a>. O visualizarla desde el apartado de Revisiones"
         p=Perfil.objects.get(user__username=username)
         notificacion1=Notificacion(receptor=p, mensaje=mensaje_a_usuario)
         notificacion1.save()
         notificacion2=Notificacion(receptor=revisor.perfil, mensaje="La partida revisada fue almacenada con éxito en el sistema")
         notificacion2.save()
         peticion=PeticionRevision.objects.get(receptor=revisor.perfil, emisor=p)
+        #Borramos sgf
+        sgf = Sgf.objects.get(id=peticion.partida_id)
+        sgf.delete()
+        print "borramos SGF"
+        #Fin borrar sgf
         peticion.delete()
         return HttpResponseRedirect(request.META['HTTP_REFERER']) #recargamos la página
     else:
@@ -801,7 +864,7 @@ def rechazar_partida_revisar(request):
     perfil = Perfil.objects.get(user=request.user)
     peticion_rev=PeticionRevision.objects.get(receptor=perfil)
     id_partida=peticion_rev.partida_id 
-    partida=get_object_or_404(Partida, pk=id_partida) #aqui parece estar el fallo
+    partida=get_object_or_404(Sgf, pk=id_partida) #aqui parece estar el fallo
     partida.delete()
     print "borramos la partida"
     emisor_peticion=peticion_rev.emisor
@@ -813,12 +876,15 @@ def rechazar_partida_revisar(request):
     print "borramos peticion"
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
 
-#FALTA POR HACER
-def reenvio_partida_revisar(request):
-    pass
 
 def ver_partida(request, partida_id):
     partida=get_object_or_404(Partida, pk=partida_id)
+    name="ver_partida.html"
+    context={'partida':partida}
+    return render(request,name, context)
+
+def ver_partida_revisada(request, partida_id):
+    partida=get_object_or_404(PartidaRevisada, pk=partida_id)
     name="ver_partida.html"
     context={'partida':partida}
     return render(request,name, context)
@@ -844,9 +910,16 @@ def crear_partida_repositorio(request):
         print diccionario_informacion
         jugador_negro, created = Jugador.objects.get_or_create(nombre=diccionario_informacion['black'])
         jugador_blanco, created = Jugador.objects.get_or_create(nombre=diccionario_informacion['blanco'])
+        """
         partida = PartidaRepositorio(fecha=diccionario_informacion['fecha'], jugador_negro=jugador_negro, 
                           jugador_blanco=jugador_blanco,rango_negro=diccionario_informacion['rango_negro'],rango_blanco=diccionario_informacion['rango_blanco'], resultado=diccionario_informacion['result'], 
                           fichero=request.FILES['fichero'])
+                          """
+        
+        partida = Partida(fecha=diccionario_informacion['fecha'], jugador_negro=jugador_negro, 
+                          jugador_blanco=jugador_blanco,rango_negro=diccionario_informacion['rango_negro'],rango_blanco=diccionario_informacion['rango_blanco'], resultado=diccionario_informacion['result'], 
+                          fichero=request.FILES['fichero'])
+        
         if partida.rango_negro in profesionales:
             jugador_negro.es_profesional=True
             jugador_negro.save()
@@ -860,9 +933,12 @@ def crear_partida_repositorio(request):
         print 'partida salvada con exito'
         """ Fin crear la partida """
         #return HttpResponse("Ha sido un exito")
+        """
         name="partidas.html"
         context={}
         return render(request,name, context)
+        """
+        return HttpResponseRedirect("partidas")
     else:
         print "no entramos en POST"
 
@@ -890,7 +966,7 @@ def fuerza_revisor(request):
             page_number = request.GET.get('page_number');
             try:
                 rango_revisor=request.GET.get('rango')
-                partidas=list(Partida.objects.filter(revisor__perfil__rango=rango_revisor).order_by('fecha').reverse())
+                partidas=list(PartidaRevisada.objects.filter(revisor__perfil__rango=rango_revisor).order_by('fecha').reverse())
                 paginator = Paginator(partidas, 2)
                 if page_number>1:
                     page_objects = paginator.page(page_number).object_list
@@ -901,12 +977,23 @@ def fuerza_revisor(request):
             lista_partidas=[]
             for p in page_objects:
                 dic_partida={}
+                """
                 dic_partida["revisor_nickname"]=p.revisor.nickname_kgs
                 dic_partida["revisor_rango"]=p.revisor.perfil.rango
                 dic_partida["jugador_negro_nombre"]=p.jugador_negro.nombre
                 dic_partida["jugador_negro_id"]=p.jugador_negro.id
                 dic_partida["jugador_blanco_nombre"]=p.jugador_blanco.nombre
                 dic_partida["jugador_blanco_id"]=p.jugador_blanco.id
+                dic_partida["rango_negro"]=p.rango_negro
+                dic_partida["rango_blanco"]=p.rango_blanco
+                dic_partida["fecha"]=p.fecha
+                dic_partida["resultado"]=p.resultado
+                dic_partida["partida_id"]=p.id
+                """
+                dic_partida["revisor_nickname"]=p.revisor.nickname_kgs
+                dic_partida["revisor_rango"]=p.revisor.perfil.rango
+                dic_partida["jugador_negro_nombre"]=p.jugador_negro
+                dic_partida["jugador_blanco_nombre"]=p.jugador_blanco
                 dic_partida["rango_negro"]=p.rango_negro
                 dic_partida["rango_blanco"]=p.rango_blanco
                 dic_partida["fecha"]=p.fecha
@@ -922,7 +1009,7 @@ def fuerza_jugador(request):
                 page_number = request.GET.get('page_number');
                 try:
                     rango_jugador=request.GET.get('rango')
-                    partidas=list(Partida.objects.filter(Q(rango_negro=rango_jugador)|Q(rango_blanco=rango_jugador)).exclude(revisor=None).order_by('fecha').reverse())
+                    partidas=list(PartidaRevisada.objects.filter(Q(rango_negro=rango_jugador)|Q(rango_blanco=rango_jugador)).order_by('fecha').reverse())
                     print partidas
                     paginator = Paginator(partidas, 2)
                     if page_number>1:
@@ -939,10 +1026,8 @@ def fuerza_jugador(request):
                     dic_partida={}
                     dic_partida["revisor_nickname"]=p.revisor.nickname_kgs
                     dic_partida["revisor_rango"]=p.revisor.perfil.rango
-                    dic_partida["jugador_negro_nombre"]=p.jugador_negro.nombre
-                    dic_partida["jugador_negro_id"]=p.jugador_negro.id
-                    dic_partida["jugador_blanco_nombre"]=p.jugador_blanco.nombre
-                    dic_partida["jugador_blanco_id"]=p.jugador_blanco.id
+                    dic_partida["jugador_negro_nombre"]=p.jugador_negro
+                    dic_partida["jugador_blanco_nombre"]=p.jugador_blanco
                     dic_partida["rango_negro"]=p.rango_negro
                     dic_partida["rango_blanco"]=p.rango_blanco
                     dic_partida["fecha"]=p.fecha
@@ -957,11 +1042,13 @@ def recargar_repositorio_ajax(request):
         if request.method=="GET":
             if request.GET.get('page_number'):
                 if request.GET.get('profesional'):
-                    partidas=list(PartidaRepositorio.objects.filter(es_profesional=True).order_by('fecha').reverse())
+                    #partidas=list(PartidaRepositorio.objects.filter(es_profesional=True).order_by('fecha').reverse())
+                    partidas=list(Partida.objects.filter(es_profesional=True).order_by('fecha').reverse())
                     paginator = Paginator(partidas, 10)
                     print "recargamos las profesionales"
                 else: #pedimos recargar el amateur
-                    partidas=list(PartidaRepositorio.objects.filter(es_profesional=False).order_by('fecha').reverse())
+                    #partidas=list(PartidaRepositorio.objects.filter(es_profesional=False).order_by('fecha').reverse())
+                    partidas=list(Partida.objects.filter(es_profesional=False).order_by('fecha').reverse())
                     paginator = Paginator(partidas, 10)
                     print "recargamos las amateur"
                 page_number = request.GET.get('page_number');
@@ -988,7 +1075,8 @@ def partidas_entre_fechas(request):
             fecha_fin=formatoFecha(request.GET.get('id_fin'))
             print fecha_fin
 
-            partidas=list(PartidaRepositorio.objects.filter(fecha__range=[fecha_inicio, fecha_fin]).order_by("fecha").reverse())
+            #partidas=list(PartidaRepositorio.objects.filter(fecha__range=[fecha_inicio, fecha_fin]).order_by("fecha").reverse())
+            partidas=list(Partida.objects.filter(fecha__range=[fecha_inicio, fecha_fin]).order_by("fecha").reverse())
             print partidas
             paginator = Paginator(partidas, 2)
             if request.GET.get('page_number'):

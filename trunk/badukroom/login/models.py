@@ -11,6 +11,7 @@ rango=[("30k","30k"), ("29k","29k"), ("28k","28k"),("27k","27k"),("26k","26k"),(
 class Perfil(models.Model):
     user=models.OneToOneField(User, unique=True)
     fecha_nacimiento=models.DateField(help_text="Formato: dd/mm/yyyy")
+    ciudad = models.CharField(max_length=50, blank=True)
     rango = models.CharField(max_length=50, choices=rango)
     jugadores_favoritos=models.ManyToManyField(Jugador,  blank=True)
     foto_principal=models.ImageField( blank=True, upload_to=MEDIA_ROOT+'imagenes', default=MEDIA_ROOT+"/imagenes/sin_foto.jpg")

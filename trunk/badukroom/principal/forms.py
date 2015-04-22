@@ -9,6 +9,4 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from principal.models import Partida
 
-class PartidaForm(ModelForm):
-    class Meta:
-        model=Partida
+

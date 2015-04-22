@@ -39,6 +39,36 @@ class Revisor(models.Model):
     def __unicode__(self):
         return self.nickname_kgs+" ["+self.perfil.rango+"]"
 
+class Sgf(models.Model):
+    fecha = models.DateField()
+    jugador_negro = models.CharField(max_length=100)
+    jugador_blanco = models.CharField(max_length=100)
+    fichero = models.FileField(upload_to='sgf')
+    path = models.CharField(max_length=70,  blank=True)
+    sgf_size=models.IntegerField(default=0)
+    
+    class Meta:
+        unique_together=('jugador_negro', 'jugador_blanco','fecha', 'sgf_size')
+    
+    def __unicode__(self):
+        return self.jugador_blanco+" - "+self.jugador_negro+" ["+unicode(self.fecha)+"]"+" "+self.path
+    
+    def save(self, *args, **kwargs):
+        #actualizamos el size con el del fichero para diferenciar entre una partida revisada y otra que no
+        self.sgf_size=self.fichero.size
+        #cambiamos nombre y path para que se apunte al fichero correcto
+        name=self.fichero.name
+        nombre=name.split('.')
+        nombre[0]=nombre[0]+''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(3)) #add terminacion random
+        self.fichero.name=nombre[0]+"."+nombre[1]
+        camino_fichero="sgf/"+self.fichero.name
+        print camino_fichero
+        if self.path == "" or self.path==None:
+            self.path = camino_fichero
+            super(Sgf, self).save(*args, **kwargs)
+        else:
+            super(Sgf, self).save(*args, **kwargs)
+    
 class Partida(models.Model):
     fecha = models.DateField()
     jugador_negro = models.ForeignKey(Jugador, related_name='Jugador_jugador_negro')
@@ -46,10 +76,10 @@ class Partida(models.Model):
     jugador_blanco = models.ForeignKey(Jugador, related_name='Jugador_jugador_blanco')
     rango_blanco = models.CharField(max_length=50)
     resultado = models.CharField(max_length=50)
-    fichero = models.FileField(upload_to=MEDIA_ROOT+'sgf') #RESOLVER Al add dos ficheros con el mismo nombre el segundo se guarda con un nombre al que se add un sufijo y no coincidira con el del path
-    #path = models.CharField(max_length=70, default=fichero.name,  blank=True) #fichero.name devuelve la ruta relativa del fichero: sgf/nombre_fichero, que mostraremos en los templates.
+    fichero = models.FileField(upload_to='partida')
     path = models.CharField(max_length=70,  blank=True)
-    revisor=models.ForeignKey(Revisor, blank=True, null=True) #asignamos revisor y sera considerada partida revisada
+    es_profesional=models.BooleanField(default=False)
+    #revisor=models.ForeignKey(Revisor, blank=True, null=True) #asignamos revisor y sera considerada partida revisada
     sgf_size=models.IntegerField(default=0)
     class Meta:
         unique_together=('jugador_negro', 'jugador_blanco','fecha', 'sgf_size')
@@ -70,7 +100,7 @@ class Partida(models.Model):
         nombre[0]=nombre[0]+''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(3)) #add terminacion random
         self.fichero.name=nombre[0]+"."+nombre[1]
         print "nombre del fichero: "+self.fichero.name
-        camino_fichero="sgf/"+self.fichero.name
+        camino_fichero="partida/"+self.fichero.name
         print camino_fichero
         if self.path == "" or self.path==None:
             print "modificamos el path"
@@ -79,6 +109,37 @@ class Partida(models.Model):
         else:
             super(Partida, self).save(*args, **kwargs)
 
-class PartidaRepositorio(Partida):
-    es_profesional=models.BooleanField(default=False)
+class PartidaRevisada(models.Model):
+    fecha = models.DateField()
+    jugador_negro = models.CharField(max_length=100)
+    rango_negro = models.CharField(max_length=50)
+    jugador_blanco = models.CharField(max_length=100)
+    rango_blanco = models.CharField(max_length=50)
+    resultado = models.CharField(max_length=50)
+    fichero = models.FileField(upload_to='revision')
+    path = models.CharField(max_length=70,  blank=True)
+    revisor=models.ForeignKey(Revisor, blank=True, null=True) #asignamos revisor y sera considerada partida revisada
+    sgf_size=models.IntegerField(default=0)
+    
+    class Meta:
+        unique_together=('jugador_negro', 'jugador_blanco','fecha', 'sgf_size')
+    
+    def __unicode__(self):
+        return self.jugador_blanco+" - "+self.jugador_negro+" ["+unicode(self.fecha)+"]"+" "+self.path
+    
+    def save(self, *args, **kwargs):
+        #actualizamos el size con el del fichero para diferenciar entre una partida revisada y otra que no
+        self.sgf_size=self.fichero.size
+        #cambiamos nombre y path para que se apunte al fichero correcto
+        name=self.fichero.name
+        nombre=name.split('.')
+        nombre[0]=nombre[0]+''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(3)) #add terminacion random
+        self.fichero.name=nombre[0]+"."+nombre[1]
+        camino_fichero="revision/"+self.fichero.name
+        print camino_fichero
+        if self.path == "" or self.path==None:
+            self.path = camino_fichero
+            super(PartidaRevisada, self).save(*args, **kwargs)
+        else:
+            super(PartidaRevisada, self).save(*args, **kwargs)
     

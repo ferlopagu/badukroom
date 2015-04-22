@@ -3,7 +3,7 @@
 {% block columna_principal %}
 
 
-<div class="jumbotron" style="background-image: url('/static/{{ grupo.path_portada }}')">
+<div class="jumbotron" style="background-image: url('/media/{{ grupo.path_portada }}')">
 	
 	<div id="div_titulo">
 		<h2 class="h_nombre_perfil" id="titulo">{{grupo.titulo}}</h2>
@@ -47,7 +47,7 @@
 			{%for c in comentarios %} 
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<img src='/static/{{c.perfil.path_principal}}' width="40px" height="40px">
+					<img src='/media/{{c.perfil.path_principal}}' width="40px" height="40px">
 					<h4>{{ c.perfil.user.username }}</h4>
 					<h4 class="fecha_comentario">{{ c.fecha|date:"d/m/y/H/i/s" }}</h4>
 					<h5>{{ c.fecha}}</h5>
@@ -58,13 +58,13 @@
 				<div class="panel-body">
 						{{ c.texto }}
 						{% if c.partida.path != Null %}
-						<div data-wgo="/static/{{c.partida.path}}">
+						<div data-wgo="/media/{{c.partida.path}}">
 								Sorry, your browser doesn't support WGo.js. Download SGF <a
-								href="/static/{{c.partida.path}}">directly</a>.
+								href="/media/{{c.partida.path}}">directly</a>.
 						</div>
 						
 						<div>
-						<a  href="/static/{{c.partida.path}}" class="btn btn-info" role="button">Descargar</a>
+						<a  href="/media/{{c.partida.path}}" class="btn btn-info" role="button">Descargar</a>
 						</div>
 						{% endif %}
 				</div>
@@ -79,17 +79,17 @@
 				<div class="panel-body" id="div_body_respuesta">
 				{% for r in c.respuesta_set.all %}
 					<div class="panel-body" id="div_body_respuesta">
-					<img src='{% static r.perfil.path_principal %}' width="40px" height="40px">
+					<img src='/media/{{r.perfil.path_principal}}' width="40px" height="40px">
 					<h4 class="fecha_comentario">{{ r.fecha|date:"d/m/y/H/i/s" }}</h4>
 					{{ r.texto }}
 					{% if r.partida.path != Null %}
-						<div data-wgo="/static/{{r.partida.path}}">
+						<div data-wgo="/media/{{r.partida.path}}">
 								Sorry, your browser doesn't support WGo.js. Download SGF <a
-								href="/static/{{r.partida.path}}">directly</a>.
+								href="/media/{{r.partida.path}}">directly</a>.
 						</div>
 						
 						<div>
-						<a  href="/static/{{r.partida.path}}" class="btn btn-info" role="button">Descargar</a>
+						<a  href="/media/{{r.partida.path}}" class="btn btn-info" role="button">Descargar</a>
 						</div>
 						{% endif %}
 					</div>
@@ -97,7 +97,7 @@
 				</div>
 				<!-- FIN DE LA PRUEBA -->
 				<div id="div_respuesta">
-					<img src='{% static user.perfil.path_principal %}' width="40px" height="40px">
+					<img src='/media/{{user.perfil.path_principal}}' width="40px" height="40px">
 					<!--  <img src='/static/{{e.perfil}}' width="40px" height="40px"> -->
 					<form class="formulario_respuesta" id='formulario_respuesta' method="post" action="{% url 'redsocial:responder' %}" enctype="multipart/form-data">
 								{% csrf_token %} {{formulario.as_p}}
@@ -131,7 +131,7 @@
 		{% for p in grupo.miembros.all %}
 			<div class="panel panel-default" style="display: inline-table">
 				<div class='panel-heading'>
-					<img src='/static/{{p.path_principal}}' width="40px" height="40px">
+					<img src='/media/{{p.path_principal}}' width="40px" height="40px">
 					<a href="/redsocial/{{p.user.username}}">{{ p.user.first_name}} {{p.user.last_name}}</a>
 				</div>
 				<div class="panel-body">
@@ -220,7 +220,7 @@ $(function(){
 							//FIN TRATAMIENTO DEL FORMATO DE LA FECHA
 							
 							//Creacion panelHeading
-							html_panelheading+="<div class='panel-heading'><img src='/static/"+data[i].path_principal+"' width='40px' height='40px'>"
+							html_panelheading+="<div class='panel-heading'><img src='/media/"+data[i].path_principal+"' width='40px' height='40px'>"
 							+"<h4>"+data[i].nombre+"</h4><h4 class='fecha_comentario'>"+cambiar_fecha_ajax(fecha)+"</h4>";
 							
 							var username="{{user.username}}" //username del usuario logueado
@@ -232,8 +232,8 @@ $(function(){
 							//Creacion panelBody
 							html_panelbody+="<div class='panel-body'>"+data[i].texto;
 							if(data[i].partida != ""){
-								html_panelbody+="<div data-wgo='/static/"+data[i].partida+"'></div>"
-								+"<div><a  href='/static/"+data[i].partida+"' class='btn btn-info' role='button'>Descargar</a></div>"+"</div>";
+								html_panelbody+="<div data-wgo='/media/"+data[i].partida+"'></div>"
+								+"<div><a  href='/media/"+data[i].partida+"' class='btn btn-info' role='button'>Descargar</a></div>"+"</div>";
 							}else{
 								html_panelbody+="</div>";
 							}
@@ -261,8 +261,8 @@ $(function(){
 									+"<div><a  href='/static/"+data[i].respuestas[j].partida+"' class='btn btn-info' role='button'>Descargar</a></div>"+"</div>";
 									*/
 									
-									html_respuesta+="<div class='player'>/static/"+data[i].respuestas[j].partida+"</div>"
-										+"<div><a  href='/static/"+data[i].respuestas[j].partida+"' class='btn btn-info' role='button'>Descargar</a></div>";
+									html_respuesta+="<div class='player'>/media/"+data[i].respuestas[j].partida+"</div>"
+										+"<div><a  href='/media/"+data[i].respuestas[j].partida+"' class='btn btn-info' role='button'>Descargar</a></div>";
 								}else{
 									html_respuesta+= "</div>";
 								}
@@ -274,7 +274,7 @@ $(function(){
 							var formulario='{{formulario.as_p|escapejs}}';
 							var csrf_token="{% csrf_token %}";
 							html_form_respuesta+="<div id='div_respuesta'>"
-							+"<img src='{ static user.perfil.path_principal }' width='40px' height='40px'>"
+							+"<img src='/media/{{user.perfil.path_principal}}' width='40px' height='40px'>"
 							+"<form class='formulario_respuesta' id='formulario_respuesta' method='post' action='/redsocial/responder/' enctype='multipart/form-data'>"
 							+ csrf_token + formulario
 							+"<p><input class='"+data[i].id+"' id='responder' type='submit' value='Responder' /></p>"
