@@ -2,6 +2,8 @@
 {% load staticfiles %} 
 {% block columna_principal %}
 
+<!-- 
+
 <ul class="nav nav-pills" role="tablist">
 	<li class="active"><a href="#">Recientes</a></li>
 	<li><a href="#">Jugador</a></li>
@@ -41,6 +43,39 @@
 	<li><a id="recargar" href="">Recargar</a></li>
 </div>
 
+-->
+
+<h1>Visualizando partidas de: {{jugador}}</h1>
+
+<table class="table">
+	<thead>
+		<tr>
+			<th>Jugador Negro</th>
+			<th>Jugador Blanco</th>
+			<th>Fecha</th>
+			<th>Resultado</th>
+			<th>Partida</th>
+		</tr>
+	</thead>
+	<tbody id="nuevos_datos_pro">
+		{% for p in partidas %}
+		<tr>
+			<td><a
+				href="{% url 'redsocial:partidas_jugador' p.jugador_negro.id %}">{{p.jugador_negro}}
+					[{{p.rango_negro}}]</a></td>
+			<td><a
+				href="{% url 'redsocial:partidas_jugador' p.jugador_blanco.id %}">{{p.jugador_blanco}}
+					[{{p.rango_blanco}}]</a></td>
+			<td>{{p.fecha}}</td>
+			<td>{{p.resultado}}</td>
+			<td><a href="{% url 'redsocial:ver_partida' p.id %}">Visualizar</a></td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+<div id="next">
+	<a class="btn btn-primary" id="recargar" href="">Recargar</a>
+</div>
 
 {% endblock columna_principal %} 
 {% block js2 %}
@@ -54,10 +89,27 @@
 		$.eliminar();
 		$.responder();
 		$.recargar();
-		
+
 		$('#recargar').on(
 				'click',
 				function(event) {
+					/*
+					*
+					* En esta funcion tenemos que coger el id del jugador para recargar
+					* lo haremos cogiendo la url y cortandola mediante un split para quedarnos 
+					* con el ultimo campo de la url el cual es el identificador del jugador
+					*
+					*/
+					
+					alert(location.href);
+					var dir_ip = location.href;
+					var array_dir = dir_ip.split("/");
+					alert(array_dir);
+					var id_jugador=array_dir[array_dir.length-2]; //el -2 es por la url al finalizar con una barra al final
+					alert(id_jugador);
+					
+					
+					
 					//alert("entramos en recargar");
 					event.preventDefault();
 					console.log("Entramos en load items");
@@ -70,16 +122,17 @@
 					pageNum = pageNum + 1;
 					// Configure the url we're about to hit
 					$.ajax({
-						url : "{% url 'redsocial:partidas_ajax' %}",
+						//url : "{ url 'redsocial:partidas_ajax' }",
+						url : "/redsocial/jugadores/"+id_jugador+"/",
 						data : {
 							page_number : pageNum
 						},
 						dataType : 'json',
 						success : function(data) {
 							//alert(data.length);
-							if(data.length < 10){
+							if (data.length < 10) {
 								//alert("No hay mas páginas");
-								$('#next').html("Ya no hay más partidas que mostrar");
+								$('#next').html("<div class='alert alert-info' role='alert'>Ya no hay más partidas que mostrar</div>");
 							}
 							//No se ejecuta lo de dentro y si el complete
 							//alert("entramos en success");
@@ -89,15 +142,14 @@
 							// Loop through all items
 							html = "";
 							console.log("Valor que tenia html: " + html);
-							for (i = 0; i < data.length; i++){
+							for (i = 0; i < data.length; i++) {
 								html += "<tr>" + "<th>"
 										+ data[i].jugador_negro_id + "</th>"
 										+ "<th>" + data[i].jugador_blanco_id
 										+ "</th>" + "<th>" + data[i].fecha
 										+ "</th>" + "<th>" + data[i].resultado
-										+ "</th>" + "<th>"
-										+ data[i].path+ "</th>"
-										+ "</tr>";
+										+ "</th>" + "<th>" + data[i].path
+										+ "</th>" + "</tr>";
 
 								/*
 								$("#newItems").before(
@@ -113,9 +165,9 @@
 							// When I get a 400 back, fail safely
 							hasNextPage = false;
 						},
-				        complete: function(data, textStatus){
-				            // Turn the scroll monitor back on
-				            //alert("Completado");
+						complete : function(data, textStatus) {
+							// Turn the scroll monitor back on
+							//alert("Completado");
 						}
 					});
 					//alert("Realizado con exito");

@@ -2,13 +2,12 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-from django.conf import settings
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ('login', '0001_initial'),
     ]
 
     operations = [
@@ -16,7 +15,8 @@ class Migration(migrations.Migration):
             name='Jugador',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('nombre', models.CharField(max_length=50)),
+                ('nombre', models.CharField(unique=True, max_length=50)),
+                ('es_profesional', models.BooleanField(default=False)),
             ],
             options={
             },
@@ -27,8 +27,13 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('fecha', models.DateField()),
+                ('rango_negro', models.CharField(max_length=50)),
+                ('rango_blanco', models.CharField(max_length=50)),
                 ('resultado', models.CharField(max_length=50)),
-                ('path', models.CharField(max_length=70)),
+                ('fichero', models.FileField(upload_to=b'partida')),
+                ('path', models.CharField(max_length=70, blank=True)),
+                ('es_profesional', models.BooleanField(default=False)),
+                ('sgf_size', models.IntegerField(default=0)),
                 ('jugador_blanco', models.ForeignKey(related_name=b'Jugador_jugador_blanco', to='principal.Jugador')),
                 ('jugador_negro', models.ForeignKey(related_name=b'Jugador_jugador_negro', to='principal.Jugador')),
             ],
@@ -37,19 +42,43 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='Perfil',
+            name='Revisor',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('fechaNacimiento', models.DateField()),
-                ('rango', models.CharField(max_length=50, choices=[(b'30k', b'30k'), (b'29k', b'29k'), (b'28k', b'28k'), (b'27k', b'27k'), (b'26k', b'26k'), (b'25k', b'25k'), (b'24k', b'24k'), (b'23k', b'23k'), (b'22k', b'22k'), (b'21k', b'21k'), (b'20k', b'20k'), (b'19k', b'19k'), (b'18k', b'18k'), (b'17k', b'17k'), (b'16k', b'16k'), (b'15k', b'15k'), (b'14k', b'14k'), (b'13k', b'13k'), (b'12k', b'12k'), (b'11k', b'11k'), (b'10k', b'10k'), (b'9k', b'9k'), (b'8k', b'8k'), (b'7k', b'7k'), (b'6k', b'6k'), (b'5k', b'5k'), (b'4k', b'4k'), (b'3k', b'3k'), (b'2k', b'2k'), (b'1k', b'1k'), (b'1D', b'1D'), (b'2D', b'2D'), (b'3D', b'3D'), (b'4D', b'4D'), (b'5D', b'5D'), (b'6D', b'6D'), (b'7D', b'7D'), (b'8D', b'8D'), (b'9D', b'9D')])),
-                ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL)),
+                ('nickname_kgs', models.CharField(unique=True, max_length=20)),
+                ('perfil', models.OneToOneField(to='login.Perfil')),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Sgf',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('fecha', models.DateField()),
+                ('jugador_negro', models.CharField(max_length=100)),
+                ('jugador_blanco', models.CharField(max_length=100)),
+                ('fichero', models.FileField(upload_to=b'sgf')),
+                ('path', models.CharField(max_length=70, blank=True)),
+                ('sgf_size', models.IntegerField(default=0)),
             ],
             options={
             },
             bases=(models.Model,),
         ),
         migrations.AlterUniqueTogether(
+            name='sgf',
+            unique_together=set([('jugador_negro', 'jugador_blanco', 'fecha', 'sgf_size')]),
+        ),
+        migrations.AddField(
+            model_name='partida',
+            name='revisor',
+            field=models.ForeignKey(blank=True, to='principal.Revisor', null=True),
+            preserve_default=True,
+        ),
+        migrations.AlterUniqueTogether(
             name='partida',
-            unique_together=set([('jugador_negro', 'jugador_blanco', 'fecha')]),
+            unique_together=set([('jugador_negro', 'jugador_blanco', 'fecha', 'sgf_size')]),
         ),
     ]

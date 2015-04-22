@@ -1,6 +1,6 @@
 from django.db import models
 from login.models import Perfil
-from principal.models import Partida
+from principal.models import Partida, Sgf
 from badukroom.settings import MEDIA_ROOT 
 from pip.cmdoptions import editable
 from django.template.defaultfilters import default
@@ -41,7 +41,7 @@ class Comentario(models.Model):
     perfil=models.ForeignKey(Perfil)
     texto=models.CharField(max_length=2000)
     #fichero=models.FileField(upload_to=MEDIA_ROOT+'sgf')
-    partida=models.ForeignKey(Partida, null=True, blank=True)
+    partida=models.ForeignKey(Sgf, null=True, blank=True)
     grupo=models.ForeignKey(Grupo, null=True, blank=True)
     #respuestas=models.ManyToManyField(Respuesta, blank=True)
     
@@ -53,7 +53,7 @@ class Respuesta(models.Model):
     comentario=models.ForeignKey(Comentario)
     fecha=models.DateTimeField()
     texto=models.CharField(max_length=2000)
-    partida=models.ForeignKey(Partida, null=True, blank=True)
+    partida=models.ForeignKey(Sgf, null=True, blank=True)
     #fichero=models.FileField(upload_to=MEDIA_ROOT+'sgf', blank=True)
 
 class Mensaje(models.Model):

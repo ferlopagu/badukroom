@@ -1,0 +1,61 @@
+{% extends "base_perfil_home.html" %}
+{% load staticfiles %}
+{% block columna_principal %}
+	{# Load the tag library #} 
+	{% load bootstrap3 %} 
+	{# Load CSS and JavaScript #}  
+	{# Display django.contrib.messages as Bootstrap alerts #} 
+	{% bootstrap_messages %}
+
+<div class="alert alert-info" role="alert">Grupos en el sistema. Únete al que quieras!</div>
+
+<div>
+<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+  Crear Grupo
+</button>
+
+<a class="btn btn-primary" href="{% url 'redsocial:lista_grupos' %}">Mis grupos</a>
+
+</div>
+
+<div class="collapse" id="collapseExample">
+  <div class="well">
+    {% block content %}
+
+    <form action="{% url 'redsocial:crear_grupo' %}" role="form" method="post" enctype="multipart/form-data" {% if layout != 'vertical' %}class="form-{{ layout }}"{% endif %}>
+        {% csrf_token %}
+        {% bootstrap_form form layout=layout %}
+        {% buttons submit='OK' reset="Cancelar" %}{% endbuttons %}
+    </form>
+
+	{% endblock %}
+  </div>
+</div>
+
+
+<div class="list-group" id="list-group">
+{% for e in lista_grupos %}
+	<a href="/redsocial/grupo/{{e.pk}}" class='list-group-item'>{{e.titulo}}</a>						
+{% endfor %} 
+</div>
+{% endblock columna_principal %}
+
+{% block js2 %}
+<script type="text/javascript">	
+	$(function(){
+		$.buscador();
+		$.contar();
+	});
+	
+	
+	$('#collapseExample2').on('show', function () {
+		  $('#collapseExample3').hide()
+	});
+	
+	$('#collapseExample3').on('show', function () {
+		  $('#collapseExample2').hide()
+	});
+	
+	
+</script>
+{% endblock js2 %}
