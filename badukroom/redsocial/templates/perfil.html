@@ -65,7 +65,7 @@
 					<h3>Peticion</h3>
 				</div>
 				<div class="modal-body" style="height: 80px">
-					<h3 id="mensaje">La petición fue enviada correctamente</h3>
+					<h3 id="mensaje">Petición de amistad enviada correctamente</h3>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
@@ -78,17 +78,51 @@
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h3>Peticion</h3>
+					<h3>Ya son amigos</h3>
 				</div>
 				<div class="modal-body" style="height: 80px">
 					<h3 id="mensaje">La petición fue aceptada</h3>
 				</div>
-				<div class="modal-footer" style="height: 30px">
+				<div class="modal-footer" >
 					<button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
 				</div>
 			</div>
 		</div>
 	</div>
+	
+	<div id="rechazar_peticion" class="modal" role="dialog">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3>Peticion</h3>
+				</div>
+				<div class="modal-body" style="height: 80px">
+					<h3 id="mensaje">La petición fue rezhazada</h3>
+				</div>
+				<div class="modal-footer" >
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id="eliminacion_peticion" class="modal" role="dialog">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3>Eliminado</h3>
+				</div>
+				<div class="modal-body" style="height: 80px">
+					<h3 id="mensaje">Ha sido eliminado correctamente</h3>
+				</div>
+				<div class="modal-footer" >
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	
 </div>
 
 
@@ -435,6 +469,7 @@ $(document).ready(function(){
 	$.buscador();
 	$.contar();
 	$.aceptarPeticion();
+	$.declinarPeticion();
 	$.agregar();
 	$.eliminar();
 	$.responder();
