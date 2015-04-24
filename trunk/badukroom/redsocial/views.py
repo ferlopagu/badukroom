@@ -436,6 +436,7 @@ def agregar_ajax(request):
     if request.is_ajax():
         if request.method=='POST':
             username_receptor=request.POST['perfil_para_agregar']
+            print "Perfil para agregar: "+username_receptor
             emisor=get_object_or_404(Perfil, user__username=request.user.username)
             receptor=get_object_or_404(Perfil, user__username=username_receptor)
             es_aceptada=False
@@ -463,7 +464,8 @@ def contar_notificaciones(request):
         if request.method=='GET':
             recuento_peticiones = PeticionAmistad.objects.filter(receptor__user__username=request.user.username).count()
             recuento_notificaciones=Notificacion.objects.filter(receptor__user__username=request.user.username).count()
-            recuento=recuento_notificaciones+recuento_peticiones
+            recuento_peticiones_revision=PeticionRevision.objects.filter(receptor__user__username=request.user.username).count()
+            recuento=recuento_notificaciones+recuento_peticiones+recuento_peticiones_revision
             return HttpResponse(recuento)
     else:
         print "no es peticion ajax o GET"
