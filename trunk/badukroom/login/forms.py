@@ -8,6 +8,7 @@ from django.forms import ModelForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from login.models import Perfil
+from django.forms.widgets import PasswordInput
 
 
 class UserForm(UserCreationForm):
@@ -48,3 +49,8 @@ class PerfilForm(ModelForm):
             perfil.save()
         return perfil
     """
+
+class UserForm2(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name')

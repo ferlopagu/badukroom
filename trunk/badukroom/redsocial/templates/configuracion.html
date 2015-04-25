@@ -4,18 +4,38 @@
 	{% load bootstrap3 %} 
 	{# Display django.contrib.messages as Bootstrap alerts #} 
 	{% bootstrap_messages %}
+	
+  
+		  <div class="well">
+		    <div class="alert alert-info" role="alert">Al actualizar la contraseña se te redirigirá a la página de login!</div>
+		    
+		    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+  				Cambiar contraseña
+			</button>
+			<div class="collapse" id="collapseExample">
+			    <form role="form" method="post" enctype="multipart/form-data" {% if layout != 'vertical' %}class="form-{{ layout }}"{% endif %}>
+			        {% csrf_token %} {% bootstrap_form form layout='vertical' size="sm" %}
+			        {% buttons  layout='vertical'%}
+						<button type="submit" class="btn btn-primary" name='actualizar_pass'>{% bootstrap_icon "star" %}Guardar cambios</button>
+					{% endbuttons %}
+			    </form>
+		    </div>
+		  </div>
+
+
+	
 		<div class="well">
 		<form id='formulario_actualizacion' method="post"
 						enctype="multipart/form-data" action=''>
-								{% csrf_token %} {% bootstrap_form form_user layout='horizontal' size="sm" %} 
-								{% csrf_token %} {% bootstrap_form form_perfil layout='vertical' size="sm" %} 
+								 {% csrf_token %} {% bootstrap_form form_user layout='horizontal' size="sm" %}
+								{% csrf_token %} {% bootstrap_form form_perfil layout='vertical' size="sm" %}
+								 
 		{% buttons  layout='vertical'%}
 		<button type="submit" class="btn btn-primary" name='actualizar_perfil'>{% bootstrap_icon "star" %}Guardar cambios</button>
 		{% endbuttons %}
 	
 					</form>
-		</div>
-										
+		</div>								
 								
 {%endblock%}
 

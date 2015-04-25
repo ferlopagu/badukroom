@@ -24,7 +24,7 @@ class RespuestaForm(ModelForm):
 
 
 class ComentarioForm(forms.Form):
-    texto=forms.CharField(label="Tu comentario", max_length=2000, required=False)
+    texto=forms.CharField(label="Tu comentario", max_length=5000, required=False, widget=forms.Textarea)
     fichero=forms.FileField(label="Sgf", required=False)
 
 class GrupoForm(ModelForm):
