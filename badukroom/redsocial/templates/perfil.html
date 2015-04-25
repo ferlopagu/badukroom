@@ -1,6 +1,11 @@
 {% extends "base_perfil_home.html" %}
 {% load staticfiles %}
 
+	{# Load the tag library #} 
+	{% load bootstrap3 %} 
+	{# Display django.contrib.messages as Bootstrap alerts #} 
+	{% bootstrap_messages %}
+
 {% block columna_principal %}
 
 <div class="jumbotron" style="background-image: url('/media/{{perfil.path_portada}}')">
@@ -19,14 +24,6 @@
 			<div id="botones_portada">
 			<nav class="navbar navbar-default" id="nav_botones_portada">
 				<div class="container-fluid">
-				<!--  
-					<ul class="nav navbar-nav navbar-right">
-					<li class="active"><a href="#">Biografia</a></li>
-					<li><a href="#">Informacion</a></li>
-					<li><a href="#">Amigos</a></li>
-					<li><a href="#">Partidas</a></li>
-				</ul>
-				-->
 				  <ul class="nav nav-tabs" role="tablist">
 				    <li role="presentation" class="active"><a href="#tablon" aria-controls="tablon" role="tab" data-toggle="tab">Tablon</a></li>
 				    <li role="presentation"><a href="#informacion" aria-controls="informacion" role="tab" data-toggle="tab">Informacion</a></li>
@@ -121,8 +118,6 @@
 			</div>
 		</div>
 	</div>
-	
-	
 </div>
 
 
@@ -130,8 +125,9 @@
     <div role="tabpanel" class="tab-pane active" id="tablon">
 	    {% if somos_nosotros == True %}
 	    <div class="well">
+	    <!-- {formulario.as_p} -->
 			<form id='formulario' method="post" action="{% url 'redsocial:creaComentario' %}" enctype="multipart/form-data">
-				{% csrf_token %} {{formulario.as_p}}
+				{% csrf_token %}  {% bootstrap_form formulario layout='vertical' size="sm" %}
 				<p>
 					<input id='enviar' type='submit' value='enviar' />
 				</p>
@@ -153,7 +149,9 @@
 					{%endif%}
 				</div>
 				<div class="panel-body">
+						
 						{{ c.texto }}
+						
 						{% if c.partida.path != Null %}
 						<div data-wgo="/media/{{c.partida.path}}">
 								Sorry, your browser doesn't support WGo.js. Download SGF <a

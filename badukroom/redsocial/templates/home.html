@@ -1,9 +1,16 @@
 {% extends "base_perfil_home.html" %}
 {% load staticfiles %}
+
+	{# Load the tag library #} 
+	{% load bootstrap3 %} 
+	{# Display django.contrib.messages as Bootstrap alerts #} 
+	{% bootstrap_messages %}
+
+
 {% block columna_principal %}
 		<div class="well">
 			<form id='formulario' method="post" action="{% url 'redsocial:creaComentario' %}" enctype="multipart/form-data">
-				{% csrf_token %} {{formulario.as_p}}
+				{% csrf_token %} {% bootstrap_form formulario layout='vertical' size="sm" %}
 				<p>
 					<input id='enviar' type='submit' value='enviar' />
 				</p>
@@ -276,6 +283,7 @@
 		$.comentar();
 		$.responder();
 		restarFecha();
+		$.eliminar_comentario();
 		//alert($(".fecha_comentario").text());
 		//Con esto recorremos todas las fechas ahora deberiamos ir cambiando una a una segun corresponda
 		/*

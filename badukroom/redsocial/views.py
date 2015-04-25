@@ -25,10 +25,11 @@ from django.template.defaultfilters import safe
 from django.views.generic.base import TemplateView
 from .recomendacion import perfiles_amigos, topMatches_amigos_comun, topMatches_gustos, getRecommendations_jugadores
 from redsocial.recomendacion import perfiles_gustos
-from login.forms import PerfilForm, UserForm
+from login.forms import PerfilForm, UserForm, UserForm2
+from django.contrib.auth.forms import PasswordChangeForm, SetPasswordForm
 # Create your views here.
 #return render_to_response('inicio.html', locals())   
-
+@login_required(login_url='/login')
 def perfil(request, username):
     #p = get_object_or_404(Perfil, user__username=username) 
     #comentarios=list(Comentario.objects.filter(perfil=p, grupo=None).order_by('fecha').reverse())
@@ -264,7 +265,8 @@ def home_ajax(request): #No se para que recojo la variable username si luego la 
                 print lista_comentarios
                 return JsonResponse(lista_comentarios, safe=False)
                 print "no se retorna"
-  
+
+@login_required(login_url='/login')
 def crea_comentario(request):
     if request.is_ajax():
         #formulario=ComentarioForm(texto=request.POST['texto'])
@@ -348,7 +350,7 @@ def crea_comentario(request):
         print "ENTRAMOS EN ELSE AL NO SER AJAX"
         return HttpResponseRedirect(request.META['HTTP_REFERER'])
 
-
+@login_required(login_url='/login')
 def responder(request):
     if request.is_ajax():
         id_comentario=int(request.POST["id_comentario"])
@@ -402,6 +404,7 @@ def responder(request):
         print "ENTRAMOS EN ELSE AL NO SER AJAX"
         return HttpResponseRedirect(request.META['HTTP_REFERER'])
 
+@login_required(login_url='/login')
 def buscador(request):
     if request.is_ajax():
         if request.method=='GET':
@@ -432,6 +435,7 @@ def buscador(request):
             return render_to_response('busqueda.html', context, context_instance=RequestContext(request))
         #return HttpResponseRedirect(request.META['HTTP_REFERER']) #Asi recargariamos la página
 
+@login_required(login_url='/login')
 def agregar_ajax(request):
     if request.is_ajax():
         if request.method=='POST':
@@ -447,6 +451,7 @@ def agregar_ajax(request):
     else:
         print "fue un fracaso la peticion ajax"
 
+@login_required(login_url='/login')
 def eliminar_ajax(request):
     if request.is_ajax():
         if request.method=='GET':
@@ -470,6 +475,7 @@ def contar_notificaciones(request):
     else:
         print "no es peticion ajax o GET"
 
+@login_required(login_url='/login')
 def ver_notificaciones(request):
     lista_peticiones=list(PeticionAmistad.objects.filter(receptor__user__username=request.user.username))
     lista_notificaciones=list(Notificacion.objects.filter(receptor__user__username=request.user.username))
@@ -520,7 +526,8 @@ def limpiar_notificaciones(request):
             return HttpResponse("Se borraron correctamente.")
     else:
         return HttpResponse('Error en la peticion Ajax')
-           
+
+@login_required(login_url='/login')          
 def grupo(request, grupo_id):
     g = get_object_or_404(Grupo, pk=grupo_id)
     comentarios_filter=list(Comentario.objects.filter(grupo=g).order_by('fecha').reverse())
@@ -574,6 +581,7 @@ def grupo(request, grupo_id):
     context = {'comentarios': lista_comentarios, 'formulario':formulario, 'grupo':g ,'miembro':miembro}
     return render_to_response('grupo.html',context,context_instance=RequestContext(request))
 
+@login_required(login_url='/login')
 def lista_grupos(request):
     p=get_object_or_404(Perfil, user__username=request.user.username)
     grupos=list(Grupo.objects.values('titulo','descripcion','pk').filter(miembros__user__username=p.user.username))
@@ -581,12 +589,14 @@ def lista_grupos(request):
     context = {'lista_grupos': grupos,'form':form}
     return render_to_response('lista_grupos.html',context,context_instance=RequestContext(request))
 
+@login_required(login_url='/login')
 def lista_todos_grupos(request):
     grupos=list(Grupo.objects.values('titulo','descripcion','pk').all().order_by("titulo"))
     form=GrupoForm()
     context = {'lista_grupos': grupos,'form':form}
     return render_to_response('lista_grupos_total.html',context,context_instance=RequestContext(request))
 
+@login_required(login_url='/login')
 def amigos(request):
     p=get_object_or_404(Perfil, user__username=request.user.username)
     amigos=list(p.amigos.all())
@@ -599,6 +609,7 @@ def amigos(request):
     context = {'lista_amigos': amigos, 'lista_recomendacion_comun': lista_recomendacion_comun, 'lista_recomendacion_gustos': lista_recomendacion_gustos}
     return render_to_response('amigos.html', context, context_instance=RequestContext(request))
 
+@login_required(login_url='/login')
 def partidas(request):
     """ Obtenemos partidas repositorio profesionales"""
     #partidas_p=list(PartidaRepositorio.objects.filter(es_profesional=True).order_by('fecha').reverse())
@@ -631,7 +642,8 @@ def partidas(request):
     form_fecha=FechasForm()
     context ={'lista_partidas_profesionales':lista_partidas_profesionales, 'lista_partidas_amateur':lista_partidas_amateur,'dic_jugadores_p':dic_jugadores_p, 'dic_jugadores_a':dic_jugadores_a, 'form':form, 'form_fecha':form_fecha}
     return render_to_response('partidas.html', context, context_instance=RequestContext(request))
-    
+ 
+@login_required(login_url='/login')   
 def partidas_ajax(request):
     partidas=list(Partida.objects.all().order_by('fecha').reverse())
     paginator = Paginator(partidas, 10)
@@ -647,7 +659,8 @@ def partidas_ajax(request):
                     page_objects=[]
                 lista=[i for i in page_objects]
                 return HttpResponse(serializers.serialize('json',lista, use_natural_foreign_keys=True))
-            
+
+@login_required(login_url='/login')          
 def partidas_jugador(request, id):
     #partidas=list(PartidaRepositorio.objects.filter(Q(jugador_negro__id=id) | Q(jugador_blanco__id=id)))
     partidas=list(Partida.objects.filter(Q(jugador_negro__id=id) | Q(jugador_blanco__id=id)))
@@ -686,6 +699,7 @@ def partidas_jugador(request, id):
     return render_to_response('jugador.html', context, context_instance=RequestContext(request))
     """
 
+@login_required(login_url='/login')
 def revisiones(request):
     partidas=list(PartidaRevisada.objects.all().order_by('fecha').reverse())
     paginator = Paginator(partidas, 2)
@@ -724,6 +738,7 @@ def revisiones(request):
         context={'partidas_revisadas':lista, 'form':form, 'revisores': revisores, 'soy_revisor':soy_revisor}
         return render(request,name, context)
 
+@login_required(login_url='/login')
 def partidas_by_revisor(request, nickname_kgs):
     partidas=list(PartidaRevisada.objects.filter(revisor__nickname_kgs=nickname_kgs).order_by('fecha').reverse())
     paginator = Paginator(partidas, 2)
@@ -761,6 +776,7 @@ def partidas_by_revisor(request, nickname_kgs):
         context={'partidas_revisadas':lista, 'nick':nickname_kgs, 'rango':revisor.perfil.rango}
         return render(request, name, context)
 
+@login_required(login_url='/login')
 def crear_grupo(request):
     if request.method=="POST":
         if 'foto_portada' in request.FILES: #comprobamos que tenga fichero
@@ -793,6 +809,7 @@ def crear_grupo(request):
         print "el metodo no es POST"
 
 #Sistema de revisiones de partidas
+@login_required(login_url='/login')
 def enviar_partida_revisar(request):
     form = EnvioForm(request.POST, request.FILES)
     if form.is_valid():
@@ -829,6 +846,7 @@ def enviar_partida_revisar(request):
     else:
         print "el formulario no es valido"
 
+@login_required(login_url='/login')
 def aceptar_partida_revisar(request, username):
     #aqui ya mandamos la partida suponemos que acepta si la revisa y sino la va a revisar rechazara cuando lea la notificacion
     revisor=Revisor.objects.get(perfil__user__username=request.user.username)
@@ -878,19 +896,21 @@ def rechazar_partida_revisar(request):
     print "borramos peticion"
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
 
-
+@login_required(login_url='/login')
 def ver_partida(request, partida_id):
     partida=get_object_or_404(Partida, pk=partida_id)
     name="ver_partida.html"
     context={'partida':partida}
     return render(request,name, context)
 
+@login_required(login_url='/login')
 def ver_partida_revisada(request, partida_id):
     partida=get_object_or_404(PartidaRevisada, pk=partida_id)
     name="ver_partida.html"
     context={'partida':partida}
     return render(request,name, context)
 
+@login_required(login_url='/login')
 def eliminar_comentario_ajax(request):
     if request.is_ajax():
         if request.method=='POST':
@@ -962,6 +982,7 @@ def dejar_revisor(request):
             revisor.delete()
             return HttpResponse("Ha sido un exito")
 
+@login_required(login_url='/login')
 def fuerza_revisor(request):  
     if request.is_ajax():
         if request.method=="GET":
@@ -1005,6 +1026,7 @@ def fuerza_revisor(request):
             print lista_partidas
             return JsonResponse(lista_partidas, safe=False)
 
+@login_required(login_url='/login')
 def fuerza_jugador(request):
         if request.is_ajax():
             if request.method=="GET":
@@ -1038,6 +1060,7 @@ def fuerza_jugador(request):
                     lista_partidas.append(dic_partida)
                 print lista_partidas
                 return JsonResponse(lista_partidas, safe=False)
+
 
 def recargar_repositorio_ajax(request):
     if request.is_ajax():
@@ -1103,6 +1126,26 @@ def partidas_entre_fechas(request):
             print lista_partidas
             return JsonResponse(lista_partidas, safe=False)
 
+def unirse_grupo(request):
+    if request.is_ajax():
+        if request.method=='POST':
+            print request.POST
+            g = Grupo.objects.get(id=request.POST['grupo_id'])
+            p=Perfil.objects.get(user__username=request.user.username)
+            g.miembros.add(p)
+            g.save()
+            return HttpResponse("Ha sido un exito")
+
+def dejar_grupo(request):
+    if request.is_ajax():
+        if request.method=='POST':
+            print request.POST
+            g = Grupo.objects.get(id=request.POST['grupo_id'])
+            p=Perfil.objects.get(user__username=request.user.username)
+            g.miembros.remove(p)
+            g.save()
+            return HttpResponse("Ha sido un exito")
+
 def rest_perfil(request, username):
     p = get_object_or_404(Perfil, user__username=username)
     dic={}
@@ -1154,58 +1197,25 @@ def configuracion(request):
     instance_perfil = Perfil.objects.get(user=request.user)
     instance_user = User.objects.get(id=instance_perfil.user.id)
     form_perfil = PerfilForm(request.POST or None,request.FILES or None, instance=instance_perfil)
-    form_user=UserForm(request.POST or None, instance=instance_user)
+    form_user=UserForm2(request.POST or None, instance=instance_user)
+    #form = PasswordChangeForm(user=request.user, data=request.POST)
+    form = SetPasswordForm(user=request.user, data=request.POST)
     if request.method=='POST':
-        if form_perfil.is_valid() and form_user.is_valid():
+        
+        
+        if form_perfil.is_valid() and form_user.is_valid(): #El usuario actualiza su informacion
             form_perfil.save()
             form_user.save()
-            return HttpResponse('salvado con exito la informacion')
-    context={'form_perfil': form_perfil, 'form_user':form_user}
+            if form.is_valid(): # y tambien actualiza su password
+                form.save()
+                return HttpResponseRedirect("/")   
+            return HttpResponseRedirect("configuracion")       
+        if form.is_valid(): #el usuario actualiza solo su password
+            print form
+            form.save()
+            return HttpResponseRedirect("/")
+        return HttpResponse('salvado con exito la informacion')
+    context={'form_perfil': form_perfil, 'form_user':form_user, 'form': form}
     name='configuracion.html'
     return render(request,name, context)
-
-def mis_mensajes(request):
-    if request.is_ajax():
-        if request.method=="POST":
-            id_perfil_amigo= request.POST["p_id"]
-            usuario = Perfil.objects.get(user=request.user)
-            amigo = Perfil.objects.get(id=id_perfil_amigo)
-            mensajes = list(Mensaje.objects.filter(Q(emisor=usuario, receptor=amigo) | Q(emisor=amigo, receptor=usuario)).order_by('fecha'))
-            lista_mensajes=[]
-            for m in mensajes:
-                diccionario_mensaje={}
-                diccionario_mensaje["fecha"]=m.fecha
-                diccionario_mensaje["emisor"]=m.emisor.user.first_name
-                diccionario_mensaje["receptor"]=m.receptor.user.first_name
-                diccionario_mensaje["mensaje"]=m.mensaje
-                lista_mensajes.append(diccionario_mensaje)
-            return JsonResponse(lista_mensajes, safe=False) #NO FUNCIONA
-        else:
-            return HttpResponse("No es POST")
-    else:
-        perfil = Perfil.objects.get(user=request.user)
-        amigos=list(perfil.amigos.all())
-        #PRUEBA OBTENEMOS TODOS LOS MENSAJES
-        mensajes=list(Mensaje.objects.filter(Q(receptor=perfil) | Q(emisor=perfil)).order_by('fecha'))
-        #Formulario Mensaje
-        form=MensajeForm()
-        context={'lista_amigos': amigos, 'lista_mensajes':mensajes, 'formulario':form}
-        name='mensajes.html'
-        return render(request, name, context)
-
-#FALTA COMPROBAR
-def enviar_mensaje(request, id_amigo):
-    if request.is_ajax():
-        if request.method=="POST":
-            usuario = Perfil.objects.get(user=request.user)
-            amigo = Perfil.objects.get(id=id_amigo)
-            texto = request.POST["mensaje"]
-            fecha = datetime.now()
-            mensaje=Mensaje(emisor=usuario, receptor=amigo, mensaje=texto, fecha=fecha)
-            mensaje.save()
-            print "mensaje creado"
-            sms="Tiene mensajes sin leer de "+usuario.user.first_name+" "+usuario.user.last_name
-            notificacion = Notificacion(receptor=amigo, mensaje=sms)
-            notificacion.save()
-            print "notificacion creada"
         

@@ -39,7 +39,7 @@ class Grupo(models.Model):
 class Comentario(models.Model):
     fecha=models.DateTimeField()
     perfil=models.ForeignKey(Perfil)
-    texto=models.CharField(max_length=2000)
+    texto=models.TextField()
     #fichero=models.FileField(upload_to=MEDIA_ROOT+'sgf')
     partida=models.ForeignKey(Sgf, null=True, blank=True)
     grupo=models.ForeignKey(Grupo, null=True, blank=True)

@@ -341,11 +341,6 @@ $.responder=function(){
 		var x = location.pathname;
 		form.append("url",x);
 		form.append("id_comentario",id_comentario);
-		console.log(x);
-		/*
-		var dic={"form":form, 'id':id_comentario};
-		alert(dic);
-		*/
 		$.ajax({ // create an AJAX call...
 			/*
 			
@@ -389,17 +384,6 @@ $.buscador=function(){
 				console.log(data);
 				console.log("construyendo enlaces");
 				html="";
-				/*
-					for(var i=0;i<data.length; i++){
-						console.log(data[i]);
-						console.log(data[i].username);
-						//html+="<li><a href='/redsocial/"+data[i].user__username+"'>"+data[i].user__first_name+" "+data[i].user__last_name+"</a></li>"
-						html+="<li><div class='panel-heading'><img src='/static/"+data[i].path_principal+"' width='40px' height='40px'><a href='/redsocial/"+data[i].user__username+"'>"+data[i].user__first_name+" "+data[i].user__last_name+"</a></div></li>";
-					}
-				*/
-				//Lista personas
-				
-
 				for(var i=0;i<data.length; i++){
 					if(data[i].length == 0){ //este bucle if es para imprimir no hay resultados en la busqueda ajax
 						console.log($('#buscar_texto').val());
@@ -441,46 +425,30 @@ $.buscador=function(){
 						}
 					}
 				}
-				/*
-				if(data[0].length < 1 && data[1].length <1){
-					console.log($('#buscar_texto').val());
-					if($('#buscar_texto').val() !=""){
-					html+="<li><div class='panel-heading'><h5 style='color:beige'>No se encontraron resultados</h5></div></li>";
-					}
-				}*/
-				//lista grupos
-				
-				//$('#list-group').html(html);
 				console.log(html);
 				$('#list-group').html(html);
 			}  
 		});
 	});
-	/*
-	$('#buscar').on('click',function(event){
-		$.get("{% url 'redsocial:buscar' %}", {"texto": $('#buscar_texto').val()}, function(data){
-			window.location.replace("http://localhost/redsocial/busqueda.html");
-		});
-	});
-	*/
-//}
+
 
 
 
 $.eliminar_comentario=function(){
 	$(".eliminar_comentario").on('click', function(event){
-		console.log("Acemos click en eliminar_comentario");
+		//alert("Acemos click en eliminar_comentario");
 		event.preventDefault();
 		var comentario_clase=$(this).attr("class");
 		var array_clases=comentario_clase.split("/");
 		var comentario_id=array_clases[1];
-		alert(comentario_id);
+		//alert(comentario_id);
 		$.ajax({
 			data:{"comentario_id":comentario_id},
 			type:'POST',
 			url: "{% url 'redsocial:eliminar_comentario_ajax' %}",
 			success: function(data){
-				alert("Comentario eliminado correctamente");
+				//alert("Comentario eliminado correctamente");
+				window.location.reload();
 			}
 		});
 	});
@@ -599,6 +567,46 @@ cambiar_fecha_ajax=function(fecha){
 	var tiempo=fecha.toLocaleTimeString("es-ES", options2);
 	var fecha_def=fecha_string[1]+" a la(s) "+tiempo;
 	return fecha_def;
+}
+
+$.unirseGrupo=function(){
+	//$('#agregar').on('click', function(event){
+	$(document).on('click', "#unir_grupo", function(event){
+		event.preventDefault();
+		var dir_ip = location.href;
+		var array_dir = dir_ip.split("/");
+		//alert(array_dir);
+		var grupo_id=array_dir[array_dir.length-2]; //el -2 es por la url al finalizar con una barra al final
+		$.ajax({
+			data:{"grupo_id":grupo_id},
+			type:'POST',
+			url: "{% url 'redsocial:unirse_grupo' %}",
+			success: function(data){
+				//var perfil=$('#nick').text();
+				location.reload(true);
+			}
+		});
+	});
+}
+	
+$.dejarGrupo=function(){
+	//$('#agregar').on('click', function(event){
+	$(document).on('click', "#dejar_grupo", function(event){
+		event.preventDefault();
+		var dir_ip = location.href;
+		var array_dir = dir_ip.split("/");
+		//alert(array_dir);
+		var grupo_id=array_dir[array_dir.length-2]; //el -2 es por la url al finalizar con una barra al final
+		$.ajax({
+			data:{"grupo_id":grupo_id},
+			type:'POST',
+			url: "{% url 'redsocial:dejar_grupo' %}",
+			success: function(data){
+				//var perfil=$('#nick').text();
+				location.reload(true);
+			}
+		});
+	});
 }
 	
 

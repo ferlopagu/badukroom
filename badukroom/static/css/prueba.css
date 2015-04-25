@@ -88,3 +88,7 @@ position: absolute;
 bottom: 0px;
 /* left: 120px; */
 }
+
+.panel-body{
+	overflow-wrap: break-word;
+}

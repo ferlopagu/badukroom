@@ -11,7 +11,7 @@
 
 	<div id="botones_portada">
 			{% if miembro %}
-				<a id="dejar_grupo" href="#" class="btn btn-info" role="button">Dejar Grupo</a> 
+				<a id="dejar_grupo" href="#" class="btn btn-danger" role="button">Dejar Grupo</a> 
 			{% else %} 
 				<a id="unir_grupo" href="#" class="btn btn-info" role="button">Unirse</a> 
 			{% endif %} 	
@@ -158,6 +158,13 @@ $(function(){
 	$.eliminar();
 	$.responder();
 	restarFecha();
+	$.eliminar_comentario();
+	$.unirseGrupo();
+	$.dejarGrupo();
+	
+	
+
+	
 	
 	$('#recargar_grupo').on(
 			'click',
