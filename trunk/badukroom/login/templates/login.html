@@ -30,9 +30,20 @@
   <div class="row" id="div_superior_login">
     <div class="col-sm-3 col-md-3">
   <h5>BadukRoom</h5>
+  {% if error %}
   <div class="alert alert-danger" id="login_incorrecto">
   	{{login_incorrecto}}
   </div>
+  {% endif %}
+  
+    {% if exito %}
+		  <div class="alert alert-info">
+		  	Registrado correctamente
+		  </div>
+  	{% endif %}
+  
+  
+  
     </div>
     <div class="col-sm-9 col-md-9">
     {% block contenido %} 
