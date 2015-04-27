@@ -181,6 +181,41 @@ $.contar=function(){
 }
 
 
+$.dejarSeguir=function(){
+	$(document).on('click', "#noJugador", function(event){
+		event.preventDefault();
+		var dir_ip = location.href;
+		var array_dir = dir_ip.split("/");
+		var id_jugador=array_dir[array_dir.length-2]; //el -2 es por la url al finalizar con una barra al final
+		$.ajax({
+			data:{"id_jugador":id_jugador},
+			type:'POST',
+			url: "{% url 'redsocial:dejar_seguir' %}",
+			success: function(data){
+				location.reload(true); 
+			}
+		});
+	});
+}
+
+$.seguirJugador=function(){
+	//$('#agregar').on('click', function(event){
+	$(document).on('click', "#siJugador", function(event){
+		event.preventDefault();
+		var dir_ip = location.href;
+		var array_dir = dir_ip.split("/");
+		var id_jugador=array_dir[array_dir.length-2]; //el -2 es por la url al finalizar con una barra al final
+		$.ajax({
+			data:{"id_jugador":id_jugador},
+			type:'POST',
+			url: "{% url 'redsocial:seguir_jugador' %}",
+			success: function(data){
+				location.reload(true); 
+			}
+		});
+	});
+}	
+
 $.agregar=function(){
 	//$('#agregar').on('click', function(event){
 	$(document).on('click', "#agregar", function(event){

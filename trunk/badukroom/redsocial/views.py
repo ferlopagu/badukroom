@@ -690,7 +690,12 @@ def partidas_jugador(request, id):
             return JsonResponse(lista_partidas, safe=False)          
     else:
         lista=paginator.page(1).object_list
-        context={'partidas': lista, 'jugador':jugador.nombre}
+        perfil=Perfil.objects.get(user__username=request.user.username)
+        me_gusta=False
+        if jugador in perfil.jugadores_favoritos.all():
+            print "El jugador me gusta"
+            me_gusta=True
+        context={'partidas': lista, 'jugador':jugador.nombre, 'me_gusta':me_gusta}
         return render_to_response('jugador.html', context, context_instance=RequestContext(request))
         
     """    VERSION ANTIGUA
@@ -1167,34 +1172,6 @@ def rest_perfil(request, username):
     dic["amigos"]=amigos
     return JsonResponse(dic)
 
-#PAGINA DE CONFIGURACION
-"""
-class MyForm(forms.ModelForm):
-
-    class Meta:
-    model = MyModel
-
-# views.py  
-
-
-@login_required
-def update_profile_view(request):
-    try:
-        profile = Profile.objects.get(user=request.user)
-    except Profile.DoesNotExist:
-        profile = None
-
-    form = ProfileForm(request.POST or None, instance=profile)
-
-    if request.method == 'POST':            
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect('/main_page/')
-    return render(request, 'update_profile.html', {'form':form})
-
-
-"""
-
 #AUN POR TERMINAR QUE FUNCIONE BIEN
 @login_required
 def configuracion(request): 
@@ -1205,8 +1182,6 @@ def configuracion(request):
     #form = PasswordChangeForm(user=request.user, data=request.POST)
     form = SetPasswordForm(user=request.user, data=request.POST)
     if request.method=='POST':
-        
-        
         if form_perfil.is_valid() and form_user.is_valid(): #El usuario actualiza su informacion
             form_perfil.save()
             form_user.save()
@@ -1222,4 +1197,21 @@ def configuracion(request):
     context={'form_perfil': form_perfil, 'form_user':form_user, 'form': form}
     name='configuracion.html'
     return render(request,name, context)
-        
+
+def dejar_seguir(request):
+    perfil = Perfil.objects.get(user=request.user)
+    if request.method=='POST':
+        jugador=Jugador.objects.get(id=request.POST["id_jugador"])
+        perfil.jugadores_favoritos.remove(jugador)
+        perfil.save()
+        print "PERFIL ACTUALIZADO"
+        return JsonResponse({})
+
+def seguir_jugador(request):
+    perfil = Perfil.objects.get(user=request.user)
+    if request.method=='POST':
+        jugador=Jugador.objects.get(id=request.POST["id_jugador"])
+        perfil.jugadores_favoritos.add(jugador)
+        perfil.save()
+        print "PERFIL ACTUALIZADO"
+        return JsonResponse({})

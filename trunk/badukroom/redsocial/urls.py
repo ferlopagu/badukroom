@@ -4,7 +4,8 @@ Created on 21/01/2015
 @author: fla2727
 '''
 from django.conf.urls import patterns, url
-from redsocial.views import perfil, home, crea_comentario, buscador, agregar_ajax, contar_notificaciones, ver_notificaciones, aceptar_peticion, declinar_peticion, limpiar_notificaciones, eliminar_ajax, grupo, lista_grupos, responder, amigos, partidas, partidas_ajax, partidas_jugador, revisiones, crear_grupo, partidas_by_revisor, enviar_partida_revisar, aceptar_partida_revisar, ver_partida, eliminar_comentario_ajax, perfil_ajax, home_ajax, crear_partida_repositorio, unirse_revisor, dejar_revisor, fuerza_revisor, fuerza_jugador, recargar_repositorio_ajax, partidas_entre_fechas, rest_perfil, configuracion, rechazar_partida_revisar, lista_todos_grupos, ver_partida_revisada, unirse_grupo, dejar_grupo
+from redsocial.views import perfil, home, crea_comentario, buscador, agregar_ajax, contar_notificaciones, ver_notificaciones, aceptar_peticion, declinar_peticion, limpiar_notificaciones, eliminar_ajax, grupo, lista_grupos, responder, amigos, partidas, partidas_ajax, partidas_jugador, revisiones, crear_grupo, partidas_by_revisor, enviar_partida_revisar, aceptar_partida_revisar, ver_partida, eliminar_comentario_ajax, perfil_ajax, home_ajax, crear_partida_repositorio, unirse_revisor, dejar_revisor, fuerza_revisor, fuerza_jugador, recargar_repositorio_ajax, partidas_entre_fechas, rest_perfil, configuracion, rechazar_partida_revisar, lista_todos_grupos, ver_partida_revisada, unirse_grupo, dejar_grupo,\
+    seguir_jugador, dejar_seguir
 from django.views.generic.base import TemplateView
 #from django.views.generic.base import TemplateView
 
@@ -51,5 +52,7 @@ urlpatterns = patterns ('' ,
     url(r'^configuracion/', configuracion, name='configuracion'), #POR TERMINAR BIEN FUNCIONAMIENTO
     url(r'^unirse_grupo/', unirse_grupo, name="unirse_grupo"),
     url(r'^dejar_grupo/', dejar_grupo, name="dejar_grupo"),
+    url(r'^seguir_jugador/', seguir_jugador, name="seguir_jugador"),
+    url(r'^dejar_seguir/', dejar_seguir, name="dejar_seguir"),
     url(r'^(?P<username>\w+)/$', perfil, name='perfil'),     
 )

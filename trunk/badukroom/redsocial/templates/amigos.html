@@ -8,20 +8,15 @@
 									{% for p in lista_amigos %}
 										<div class="panel panel-default" style="display: inline-table">
 											<div class='panel-heading'>
-												<img src='/static/{{p.path_principal}}' width="40px" height="40px">
+												<img src='/media/{{p.path_principal}}' width="40px" height="40px">
 												<a href="/redsocial/{{p.user.username}}">{{ p.user.first_name }} {{p.user.last_name}}</a>
 											</div>
 											<div class="panel-body">
 												<h5>Nacimiento: {{p.fecha_nacimiento}}</h5>
 												<h5>Rango: {{p.rango}}</h5>
-												<h5>Jugadores preferidos: 
-												{%for j in p.jugadores_favoritos.all %}
-													{{j}}
-												{%endfor%}
-												</h5>
+												<h5>Ciudad: {{p.ciudad}}</h5>
 											</div>
 										</div>
-									
 									 <!--  <ul><li><img src='/static/{{p.path_principal}}' width='40px' height='40px'><a href="/redsocial/{{p.user.username}}">{{ p.user.first_name }} {{p.user.last_name}}</a></li></ul> -->
 									{% endfor %}	
 								</div>
@@ -33,17 +28,12 @@
 										{%if tupla.0 != 0 %}
 										<div class="panel panel-default" style="display: inline-table">
 											<div class='panel-heading'>
-												<img src='/static/{{p.1.path_principal}}' width="40px" height="40px">
+												<img src='/media/{{p.1.path_principal}}' width="40px" height="40px">
 												<a href="/redsocial/{{tupla.1.user.username}}">{{ tupla.1.user.first_name }} {{tupla.1.user.last_name}}</a>
 											</div>
 											<div class="panel-body">
 												<h5>Nacimiento: {{tupla.1.fecha_nacimiento}}</h5>
 												<h5>Rango: {{tupla.1.rango}}</h5>
-												<h5>Jugadores preferidos: 
-												{%for j in tupla.1.jugadores_favoritos.all %}
-													{{j}}
-												{%endfor%}
-												</h5>
 											</div>
 										</div>
 										{% else %}
@@ -59,17 +49,12 @@
 										{%if tupla.0 != 0 %}
 										<div class="panel panel-default" style="display: inline-table">
 											<div class='panel-heading'>
-												<img src='/static/{{tupla.1.path_principal}}' width="40px" height="40px">
+												<img src='/media/{{tupla.1.path_principal}}' width="40px" height="40px">
 												<a href="/redsocial/{{tupla.1.user.username}}">{{ tupla.1.user.first_name }} {{tupla.1.user.last_name}}</a>
 											</div>
 											<div class="panel-body">
 												<h5>Nacimiento: {{tupla.1.fecha_nacimiento}}</h5>
 												<h5>Rango: {{tupla.1.rango}}</h5>
-												<h5>Jugadores preferidos: 
-												{%for j in tupla.1.jugadores_favoritos.all %}
-													{{j}}
-												{%endfor%}
-												</h5>
 											</div>
 										</div>
 										{% else %}
