@@ -47,6 +47,14 @@
 
 <h1>Visualizando partidas de: {{jugador}}</h1>
 
+{% if me_gusta %}
+	<div class="alert alert-info" role="alert">Estas siguiendo a {{jugador}}!</div>
+	<a id="noJugador" href="#" class="btn btn-danger" role="button">Dejar de seguir</a>
+{% else %}
+	<div class="alert alert-info" role="alert">Aun no sigues a {{jugador}}</div>
+	<a id="siJugador" href="#" class="btn btn-info" role="button">Seguir</a>
+{% endif %}
+
 <table class="table">
 	<thead>
 		<tr>
@@ -89,6 +97,8 @@
 		$.eliminar();
 		$.responder();
 		$.recargar();
+		$.dejarSeguir();
+		$.seguirJugador();
 
 		$('#recargar').on(
 				'click',
