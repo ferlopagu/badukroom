@@ -8,7 +8,7 @@ from redsocial.models import Comentario, Respuesta, PeticionAmistad, Notificacio
 from login.models import Perfil
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
-from redsocial.forms import ComentarioForm, GrupoForm, EnvioForm, SgfForm, FechasForm, MensajeForm
+from redsocial.forms import ComentarioForm, GrupoForm, EnvioForm, SgfForm, FechasForm, MensajeForm, RespuestaForm
 from django.http import JsonResponse
 from datetime import datetime
 from django.http.response import HttpResponseRedirect
@@ -195,7 +195,8 @@ def home(request):
     
     #context = {'lista_comentarios': lista_comentarios}
     formulario=ComentarioForm()
-    context = {'comentarios': comentarios,'formulario':formulario, 'perfil':p}
+    formulario_respuesta=ComentarioForm()
+    context = {'comentarios': comentarios,'formulario':formulario, 'perfil':p, 'formulario_respuesta':formulario_respuesta }
     return render_to_response('home.html',context,context_instance=RequestContext(request))
 
 def home_ajax(request): #No se para que recojo la variable username si luego la redefino
@@ -1144,6 +1145,9 @@ def dejar_grupo(request):
             p=Perfil.objects.get(user__username=request.user.username)
             g.miembros.remove(p)
             g.save()
+            if g.miembros.all().count()==0:
+                g.delete()
+                return JsonResponse({"vacio":True})
             return HttpResponse("Ha sido un exito")
 
 def rest_perfil(request, username):

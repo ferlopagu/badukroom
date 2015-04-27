@@ -603,7 +603,14 @@ $.dejarGrupo=function(){
 			url: "{% url 'redsocial:dejar_grupo' %}",
 			success: function(data){
 				//var perfil=$('#nick').text();
-				location.reload(true);
+				console.log(data);
+				console.log(data.vacio);
+				if(data.vacio==true){
+					console.log("Entramos en if");
+					window.location="{% url 'redsocial:lista_grupos' %}";
+				}else{
+					location.reload(true);
+				}
 			}
 		});
 	});
