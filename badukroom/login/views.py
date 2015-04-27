@@ -64,30 +64,41 @@ def login_view(request):
                 perfil.save() #guardamos el perfil
                 return HttpResponseRedirect('/')
             """
+            
+            """
             if error_register(request):
                 error_en_registro=True
                 return render_to_response('login.html', {'formulario_login':formulario_login, 'user_form':user_form, 'perfil_form':perfil_form, 'login_incorrecto':login_incorrecto, 'error': error_en_registro}, context_instance=RequestContext(request))
+            
             else:
-                #AQUI TENEMOS QUE COMPROBAR SI EL FORMULARIO ES VALIDO
-                #AUN POR HACER 
-                #if messageform.is_valid():   <-- INCLUIR EL PARENTESIS http://stackoverflow.com/questions/5358566/saving-modelform-erroruser-message-could-not-be-created-because-the-data-didnt
+            """
+            #AQUI TENEMOS QUE COMPROBAR SI EL FORMULARIO ES VALIDO
+            #AUN POR HACER 
+            #if messageform.is_valid():   <-- INCLUIR EL PARENTESIS http://stackoverflow.com/questions/5358566/saving-modelform-erroruser-message-could-not-be-created-because-the-data-didnt
+            if user_form.is_valid():
                 user = user_form.save()
                 user.is_active = False
                 user.save()
                 confirmation_code = ''.join(random.choice(string.ascii_uppercase + string.digits + string.ascii_lowercase) for x in range(33))
-                perfil=perfil_form.save(commit=False) #tenemos que add el usuario
-                perfil.user=user #add el usuario al perfil 
-                perfil.confirmation_code=confirmation_code #ADD confirmation code to perfil
-                perfil.save() #guardamos el perfil
-                send_registration_confirmation(user)
-                print "REDIRECCIONAMOS A INICIO"
-                #return HttpResponseRedirect('/')
-                exito=True
-                #VOLVEMOS A CARGAR LOS FORMULARIOS VACIOS
-                formulario_login=AuthenticationForm()
-                user_form = UserForm()
-                perfil_form=PerfilForm()
-                return render_to_response('login.html', {'formulario_login':formulario_login, 'user_form':user_form, 'perfil_form':perfil_form, 'login_incorrecto':login_incorrecto, 'error':error_en_registro, 'exito':exito}, context_instance=RequestContext(request))
+                if perfil_form.is_valid():
+                    perfil=perfil_form.save(commit=False) #tenemos que add el usuario
+                    perfil.user=user #add el usuario al perfil 
+                    perfil.confirmation_code=confirmation_code #ADD confirmation code to perfil
+                    perfil.save() #guardamos el perfil
+                    send_registration_confirmation(user)
+                    print "REDIRECCIONAMOS A INICIO"
+                    #return HttpResponseRedirect('/')
+                    exito=True
+                    #VOLVEMOS A CARGAR LOS FORMULARIOS VACIOS
+                    formulario_login=AuthenticationForm()
+                    user_form = UserForm()
+                    perfil_form=PerfilForm()
+                    return render_to_response('login.html', {'formulario_login':formulario_login, 'user_form':user_form, 'perfil_form':perfil_form, 'login_incorrecto':login_incorrecto, 'error':error_en_registro, 'exito':exito}, context_instance=RequestContext(request))
+                else:
+                    print "EL PERFIL_FORM NO ES VALID"
+                    user.delete()
+            else:
+                print "EL USERFORM NO ES VALID"
         else:
             return HttpResponseRedirect('/quedise')          
     #else:
@@ -169,6 +180,7 @@ def confirm(request, confirmation_code, username):
         print "NO EXISTE USUARIO O PERFIL EN METODO CONFIRM"
         return HttpResponseRedirect('../../../../../') #Mandar a pagina de error en la confirmacion
 
+"""
 def error_register(request):
     username = request.POST['username']
     password = request.POST['password1'] 
@@ -191,3 +203,4 @@ def error_register(request):
             return True
     except:
         pass
+"""

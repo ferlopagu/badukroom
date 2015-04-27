@@ -17,11 +17,16 @@ class ComentarioForm(ModelForm):
         exclude =['perfil', 'fecha', 'partida']
 """
 
+"""
 class RespuestaForm(ModelForm):
     class Meta:
         model=Respuesta
         exclude =['perfil','fecha']
+"""
 
+class RespuestaForm(forms.Form):
+    texto=forms.CharField(max_length=5000, required=False)
+    fichero=forms.FileField(label="Sgf", required=False)
 
 class ComentarioForm(forms.Form):
     texto=forms.CharField(label="Tu comentario", max_length=5000, required=False, widget=forms.Textarea)

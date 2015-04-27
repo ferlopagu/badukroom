@@ -197,7 +197,7 @@
 								fechaR=new Date(data[i].respuestas[j].fecha);
 								var html_respuesta="";
 								html_respuesta+="<div class='panel-body' id='div_body_respuesta'>"
-								+"<img src='"+data[i].respuestas[j].imagen_perfil+"' width='40px' height='40px'>"
+								+"<img src='/media/"+data[i].respuestas[j].imagen_perfil+"' width='40px' height='40px'>"
 								+"<h4 class='fecha_comentario'>"+cambiar_fecha_ajax(fechaR)+"</h4>"
 								+data[i].respuestas[j].texto;
 								//console.log(data[i].respuestas[j].partida);
