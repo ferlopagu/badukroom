@@ -604,6 +604,7 @@ def amigos(request):
     """ add perfiles recomendados """
     diccionario_amigos=perfiles_amigos()
     lista_recomendacion_comun=topMatches_amigos_comun(diccionario_amigos, p)
+    print lista_recomendacion_comun
     diccionario_gustos=perfiles_gustos()
     lista_recomendacion_gustos=topMatches_gustos(diccionario_gustos, p)
     """ fin perfiles recomendados"""
@@ -1091,10 +1092,23 @@ def recargar_repositorio_ajax(request):
                     #return HttpResponseBadRequest(mimetype="json")
                     #puede ser que al ser multiplo de 10 ya no queden elementos en la pagina siguiente. Devolvemos lista vacia
                     page_objects=[]
-                lista=[i for i in page_objects]
-                #return JsonResponse(serializers.serialize('json',lista, use_natural_foreign_keys=True, safe=False)) esta opcion no funcionaba pusieramos en el codigo javascript que recibiamos json como si no
-                print HttpResponse(serializers.serialize('json',lista, use_natural_foreign_keys=True))
-                return HttpResponse(serializers.serialize('json',lista, use_natural_foreign_keys=True))
+                #lista=[i for i in page_objects]
+                #print HttpResponse(serializers.serialize('json',lista, use_natural_foreign_keys=True))
+                #return HttpResponse(serializers.serialize('json',lista, use_natural_foreign_keys=True))
+                lista_partidas=[]
+                for p in page_objects:
+                    dic_partida={}
+                    dic_partida["jugador_negro_nombre"]=p.jugador_negro.nombre
+                    dic_partida["jugador_negro_id"]=p.jugador_negro.id
+                    dic_partida["jugador_blanco_nombre"]=p.jugador_blanco.nombre
+                    dic_partida["jugador_blanco_id"]=p.jugador_blanco.id
+                    dic_partida["rango_negro"]=p.rango_negro
+                    dic_partida["rango_blanco"]=p.rango_blanco
+                    dic_partida["fecha"]=p.fecha
+                    dic_partida["resultado"]=p.resultado
+                    dic_partida["partida_id"]=p.id
+                    lista_partidas.append(dic_partida)
+                return JsonResponse(lista_partidas, safe=False)
 
 def partidas_entre_fechas(request):
     if request.is_ajax():

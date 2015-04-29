@@ -404,4 +404,96 @@ def formatoFecha(cadena):
     fecha=array[2]+"-"+array[1]+"-"+array[0]
     return fecha
 
+def recorrer_sgfs_gokifu():
+    lista_diccionarios_res=[]
+    dict_game={}
+    #ficheros = pathFile("../static/sgf")
+    ficheros=pathFile("../principal/gokifu.com")
+    #ficheros=pathFile("../gokifu.com")
+    for path in ficheros:
+        #print path
+        #nombre_fichero=path
+        #print path
+        contador=0
+        """ LEEMOS EL FICHERO"""
+        fileobj = open(path, "rb")
+        lines = fileobj.readlines()
+        fileobj.close()
+        pw=""
+        rw=""
+        pb=""
+        rb=""
+        date=""
+        result=""
+        """Recorremos las lineas para rellenar la informacion de cada partida"""
+        for line in lines:
+            #print line
+            if pw=="" or pw==None:
+                mo = re.search("PW\[(\w*\s?\w*)\]", line)
+                if mo:
+                    for e in mo.groups():
+                        pw=e
+                #print "pw: "+str(pw)+"\n"+line
+            if rw=="" or rw==None:
+                mo = re.search("WR\[(\w*\s?\w*)\]", line)
+                if mo:
+                    for e in mo.groups():
+                        rw=e
+            if pb=="" or pb==None:
+                #mo = re.search("PB\[(\w*)\]", line)
+                mo = re.search("PB\[(\w*\s?\w*)\]", line)
+                if mo:
+                    for e in mo.groups():
+                        pb=e
+            if rb=="" or rb==None:
+                mo = re.search("BR\[(\w*\s?\w*)\]", line)
+                if mo:
+                    for e in mo.groups():
+                        rb=e
+            if date=="" or date==None:
+                mo = re.search("DT\[(\d+-\d+-\d+)]", line)
+                if mo:
+                    for e in mo.groups():
+                        date=e
+            if result=="" or result==None:
+                #mo = re.search("RE\[(\w\+.*)\]", line)
+                mo = re.search("RE\[(\w*\+\w*\W?\w*?)\]", line)
+                if mo:
+                    for e in mo.groups():
+                        result=e
+        dict_game={}
+        dict_game["blanco"]=pw
+        dict_game["rango_blanco"]=rw
+        dict_game["black"]=pb
+        dict_game["rango_negro"]=rb
+        dict_game["fecha"]=date
+        dict_game["result"]=result
+        dict_game["path"]=path
+        
+        """Creamos los jugadores y la Partida"""
+        #path_fichero=BASE_DIR+"/static/sgf/"+path
+        #print path_fichero
+        jugador_negro, created = Jugador.objects.get_or_create(nombre=dict_game['black'])
+        print jugador_negro.__unicode__()
+        #jugador_negro=Jugador()
+        #jugador_negro.save()
+        print 'jugador negro guardado con exito'
+        #jugador_blanco=Jugador(nombre=dict_game['blanco'])
+        jugador_blanco, created = Jugador.objects.get_or_create(nombre=dict_game['blanco'])
+        #jugador_blanco.save()
+        
+        cadenas=path.split("/")
+        nombre_fichero=cadenas[len(cadenas)-1]
+        path_fichero="sgf/"+nombre_fichero
+        print "Path fichero"+path_fichero
+        
+        partida = Partida(fecha=dict_game['fecha'], jugador_negro=jugador_negro, rango_negro=dict_game['rango_negro'], jugador_blanco=jugador_blanco, rango_blanco=dict_game['rango_blanco'], resultado=dict_game['result'], fichero=File(open(path, 'r')))
+        partida.save()
+        """ Fin crear Partida """
+        
+        lista_diccionarios_res.append(dict_game)
+    for e in lista_diccionarios_res:
+        print e     
+#recorrer_sgfs_gokifu()
+
     
