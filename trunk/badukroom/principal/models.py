@@ -89,6 +89,17 @@ class Partida(models.Model):
         return self.jugador_blanco.__unicode__()+" - "+self.jugador_negro.__unicode__()+" ["+unicode(self.fecha)+"]"+" "+self.path
 
     def save(self, *args, **kwargs):
+        #Comrpobamos si es profesional
+        profesional=["1p", "2p", "3p", "4p", "5p", "6p", "7p", "8p", "9p", "1P", "2P", "3P", "4P", "5P", "6P", "7P", "8P", "9P"]
+        if self.rango_blanco in profesional: 
+            self.es_profesional=True
+            self.jugador_blanco.es_profesional=True
+            self.jugador_blanco.save()
+        if self.rango_negro in profesional:
+            self.es_profesional=True
+            self.jugador_negro.es_profesional=True
+            self.jugador_negro.save()
+        #fin comprobar si es profesional
         print "En el metodo save() vemos el path: "+self.path
         print self.fichero.size
         #actualizamos el size con el del fichero para diferenciar entre una partida revisada y otra que no
@@ -97,8 +108,9 @@ class Partida(models.Model):
         print "nombre del fichero: "+self.fichero.name
         name=self.fichero.name
         nombre=name.split('.')
-        nombre[0]=nombre[0]+''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(3)) #add terminacion random
-        self.fichero.name=nombre[0]+"."+nombre[1]
+        nombre[0]=nombre[0]+''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(8)) #add terminacion random
+        #self.fichero.name=nombre[0]+"."+nombre[1]
+        self.fichero.name=nombre[0]+".sgf"
         print "nombre del fichero: "+self.fichero.name
         camino_fichero="partida/"+self.fichero.name
         print camino_fichero
