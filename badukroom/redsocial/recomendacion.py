@@ -37,7 +37,7 @@ def similitud_gustos(dic_gustos, person1, person2): #funciona pero en funcion de
         #print 'entro en for'
         if j in dic_gustos[person1]:
             if j in dic_gustos[person2]:
-                si[j]=1
+                si[j]=1.0
                 #print j.__unicode__() +'esta en ambos'
             else:
                 #print "add "+person2.__unicode__()+" "+j.__unicode__()
@@ -58,9 +58,9 @@ def similitud_gustos(dic_gustos, person1, person2): #funciona pero en funcion de
     #print 1/(1+sum_of_squares)
     return 1/(1+sum_of_squares)
 
-def topMatches_gustos(diccionario_amigos, person, n=4, similarity=similitud_gustos):
+def topMatches_gustos(diccionario_gustos, person, n=4, similarity=similitud_gustos):
     #scores=[(similarity(jugadores, prefs, person, other), other) for other in prefs if other != person]
-    scores=[(similarity(diccionario_amigos, person, other), other) for other in diccionario_amigos if other != person]
+    scores=[(similarity(diccionario_gustos, person, other), other) for other in diccionario_gustos if other != person and other not in person.amigos.all()] #and other not in person.amigos.all()
     scores.sort()
     scores.reverse()
     return scores[0:n] 
@@ -125,7 +125,7 @@ if __name__ == '__main__':
     #""" PRUEBAS BASE DE DATOS
     import django
     django.setup()
-    perfil1=Perfil.objects.get(user__username='lolo')
+    perfil1=Perfil.objects.get(user__username='priscilacb')
     perfil2=Perfil.objects.get(user__username='fran')
     
     dic_gustos=perfiles_gustos()
@@ -134,24 +134,26 @@ if __name__ == '__main__':
     print "==========DICCIONARIO DE LOS GUSTOS DE JUGADORES PARA CADA PERFIL============\n"
     print dic_gustos
     print "\n===========PERFIL DE ESTUDIO: "+perfil1.user.first_name+" "+perfil1.user.last_name+" ==============="
-    print "\n=========LISTA PONDERADA DE PERFILES RECOMENDADOS POR GUSTOS EN COMUN========="
+    #print "\n=========LISTA PONDERADA DE PERFILES RECOMENDADOS POR GUSTOS EN COMUN========="
     print topMatches_gustos(dic_gustos, perfil1)
-    print "===========RESULTADOS DE LA PONDERACION DE LOS GUSTOS============="
-    print(getRecommendations_jugadores(perfil1, dic_gustos))
+    print topMatches_amigos_comun(diccionario_amigos, perfil1)
+    #print "===========RESULTADOS DE LA PONDERACION DE LOS GUSTOS============="
+    #print(getRecommendations_jugadores(perfil1, dic_gustos))
     print "\n===========PERFIL DE ESTUDIO: "+perfil2.user.first_name+" "+perfil2.user.last_name+" ==============="
-    print "\n=========LISTA PONDERADA DE PERFILES RECOMENDADOS POR GUSTOS EN COMUN========="
+    #print "\n=========LISTA PONDERADA DE PERFILES RECOMENDADOS POR GUSTOS EN COMUN========="
     print topMatches_gustos(dic_gustos, perfil2)
-    print "\n===========RESULTADOS DE LA PONDERACION DE LOS GUSTOS============="
-    print(getRecommendations_jugadores(perfil2, dic_gustos))
+    print topMatches_amigos_comun(diccionario_amigos, perfil2)
+    #print "\n===========RESULTADOS DE LA PONDERACION DE LOS GUSTOS============="
+    #print(getRecommendations_jugadores(perfil2, dic_gustos))
     
-    print "\n==========DICCIONARIO DE LOS AMIGOS PARA CADA PERFIL============\n"
-    print diccionario_amigos
-    print "===========PERFIL DE ESTUDIO: "+perfil1.user.first_name+" "+perfil1.user.last_name+" ==============="
-    print "=========LISTA PONDERADA DE PERFILES RECOMENDADOS POR AMIGOS EN COMUN=========\n"
-    print topMatches_amigos_comun(diccionario_amigos, perfil1) #Devuelve perfiles con quien tenemos mas amigos en comun
-    print "\n===========PERFIL DE ESTUDIO: "+perfil2.user.first_name+" "+perfil2.user.last_name+" ==============="
-    print "=========LISTA PONDERADA DE PERFILES RECOMENDADOS POR AMIGOS EN COMUN========="
-    print topMatches_amigos_comun(diccionario_amigos, perfil2) #Devuelve perfiles con quien tenemos mas amigos en comun
+    #print "\n==========DICCIONARIO DE LOS AMIGOS PARA CADA PERFIL============\n"
+    #print diccionario_amigos
+    #print "===========PERFIL DE ESTUDIO: "+perfil1.user.first_name+" "+perfil1.user.last_name+" ==============="
+    #print "=========LISTA PONDERADA DE PERFILES RECOMENDADOS POR AMIGOS EN COMUN=========\n"
+    #print topMatches_amigos_comun(diccionario_amigos, perfil1) #Devuelve perfiles con quien tenemos mas amigos en comun
+    #print "\n===========PERFIL DE ESTUDIO: "+perfil2.user.first_name+" "+perfil2.user.last_name+" ==============="
+    #print "=========LISTA PONDERADA DE PERFILES RECOMENDADOS POR AMIGOS EN COMUN========="
+    #print topMatches_amigos_comun(diccionario_amigos, perfil2) #Devuelve perfiles con quien tenemos mas amigos en comun
 
     """
     print critics

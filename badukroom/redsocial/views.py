@@ -605,10 +605,23 @@ def amigos(request):
     diccionario_amigos=perfiles_amigos()
     lista_recomendacion_comun=topMatches_amigos_comun(diccionario_amigos, p)
     print lista_recomendacion_comun
+    recomendacion_comun=True
+    print lista_recomendacion_comun[0][0]
+    if lista_recomendacion_comun[0][0]==0:
+        print lista_recomendacion_comun[0][0]
+        recomendacion_comun=False
+        print recomendacion_comun
+    
+    
     diccionario_gustos=perfiles_gustos()
     lista_recomendacion_gustos=topMatches_gustos(diccionario_gustos, p)
+    recomendacion_gustos=True
+    if lista_recomendacion_gustos[0][0]==0:
+        recomendacion_gustos=False
+        print recomendacion_gustos
+    print lista_recomendacion_gustos
     """ fin perfiles recomendados"""
-    context = {'lista_amigos': amigos, 'lista_recomendacion_comun': lista_recomendacion_comun, 'lista_recomendacion_gustos': lista_recomendacion_gustos}
+    context = {'lista_amigos': amigos, 'lista_recomendacion_comun': lista_recomendacion_comun, 'lista_recomendacion_gustos': lista_recomendacion_gustos, 'rec_gustos':recomendacion_gustos, 'rec_comun':recomendacion_comun}
     return render_to_response('amigos.html', context, context_instance=RequestContext(request))
 
 @login_required(login_url='/login')
