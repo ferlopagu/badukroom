@@ -193,6 +193,8 @@
 				{% endfor%}
 				</div>
 				<!-- FIN DE LA PRUEBA -->
+				
+				{% if lista_dic_amigo.0.es_amigo == True or somos_nosotros == True %} 
 				<div id="div_respuesta">
 					<img src='/media/{{user.perfil.path_principal}}' width="40px" height="40px">
 					<!--  <img src='/static/{{e.perfil}}' width="40px" height="40px"> -->
@@ -204,6 +206,8 @@
 					</form>
 					
 				</div>
+				{% endif %}
+				
 			</div>
 		{% endfor %} 
 		</div>
@@ -414,7 +418,7 @@ $(document).ready(function(){
 							+"</form></div>";
 							//Se juntan todas las partes
 							html_comentario+=html_panelheading+html_panelbody+html_navbar+html_lista_respuestas;
-							html_lista_comentarios+=html_comentario+html_form_respuesta+"</div>"+"</div>";
+							html_lista_comentarios+=html_comentario+"{% if lista_dic_amigo.0.es_amigo == True or somos_nosotros == True %}"+html_form_respuesta+"{% endif %}"+"</div>"+"</div>";
 						}
 						html=html_lista_comentarios;
 						//Antes de crear los nuevos comentarios y respuestas cambiamos la clase player a los de la página anterior
@@ -609,7 +613,7 @@ $(document).ready(function(){
 							+"</form></div>";
 							//Se juntan todas las partes
 							html_comentario+=html_panelheading+html_panelbody+html_navbar+html_lista_respuestas;
-							html_lista_comentarios+=html_comentario+html_form_respuesta+"</div>"+"</div>";
+							html_lista_comentarios+=html_comentario+"{% if lista_dic_amigo.0.es_amigo == True or somos_nosotros == True %}"+html_form_respuesta+"{% endif %}"+"</div>"+"</div>";
 						}
 						html=html_lista_comentarios;
 						//Antes de crear los nuevos comentarios y respuestas cambiamos la clase player a los de la página anterior
