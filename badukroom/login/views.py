@@ -180,27 +180,7 @@ def confirm(request, confirmation_code, username):
         print "NO EXISTE USUARIO O PERFIL EN METODO CONFIRM"
         return HttpResponseRedirect('../../../../../') #Mandar a pagina de error en la confirmacion
 
-"""
-def error_register(request):
-    username = request.POST['username']
-    password = request.POST['password1'] 
-    email = request.POST['email'] 
-    #if not clean_username(username):
-    #    return True
-    
-    
-    
-    
-    print "ENTRAMOS EN error_register"
-    if username.replace(" ", "") == "" or password.replace(" ", "") == "":
-        return True
-    if len(username) > 15 or len(password) > 50:
-        return True
-    if not "@" in email:
-        return True
-    try:
-        if User.objects.get(username=username):
-            return True
-    except:
-        pass
-"""
+@login_required(login_url='/login')
+def logout_view(request):
+    logout(request)
+    return HttpResponseRedirect('/')
