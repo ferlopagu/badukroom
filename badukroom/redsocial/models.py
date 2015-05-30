@@ -40,10 +40,8 @@ class Comentario(models.Model):
     fecha=models.DateTimeField()
     perfil=models.ForeignKey(Perfil)
     texto=models.TextField()
-    #fichero=models.FileField(upload_to=MEDIA_ROOT+'sgf')
     partida=models.ForeignKey(Sgf, null=True, blank=True)
     grupo=models.ForeignKey(Grupo, null=True, blank=True)
-    #respuestas=models.ManyToManyField(Respuesta, blank=True)
     
     def __unicode__(self):
         return self.perfil.user.username+" "+self.texto
@@ -54,10 +52,3 @@ class Respuesta(models.Model):
     fecha=models.DateTimeField()
     texto=models.CharField(max_length=2000)
     partida=models.ForeignKey(Sgf, null=True, blank=True)
-    #fichero=models.FileField(upload_to=MEDIA_ROOT+'sgf', blank=True)
-
-class Mensaje(models.Model):
-    emisor=models.ForeignKey(Perfil, related_name='emisorMensaje')
-    receptor=models.ForeignKey(Perfil, related_name='receptorMensaje')
-    mensaje=models.CharField(max_length=300)
-    fecha=models.DateTimeField()

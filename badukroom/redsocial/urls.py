@@ -4,11 +4,8 @@ Created on 21/01/2015
 @author: fla2727
 '''
 from django.conf.urls import patterns, url
-from redsocial.views import perfil, home, crea_comentario, buscador, agregar_ajax, contar_notificaciones, ver_notificaciones, aceptar_peticion, declinar_peticion, limpiar_notificaciones, eliminar_ajax, grupo, lista_grupos, responder, amigos, partidas, partidas_ajax, partidas_jugador, revisiones, crear_grupo, partidas_by_revisor, enviar_partida_revisar, aceptar_partida_revisar, ver_partida, eliminar_comentario_ajax, perfil_ajax, home_ajax, crear_partida_repositorio, unirse_revisor, dejar_revisor, fuerza_revisor, fuerza_jugador, recargar_repositorio_ajax, partidas_entre_fechas, rest_perfil, configuracion, rechazar_partida_revisar, lista_todos_grupos, ver_partida_revisada, unirse_grupo, dejar_grupo,\
-    seguir_jugador, dejar_seguir
-from django.views.generic.base import TemplateView
+from redsocial.views import perfil, home, crea_comentario, buscador, agregar_ajax, contar_notificaciones, ver_notificaciones, aceptar_peticion, declinar_peticion, limpiar_notificaciones, eliminar_ajax, grupo, lista_grupos, responder, amigos, partidas, partidas_ajax, partidas_jugador, revisiones, crear_grupo, partidas_by_revisor, enviar_partida_revisar, aceptar_partida_revisar, ver_partida, eliminar_comentario_ajax, perfil_ajax, home_ajax, crear_partida_repositorio, unirse_revisor, dejar_revisor, fuerza_revisor, fuerza_jugador, recargar_repositorio_ajax, partidas_entre_fechas, configuracion, rechazar_partida_revisar, lista_todos_grupos, ver_partida_revisada, unirse_grupo, dejar_grupo, seguir_jugador, dejar_seguir
 #from django.views.generic.base import TemplateView
-
 
 #url(r'crea_comentario/$', crea_comentario.as_view(template_name="inicio"))
 urlpatterns = patterns ('' ,
@@ -48,7 +45,6 @@ urlpatterns = patterns ('' ,
     url(r'^fuerza_jugador', fuerza_jugador, name="fuerza_jugador"),
     url(r'^recargar_repositorio_ajax', recargar_repositorio_ajax, name='recargar_repositorio_ajax'),
     url(r'^partidas_entre_fechas', partidas_entre_fechas, name='partidas_entre_fechas'),
-    url(r'^rest/(?P<username>\w+)/$', rest_perfil, name='rest_perfil'), #prueba CM
     url(r'^configuracion/', configuracion, name='configuracion'), #POR TERMINAR BIEN FUNCIONAMIENTO
     url(r'^unirse_grupo/', unirse_grupo, name="unirse_grupo"),
     url(r'^dejar_grupo/', dejar_grupo, name="dejar_grupo"),

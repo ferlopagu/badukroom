@@ -5,24 +5,11 @@ Created on 26/12/2014
 '''
 from django import forms
 from django.forms import ModelForm
-from redsocial.models import Comentario, Respuesta, Grupo, PeticionRevision
+from redsocial.models import Grupo, PeticionRevision
 from principal.models import Revisor
 import datetime
-from datetime import date
 from django.db.models import Q
-"""
-class ComentarioForm(ModelForm):
-    class Meta:
-        model=Comentario
-        exclude =['perfil', 'fecha', 'partida']
-"""
 
-"""
-class RespuestaForm(ModelForm):
-    class Meta:
-        model=Respuesta
-        exclude =['perfil','fecha']
-"""
 
 class RespuestaForm(forms.Form):
     texto=forms.CharField(max_length=5000, required=False)

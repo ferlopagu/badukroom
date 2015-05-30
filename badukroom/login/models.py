@@ -1,8 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from principal.models import Jugador 
-from distutils.command.upload import upload
-from badukroom.settings import MEDIA_ROOT
+from principal.models import Jugador
 import random
 import string
 

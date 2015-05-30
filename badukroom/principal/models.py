@@ -40,29 +40,19 @@ class Revisor(models.Model):
         return self.nickname_kgs+" ["+self.perfil.rango+"]"
 
 class Sgf(models.Model):
-    fecha = models.DateField()
-    jugador_negro = models.CharField(max_length=100)
-    jugador_blanco = models.CharField(max_length=100)
     fichero = models.FileField(upload_to='sgf')
     path = models.CharField(max_length=70,  blank=True)
-    sgf_size=models.IntegerField(default=0)
-    
-    class Meta:
-        unique_together=('jugador_negro', 'jugador_blanco','fecha', 'sgf_size')
     
     def __unicode__(self):
-        return self.jugador_blanco+" - "+self.jugador_negro+" ["+unicode(self.fecha)+"]"+" "+self.path
+        return self.path
     
     def save(self, *args, **kwargs):
-        #actualizamos el size con el del fichero para diferenciar entre una partida revisada y otra que no
-        self.sgf_size=self.fichero.size
         #cambiamos nombre y path para que se apunte al fichero correcto
         name=self.fichero.name
         nombre=name.split('.')
         nombre[0]=nombre[0]+''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(3)) #add terminacion random
         self.fichero.name=nombre[0]+"."+nombre[1]
         camino_fichero="sgf/"+self.fichero.name
-        print camino_fichero
         if self.path == "" or self.path==None:
             self.path = camino_fichero
             super(Sgf, self).save(*args, **kwargs)
@@ -99,23 +89,16 @@ class Partida(models.Model):
             self.es_profesional=True
             self.jugador_negro.es_profesional=True
             self.jugador_negro.save()
-        #fin comprobar si es profesional
-        print "En el metodo save() vemos el path: "+self.path
-        print self.fichero.size
         #actualizamos el size con el del fichero para diferenciar entre una partida revisada y otra que no
         self.sgf_size=self.fichero.size
         #cambiamos nombre y path para que se apunte al fichero correcto
-        print "nombre del fichero: "+self.fichero.name
         name=self.fichero.name
         nombre=name.split('.')
         nombre[0]=nombre[0]+''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(8)) #add terminacion random
         #self.fichero.name=nombre[0]+"."+nombre[1]
         self.fichero.name=nombre[0]+".sgf"
-        print "nombre del fichero: "+self.fichero.name
         camino_fichero="partida/"+self.fichero.name
-        print camino_fichero
         if self.path == "" or self.path==None:
-            print "modificamos el path"
             self.path = camino_fichero
             super(Partida, self).save(*args, **kwargs)
         else:
