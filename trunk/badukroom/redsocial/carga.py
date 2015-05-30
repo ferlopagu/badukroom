@@ -3,12 +3,6 @@ Created on 27/4/2015
 
 @author: fla2727
 
-class Comentario(models.Model):
-    fecha=models.DateTimeField()
-    perfil=models.ForeignKey(Perfil)
-    texto=models.TextField()
-
-
 '''
 import random
 import string
@@ -16,7 +10,6 @@ import datetime
 from login.models import Perfil
 from redsocial.models import Comentario, Respuesta
 from django.contrib.auth.models import User
-import datetime
 
 date = datetime.date(1992,3, 13)  #year, month, day
 
@@ -68,7 +61,7 @@ if __name__ == '__main__':
     import django
     django.setup()
     
-    #cargaComentariosRelleno()
+    
     a=creaUser("lolo", "lolo", "lolo@hotmail.com", "Lolo", "Amador")
     b=creaUser("fran", "fran", "fran@hotmail.com", "Fran", "Hernandez")
     c=creaUser("campa", "campa", "campa@hotmail.com", "Carlos", "Campanario")
@@ -119,7 +112,8 @@ if __name__ == '__main__':
     addAmigos(pd, amigos=[pa,pb,pc,pf,ph,pi,pj,pk,pl])
     addAmigos(pf, amigos=[pa,pb,pc,pd,ph,pi,pj,pk,pl])
     addAmigos(pg, amigos=[pa])
-    #addAmigos(pa, amigos=[pb,pc,pd,pf,pg,ph,pi,pj,pk,pl,pt,pu])
-    #addAmigos(pa, amigos=[pb,pc,pd,pf,pg,ph,pi,pj,pk,pl,pt,pu])
-    print "User creado"
+    
+    #cargaComentariosRelleno()
+    
+    print "Carga completada de perfiles y relaciones"
     

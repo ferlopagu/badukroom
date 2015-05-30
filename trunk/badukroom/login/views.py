@@ -13,13 +13,9 @@ from django.contrib.auth.decorators import login_required
 #add necesarios para la confirmacion de la web
 import random
 import string
-import datetime
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from .models import Perfil
-
-def holaMundo(request):
-    return render_to_response('mundo.html', locals())
 
 def login_view(request):
     login_incorrecto=""
@@ -33,7 +29,6 @@ def login_view(request):
         user_form=UserForm(request.POST)
         perfil_form=PerfilForm(request.POST, request.FILES)
         if 'entrar' in request.POST:
-            print "Entro en entrar"
             if formulario_login.is_valid:
                 usuario=request.POST['username']
                 clave=request.POST['password']
@@ -45,35 +40,13 @@ def login_view(request):
                     else:
                         return render_to_response('noactivo.html', context_instance=RequestContext(request))
                 else:
-                    print "el formulario es valido pero acceso es not"
                     login_incorrecto="El nick o password no son validos."
                     formulario_login=AuthenticationForm()
                     user_form = UserForm()
                     perfil_form=PerfilForm()
                     return render_to_response('login.html', {'formulario_login':formulario_login, 'user_form':user_form, 'perfil_form':perfil_form, 'login_incorrecto':login_incorrecto} ,context_instance=RequestContext(request) )
-                    #return render_to_response('nousuario.html', context_instance=RequestContext(request))
         elif 'registrar' in request.POST:
-            """
-            print "Entro en registrar"
-            if user_form.is_valid() and perfil_form.is_valid():
-                print "userform y perfilform son validos"
-                print request.FILES
-                user=user_form.save() #guardamos el usuario
-                perfil=perfil_form.save(commit=False) #tenemos que add el usuario
-                perfil.user=user #add el usuario al perfil 
-                perfil.save() #guardamos el perfil
-                return HttpResponseRedirect('/')
-            """
-            
-            """
-            if error_register(request):
-                error_en_registro=True
-                return render_to_response('login.html', {'formulario_login':formulario_login, 'user_form':user_form, 'perfil_form':perfil_form, 'login_incorrecto':login_incorrecto, 'error': error_en_registro}, context_instance=RequestContext(request))
-            
-            else:
-            """
             #AQUI TENEMOS QUE COMPROBAR SI EL FORMULARIO ES VALIDO
-            #AUN POR HACER 
             #if messageform.is_valid():   <-- INCLUIR EL PARENTESIS http://stackoverflow.com/questions/5358566/saving-modelform-erroruser-message-could-not-be-created-because-the-data-didnt
             if user_form.is_valid():
                 user = user_form.save()
@@ -87,7 +60,6 @@ def login_view(request):
                     perfil.save() #guardamos el perfil
                     send_registration_confirmation(user)
                     print "REDIRECCIONAMOS A INICIO"
-                    #return HttpResponseRedirect('/')
                     exito=True
                     #VOLVEMOS A CARGAR LOS FORMULARIOS VACIOS
                     formulario_login=AuthenticationForm()
@@ -101,57 +73,9 @@ def login_view(request):
                 print "EL USERFORM NO ES VALID"
         else:
             return HttpResponseRedirect('/quedise')          
-    #else:
-        #formulario_login=AuthenticationForm()
-        #user_form = UserForm()
-        #perfil_form=PerfilForm()
     return render_to_response('login.html', {'formulario_login':formulario_login, 'user_form':user_form, 'perfil_form':perfil_form, 'login_incorrecto':login_incorrecto, 'error':error_en_registro, 'exito':exito}, context_instance=RequestContext(request))
 
-#INTENTO DE HACER EL REGISTRO Y LOGIN CON EMAIL DE CONFIRMACION
-
-"""
-def register(request):
-    if request.method == 'POST':
-        captcha_error = ""
-        captcha_response = captcha.submit(
-        request.POST.get("recaptcha_challenge_field", None),
-        request.POST.get("recaptcha_response_field", None),
-        settings.RECAPTCHA_PRIVATE_KEY,
-        request.META.get("REMOTE_ADDR", None))
-        if not captcha_response.is_valid:
-            captcha_error = "&error=%s" % captcha_response.error_code
-            c = {}
-            c.update(csrf(request))
-            c['repetir'] = True
-            c['header'] = "register"
-            return render_to_response('register.html', c, context_instance=RequestContext(request))
-        else:
-            if error_register(request):
-                c = {}
-                c.update(csrf(request))
-                c['repetir'] = True
-                c['header'] = "register"
-                return render_to_response('register.html', c, context_instance=RequestContext(request))
-            else:
-                username = clean_username(request.POST['user'])
-                password = request.POST['password']
-                email = request.POST['email']
-                user = User.objects.create_user(username, email, password)
-                user.is_active = False
-                user.save()
-                confirmation_code = ''.join(tehrandom.choice(string.ascii_uppercase + string.digits + string.ascii_lowercase) for x in range(33))
-                p = Profile(user=user, confirmation_code=confirmation_code)
-                p.save()
-                send_registration_confirmation(user)
-                return HttpResponseRedirect('../../../../../')
-    else:
-        c = create_c(request)
-        c['header'] = "register"
-        return render_to_response('register.html', c, context_instance=RequestContext(request))
-"""
-
 def send_registration_confirmation(user):
-    print "ENTRAMOS EN send_registration"
     p = Perfil.objects.get(user = user)
     email = user.email
     title = "BadukRoom confirmacion"
@@ -160,10 +84,8 @@ def send_registration_confirmation(user):
     parrafo2 = "\n\n Saludos, \n BadukRoom Team."
     mensaje=parrafo1+content+parrafo2
     send_mail(title, mensaje, 'no-reply@badukroom.com', [email], fail_silently=False)
-    print "DEBERIAMOS HABER ENVIADO EL EMAIL"
 
 def confirm(request, confirmation_code, username):
-    print "ENTRAMOS EN confirm"
     try:
         user = User.objects.get(username=username)
         profile = Perfil.objects.get(user = user)
@@ -177,7 +99,6 @@ def confirm(request, confirmation_code, username):
             return HttpResponseRedirect('/redsocial/'+user.username)
         return HttpResponseRedirect('../../../../../') #Mandar a pagina de error en la confirmacion
     except:
-        print "NO EXISTE USUARIO O PERFIL EN METODO CONFIRM"
         return HttpResponseRedirect('../../../../../') #Mandar a pagina de error en la confirmacion
 
 @login_required(login_url='/login')

@@ -41,6 +41,7 @@ def pathFile(path): #example--> path="Correos",    dir="Correos/"
 
 
 #pathFile("../static/sgf")
+
 def recorrer_sgfs():
     lista_diccionarios_res=[]
     dict_game={}
@@ -48,9 +49,6 @@ def recorrer_sgfs():
     ficheros=pathFile("../principal/gokifu.com")
     #ficheros=pathFile("../gokifu.com")
     for path in ficheros:
-        #print path
-        #nombre_fichero=path
-        #print path
         contador=0
         """ LEEMOS EL FICHERO"""
         fileobj = open(path, "rb")
@@ -62,15 +60,12 @@ def recorrer_sgfs():
         result=""
         """Recorremos las lineas para rellenar la informacion de cada partida"""
         for line in lines:
-            #print line
             if pw=="" or pw==None:
                 mo = re.search("PW\[(\w*\s?\w*)\]", line)
                 if mo:
                     for e in mo.groups():
                         pw=e
-                #print "pw: "+str(pw)+"\n"+line
             if pb=="" or pb==None:
-                #mo = re.search("PB\[(\w*)\]", line)
                 mo = re.search("PB\[(\w*\s?\w*)\]", line)
                 if mo:
                     for e in mo.groups():
@@ -81,7 +76,6 @@ def recorrer_sgfs():
                     for e in mo.groups():
                         date=e
             if result=="" or result==None:
-                #mo = re.search("RE\[(\w\+.*)\]", line)
                 mo = re.search("RE\[(\w*\+\w*\W?\w*?)\]", line)
                 if mo:
                     for e in mo.groups():
@@ -94,16 +88,8 @@ def recorrer_sgfs():
         dict_game["path"]=path
         
         """Creamos los jugadores y la Partida"""
-        #path_fichero=BASE_DIR+"/static/sgf/"+path
-        #print path_fichero
         jugador_negro, created = Jugador.objects.get_or_create(nombre=dict_game['black'])
-        print jugador_negro.__unicode__()
-        #jugador_negro=Jugador()
-        #jugador_negro.save()
-        print 'jugador negro guardado con exito'
-        #jugador_blanco=Jugador(nombre=dict_game['blanco'])
         jugador_blanco, created = Jugador.objects.get_or_create(nombre=dict_game['blanco'])
-        #jugador_blanco.save()
         
         cadenas=path.split("/")
         nombre_fichero=cadenas[len(cadenas)-1]
@@ -130,6 +116,7 @@ def guardar_profesionales(lista):
     print "Jugadores deberian haber sido guardados"
         
 #guardar_profesionales(profesionales)
+
 """ Ejecutar en shell with Django enviroment
 introducir primero 
 import django
@@ -141,6 +128,7 @@ print lista_perfiles
 
 Perfil.objects.values('user').filter(Q(user__first_name__regex=cadena) | Q(user__last_name__regex=cadena))
 """
+
 def buscador():
     cadena=raw_input("Introduce un nombre: ")
     print cadena
@@ -148,11 +136,9 @@ def buscador():
     if cadena!="":
         lista_perfiles=list(Perfil.objects.values('user__first_name', 'user__last_name', 'user__username').filter(Q(user__first_name__regex=cadena) | Q(user__last_name__regex=cadena))) #cambiar username por first_name o last_name
         print lista_perfiles
-        #for p in lista_perfiles:
-            #lista_user=list(User.objects.values('first_name', 'last_name', 'username').filter(id=p['user']))
-        #print lista_user
     else:
         print "La cadena es ''"
+
 def informacion_partida(path):
 #fichero = pathFile("../static/sgf")
     """ LEEMOS EL FICHERO"""
@@ -165,15 +151,12 @@ def informacion_partida(path):
     result=""
     """Recorremos las lineas para rellenar la informacion de cada partida"""
     for line in lines:
-        #print line
         if pw=="" or pw==None:
             mo = re.search("PW\[(\w*\s?\w*)\]", line)
             if mo:
                 for e in mo.groups():
                     pw=e
-            #print "pw: "+str(pw)+"\n"+line
         if pb=="" or pb==None:
-            #mo = re.search("PB\[(\w*)\]", line)
             mo = re.search("PB\[(\w*\s?\w*)\]", line)
             if mo:
                 for e in mo.groups():
@@ -184,7 +167,6 @@ def informacion_partida(path):
                 for e in mo.groups():
                     date=e
         if result=="" or result==None:
-            #mo = re.search("RE\[(\w\+.*)\]", line)
             mo = re.search("RE\[(\w*\+\w*\W?\w*?)\]", line)
             if mo:
                 for e in mo.groups():
@@ -254,120 +236,7 @@ def informacion_partida2(lineas, path):
 
 
 #informacion_partida("../static/sgf/gresko-ersev.sgf")
-#informacion_partida('../static/sgf/wilwal6re-ersev2.sgf')
 
-
-#print datetime.date.today( )
-#print datetime.datetime.now()
-
-def fue_comentado(fecha):
-    locale.setlocale(locale.LC_TIME, "es_ES.UTF-8")
-    #diccionario_meses={"01":"enero", "02":"febrero", "03":"marzo", "04":"abril", "05":"mayo", "06":"junio", "07":"julio", "08":"agosto","09":"septiembre", "10":"octubre", "11":"noviembre", "12":"diciembre"}
-    res=""
-    ahora= datetime.datetime.now()
-    ahora_cadena=datetime.datetime.now().strftime("%d de %B a la(s) %H:%M")
-    diferencia= ahora -fecha
-    #creamos tupla (horas, segundos)
-    tupla=divmod(diferencia.total_seconds(), 3600)
-    #comprobamos que el numero de horas es mayor que 24
-    if tupla[0] > 24:
-        res=ahora_cadena
-    else:
-        if tupla[0]>=0:
-            res= "hace "+str(int(tupla[0]))+" hora(s)"
-        else:
-            #al ser igual que cero, tupla[1] almacena los segundos que dividido entre 60 nos devuelve los minutos y segundos restantes
-            minutos_segundos=divmod(tupla[1], 60)
-            if minutos_segundos[0]>0:
-                res = "hace "+str(int(minutos_segundos[0]))+ " minutos"
-            else: 
-                res= "hace "+str(int(minutos_segundos[1]))+ "segundos"
-    print "RES: "+res
-    return res
-            #almacena
-        
-        #tupla=divmod(tupla[0], )
-
-#fecha=datetime.datetime(2015, 2, 8, 21, 57, 42)
-#fue_comentado(fecha)
-
-#locale.setlocale(locale.LC_TIME, "es_ES.UTF-8") 
-#diccionario_meses={"01":"enero", "02":"febrero", "03":"marzo", "04":"abril", "05":"mayo", "06":"junio", "07":"julio", "08":"agosto"
-#                    ,"09":"septiembre", "10":"octubre", "11":"noviembre", "12":"diciembre"}
-#print datetime.datetime.now().strftime("%d de %B a la(s) %H:%M")
-#print datetime.datetime.now().strftime("%m")
-ahora = datetime.datetime.now().strftime("%y-%m-%d-%H:%M:%S")
-#print "ahora: "+str(ahora)
-dia1= datetime.datetime(2015, 2, 8, 18, 17, 42)
-dia2= datetime.datetime(2015, 2, 8, 18, 57, 42)
-elapsedTime = dia2 - dia1
-#print divmod(elapsedTime.total_seconds(), 86400)
-#print divmod(elapsedTime.total_seconds(), 3600)
-#print divmod(elapsedTime.total_seconds(), 60)
-#tupla=divmod(elapsedTime.total_seconds(), 3600)
-#print tupla[0]
-#print tupla[1]
-#print dia1
-#print dia2
-#segundos_ahora=datetime.datetime.now().strftime("%s")
-#meses_ahora=datetime.datetime.now().strftime("%s")
-#print "fecha en meses: "+str(meses_ahora)
-#segundos_dia1= dia1.strftime("%s")
-#segundos_dia= dia2.strftime("%s")
-#print "Diferencia: "+str(int(segundos_dia) - int(segundos_dia1))
-#print dia2.strftime("%s")
-#print "dia: "+str(dia2)
-
-#print "RES: "+str(  int(segundos_ahora)- int(segundos_dia)  )
-#ayer = hoy - datetime.timedelta(hours=1)
-#res= hoy-dia2
-"""
-print res
-print "el comentario se realizo hace "+str(res)
-
-
-print "Time in seconds since the epoch: %s" %time.time()
-print "Current date and time: " , datetime.datetime.now()
-print "Or like this: " ,datetime.datetime.now().strftime("%y-%m-%d-%H-%M")
-print "Current year: ", datetime.date.today().strftime("%Y")
-print "Month of year: ", datetime.date.today().strftime("%B")
-print "Week number of the year: ", datetime.date.today().strftime("%W")
-print "Weekday of the week: ", datetime.date.today().strftime("%w")
-print "Day of year: ", datetime.date.today().strftime("%j")
-print "Day of the month : ", datetime.date.today().strftime("%d")
-print "Day of week: ", datetime.date.today().strftime("%A")
-"""
-
-
-#/redsocial/grupo/1/
-"""
-def estamos_en_grupo1(url):
-    print url
-    res_url=[]
-    print res_url
-    mo = re.search("/redsocial/grupo/(.+)", url)
-    if mo:
-        res_url.append(True)
-        res_url.append(mo.group(1))
-    else:
-        res_url.append(False)
-    #print res_url
-    return res_url
-
-#estamos_en_grupo("/redsocial/grupo/1")
-
-def devuelve_grupo(g_id):
-    g = get_object_or_404(Grupo, pk=g_id)
-    #int g.__unicode__()
-    return g
-#devuelve_grupo(1)
-
-def devuelve_grupo2(url):
-    g_id=int(estamos_en_grupo1(url))
-    g=devuelve_grupo(g_id)
-    #print g
-    return g
-"""
 def estamos_en_grupo(url):
     mo = re.search("/redsocial/grupo/(.+)/", url)
     resultado=[]
@@ -384,13 +253,7 @@ def estamos_en_grupo(url):
     return resultado
         
 #estamos_en_grupo("/redsocial/grupo/1/")
-#estamos_en_grupo("/redsocial/fla2727/")
 
-
-
-#names_urls = zip(names, urls)
-
-#for name, url in names_urls:
 def descarga_sgf():
     url="http://gokifu.com/es/?p=2"
     print('Downloading %s' % url)
@@ -407,13 +270,8 @@ def formatoFecha(cadena):
 def recorrer_sgfs_gokifu():
     lista_diccionarios_res=[]
     dict_game={}
-    #ficheros = pathFile("../static/sgf")
     ficheros=pathFile("../principal/gokifu.com")
-    #ficheros=pathFile("../gokifu.com")
     for path in ficheros:
-        #print path
-        #nombre_fichero=path
-        #print path
         contador=0
         """ LEEMOS EL FICHERO"""
         fileobj = open(path, "rb")
@@ -427,20 +285,17 @@ def recorrer_sgfs_gokifu():
         result=""
         """Recorremos las lineas para rellenar la informacion de cada partida"""
         for line in lines:
-            #print line
             if pw=="" or pw==None:
                 mo = re.search("PW\[(\w*\s?\w*)\]", line)
                 if mo:
                     for e in mo.groups():
                         pw=e
-                #print "pw: "+str(pw)+"\n"+line
             if rw=="" or rw==None:
                 mo = re.search("WR\[(\w*\s?\w*)\]", line)
                 if mo:
                     for e in mo.groups():
                         rw=e
             if pb=="" or pb==None:
-                #mo = re.search("PB\[(\w*)\]", line)
                 mo = re.search("PB\[(\w*\s?\w*)\]", line)
                 if mo:
                     for e in mo.groups():
@@ -456,7 +311,6 @@ def recorrer_sgfs_gokifu():
                     for e in mo.groups():
                         date=e
             if result=="" or result==None:
-                #mo = re.search("RE\[(\w\+.*)\]", line)
                 mo = re.search("RE\[(\w*\+\w*\W?\w*?)\]", line)
                 if mo:
                     for e in mo.groups():
@@ -471,16 +325,8 @@ def recorrer_sgfs_gokifu():
         dict_game["path"]=path
         
         """Creamos los jugadores y la Partida"""
-        #path_fichero=BASE_DIR+"/static/sgf/"+path
-        #print path_fichero
         jugador_negro, created = Jugador.objects.get_or_create(nombre=dict_game['black'])
-        print jugador_negro.__unicode__()
-        #jugador_negro=Jugador()
-        #jugador_negro.save()
-        print 'jugador negro guardado con exito'
-        #jugador_blanco=Jugador(nombre=dict_game['blanco'])
         jugador_blanco, created = Jugador.objects.get_or_create(nombre=dict_game['blanco'])
-        #jugador_blanco.save()
         
         cadenas=path.split("/")
         nombre_fichero=cadenas[len(cadenas)-1]

@@ -16,29 +16,10 @@ class UserForm(UserCreationForm):
     error_css_class = 'error'
     required_css_class = 'required'
     email=forms.EmailField(required=True)
-    #date = forms.DateField(label='Ej: 12/02/92', widget=forms.DateInput)
-    
+  
     class Meta:
         model=User
         fields=("first_name","last_name","username", "email", "password1", "password2")
-    
-    """
-    def clean(self):
-        cleaned_data = super(UserForm, self).clean()
-        email=self.cleaned_data['email']
-        print "IMPRIMO EMAIL EN METODO CLEAN"
-        if User.objects.filter(email=email).exists():
-            raise forms.ValidationError("Ya existe usuario con ese email")
-        patron = re.compile('\w+@\w+\.\w+')
-        if patron.match(email)==None:
-            print "EL PATRON ES NONE"
-            raise forms.ValidationError('El email no esta bien escrito, ej: prueba@prueba.com')
-        else:
-            print "el patron no es none"
-        #if self.cleaned_data['password'] != self.cleaned_data['confirm_password']:
-            #self.add_error('confirm_password', 'Password & Confirm Password must match.')
-        #return cleaned_data
-        """
     
     def save(self, commit=True):
         user=super(UserForm, self).save(commit=False)
@@ -70,7 +51,6 @@ class UserForm(UserCreationForm):
             raise forms.ValidationError('El email no esta bien escrito, ej: prueba@prueba.com')
         return email
     
-    
     def clean_username(self):
         print "ENTRAMOS EN CLEAN_USERNAME"
         username=self.cleaned_data['username']
@@ -85,12 +65,9 @@ class PerfilForm(ModelForm):
     error_css_class = 'error'
     required_css_class = 'required'
     
-    #fecha_nacimiento=forms.DateField(label="Fecha nacimiento (Ej: 12/02/1992)",required=True) #vamos a excluir fecha de nacimiento por defecto y redifinirla para modificar el label
     class Meta:
         model=Perfil
-        #exclude=['user','amigos','path_portada','path_principal', 'confirmation_code']
         fields=("fecha_nacimiento","ciudad","rango", "jugadores_favoritos", "foto_portada", "foto_principal")
-        #exclude =['user','fecha_nacimiento']
 
 class UserForm2(forms.ModelForm):
     class Meta:
