@@ -67,7 +67,7 @@ class PerfilForm(ModelForm):
     
     class Meta:
         model=Perfil
-        fields=("fecha_nacimiento","ciudad","rango", "jugadores_favoritos", "foto_portada", "foto_principal")
+        fields=("fecha_nacimiento","ciudad","rango", "jugadores_favoritos", "foto_portada", "foto_principal", "visible_perfil")
 
 class UserForm2(forms.ModelForm):
     class Meta:

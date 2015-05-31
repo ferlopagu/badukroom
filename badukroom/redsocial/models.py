@@ -1,9 +1,8 @@
 from django.db import models
 from login.models import Perfil
-from principal.models import Partida, Sgf
-from badukroom.settings import MEDIA_ROOT 
-from pip.cmdoptions import editable
-from django.template.defaultfilters import default
+from principal.models import Sgf
+import random
+import string
 # Create your models here.
 
 
@@ -30,11 +29,24 @@ class Grupo(models.Model):
     titulo=models.CharField(max_length=300)
     descripcion=models.TextField(max_length=600)
     miembros=models.ManyToManyField(Perfil)
-    foto_portada=models.ImageField( blank=True, upload_to=MEDIA_ROOT+'imagenes', default=MEDIA_ROOT+"/imagenes/sin_portada.jpg")
+    foto_portada=models.ImageField( blank=True, upload_to='imagenes', default="imagenes/sin_portada.jpg")
     path_portada = models.CharField(max_length=70, default='imagenes/sin_portada.jpg' ,blank=True)
     
     def __unicode__(self):
         return self.titulo
+    
+    def save(self, *args, **kwargs):
+        array=self.foto_portada.name.split("/")
+        nombre_portada=array[len(array)-1]
+        if self.path_portada != 'imagenes/'+nombre_portada: 
+            if self.path_portada == "" or self.path_portada==None or self.foto_portada==None:
+                self.path_portada='imagenes/sin_portada.jpg'
+            else:
+                self.foto_portada.name=''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(3))+nombre_portada #add principio random
+                path_portada="imagenes/"+self.foto_portada.name
+                self.path_portada=path_portada
+        super(Grupo, self).save(*args, **kwargs)
+    
 
 class Comentario(models.Model):
     fecha=models.DateTimeField()
