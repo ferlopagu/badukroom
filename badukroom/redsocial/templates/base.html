@@ -26,17 +26,11 @@
 
 </head>
 <body>
-<!-- 	{# Load CSS and JavaScript #} 
-	
-	{ bootstrap_javascript }  -->
 	<div id="menu_principal">
 	{# Load the tag library #} 
 	{% load bootstrap3 %} 
-	
 
-	{# Display django.contrib.messages as Bootstrap alerts #} 
-	{% bootstrap_messages %}
-		{% block menu_principal %}
+	{% block menu_principal %}
 		
 		<nav class="navbar navbar-inverse navbar-fixed-top">
 			<div class="container">
@@ -94,6 +88,24 @@
 		</nav>
 		{% endblock %}
 	</div>
+
+<div id='modal_aviso'>
+	<div id="aviso" class="modal" role="dialog">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3>Warning!</h3>
+				</div>
+				<div class="modal-body" style="height: 160px">
+					<h3 id="mensaje_aviso"></h3>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 
 	<div id="cuerpo">
 		{% block cuerpo %} {% endblock cuerpo%}
@@ -212,14 +224,9 @@ $.declinarPeticion=function(){
 	$(document).on('click', "#rechazar", function(event){
 		event.preventDefault();
 		//Almacenamos el nick del perfil
-		//alert(location.href);
 		var dir_ip = location.href;
 		var array_dir = dir_ip.split("/");
-		//alert(array_dir);
 		var nickname=array_dir[array_dir.length-2]; //el -2 es por la url al finalizar con una barra al final
-		//alert(nickname);
-		
-		//var perfil=$('#nick').text();
 		var perfil = nickname;
 		//alert("El perfil que enviamos: "+perfil);
 		
@@ -247,7 +254,15 @@ $.comentar=function(){
 		    processData: false,
 		    contentType: false,
 			success: function(data){ // on success..
-				location.reload(true);
+				console.log(data);
+				if(data.error){
+					html=data.error;
+					$('#mensaje_aviso').html(html);
+					$("#aviso").modal('show');
+				}else{
+					location.reload(true);
+				}
+				
 				//alert("Se ha comentado con exito");
 			}  
 		});
@@ -262,8 +277,7 @@ $.responder=function(){
 	    var id_comentario=$(this).children('p:last')//seleccionamos <p> que contiene input responder
         .children(':last')//seleccionamos el input responder
         .attr("class");
-	    alert("Id_ del comentario a responder: "+id_comentario);
-		var form= new FormData(this);
+	    var form= new FormData(this);
 		var x = location.pathname;
 		form.append("url",x);
 		form.append("id_comentario",id_comentario);
@@ -275,7 +289,14 @@ $.responder=function(){
 		    processData: false,
 		    contentType: false,
 			success: function(data){ // on success..
-				location.reload(true);
+				console.log(data);
+				if(data.error){
+					html=data.error;
+					$('#mensaje_aviso').html(html);
+					$("#aviso").modal('show');
+				}else{
+					location.reload(true);
+				}
 			}  
 		});
 	});
@@ -344,13 +365,6 @@ $.buscador=function(){
 	});
 }
 
-//$.buscador=function(){
-	//click
-	//$('#buscar').on('click',function(event)
-	
-
-
-
 
 $.eliminar_comentario=function(){
 	$(".eliminar_comentario").on('click', function(event){
@@ -395,9 +409,17 @@ $.limpiarPeticiones=function(){
 	});
 }
 
+$.limpiarRevisiones=function(){
+	$('#limpiar_revisiones').on('click', function(event){
+		event.preventDefault();
+		var boton='limpiar_revisiones';
+		$.limpiar(boton);
+		$('#revisiones').html("Se eliminaron correctamente las notificaciones del sistema de revisión");
+	});
+}
+
 $.visualizarSGF=function(){
 	$(document).on('click', "#visualizar", function(event){
-		alert("Estoy pulsando en visualizar");
 		event.preventDefault();
 		$("#partida").modal('show'); 
 	});
@@ -427,15 +449,11 @@ $.recargar = function() {
 
 restarFecha=function(){
 	$(".fecha_comentario").each(function() { //AL COMENTAR Y RECARGAR LA PAGINA NO SE VUELVE A EJECUTAR DE PRIMERAS
-			//alert("Entramos en restar fecha");
 			//Construimos el objeto Date de la fecha recibida
 			var string=$(this).text();
-			//alert(string);
 			var array=string.split("/");
 			var fecha_array=new Date("20"+array[2], array[1]-1, array[0], array[3], array[4], array[5]);
-			//alert(fecha_array);
 			var fecha=fecha_array.toLocaleDateString();
-			//alert(fecha);
 			//Fin construir el objeto Date
 			var ahora=new Date();
 			var diff= ahora.getTime()-fecha_array.getTime(); //cogemos diferencia en milisegundos
@@ -443,7 +461,6 @@ restarFecha=function(){
 			var diffMinutes = (diff / (60 * 1000)).toFixed(0) % 60;
 			var diffHours = (diff / (60 * 60 * 1000)).toFixed(0) % 24;
 			var diffDays = (diff / (24 * 60 * 60 * 1000)).toFixed(0);
-			//alert(diffSeconds + "\n" + diffMinutes + "\n" + diffHours + "\n" + "\n" + diffDays);
 			if (diffDays >= 1) {
 				console.log("Se comento el " + fecha_array);
 		        var options = {weekday: "long", month: "long", year: "numeric", day: "numeric"};
@@ -486,7 +503,6 @@ $.unirseGrupo=function(){
 		event.preventDefault();
 		var dir_ip = location.href;
 		var array_dir = dir_ip.split("/");
-		//alert(array_dir);
 		var grupo_id=array_dir[array_dir.length-2]; //el -2 es por la url al finalizar con una barra al final
 		$.ajax({
 			data:{"grupo_id":grupo_id},

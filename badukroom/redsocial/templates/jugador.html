@@ -2,49 +2,6 @@
 {% load staticfiles %} 
 {% block columna_principal %}
 
-<!-- 
-
-<ul class="nav nav-pills" role="tablist">
-	<li class="active"><a href="#">Recientes</a></li>
-	<li><a href="#">Jugador</a></li>
-	<li><a href="#">Busqueda avanzada</a></li>
-</ul>
-
-<ul class="nav nav-pills" role="tablist" style="float:right">
-	<li><a href="#">Subir partida</a></li>
-</ul>
-
-<h1>Visualizando partidas de: {{jugador}}</h1>
-
-<table class="table">
-	<thead>
-		<tr>
-			<th>Jugador Negro</th>
-			<th>Jugador Blanco</th>
-			<th>Fecha</th>
-			<th>Resultado</th>
-			<th>Partida</th>
-		</tr>
-	</thead>
-	<tbody id="nuevos_datos">
-		{% for p in partidas %}
-			<tr>
-				<td><a href="">{{p.jugador_negro}}</a></td>
-				<td><a href="">{{p.jugador_blanco}}</a></td>
-				<td>{{p.fecha}}</td>
-				<td>{{p.resultado}}</td>
-				<td><a href="{ static 'redsocial:partida' id }">{{p.path}}</a></td>
-			</tr>
-		{% endfor %}
-	</tbody>
-</table>
-
-<div id="next">
-	<li><a id="recargar" href="">Recargar</a></li>
-</div>
-
--->
-
 <h1>Visualizando partidas de: {{jugador}}</h1>
 
 {% if me_gusta %}
@@ -111,21 +68,13 @@
 					*
 					*/
 					
-					alert(location.href);
 					var dir_ip = location.href;
 					var array_dir = dir_ip.split("/");
-					alert(array_dir);
 					var id_jugador=array_dir[array_dir.length-2]; //el -2 es por la url al finalizar con una barra al final
-					alert(id_jugador);
-					
-					
-					
-					//alert("entramos en recargar");
 					event.preventDefault();
 					console.log("Entramos en load items");
 					// If the next page doesn't exist, just quit now 
 					if (hasNextPage === false) {
-						//alert("hasNextPage es false");
 						return false //ya no haria falta ya que al comprobar si son menos de diez se eliminara el boton
 					}
 					// Update the page number
@@ -139,17 +88,10 @@
 						},
 						dataType : 'json',
 						success : function(data) {
-							//alert(data.length);
 							if (data.length < 10) {
-								//alert("No hay mas páginas");
 								$('#next').html("<div class='alert alert-info' role='alert'>Ya no hay más partidas que mostrar</div>");
 							}
-							//No se ejecuta lo de dentro y si el complete
-							//alert("entramos en success");
-							console.log(data);
-							// Update global next page variable
 							hasNextPage = true;//.hasNext;
-							// Loop through all items
 							html = "";
 							console.log("Valor que tenia html: " + html);
 							for (i = 0; i < data.length; i++) {
@@ -160,14 +102,6 @@
 										+ "</th>" + "<th>" + data[i].resultado
 										+ "</th>" + "<th>" + data[i].path
 										+ "</th>" + "</tr>";
-
-								/*
-								$("#newItems").before(
-								// Do something with your json object response
-									//console.log(i)
-									//console.log(data[i])
-									
-								);*/
 							}
 							$("#nuevos_datos").append(html);
 						},
@@ -176,11 +110,9 @@
 							hasNextPage = false;
 						},
 						complete : function(data, textStatus) {
-							// Turn the scroll monitor back on
 							//alert("Completado");
 						}
 					});
-					//alert("Realizado con exito");
 				});
 	});
 </script>

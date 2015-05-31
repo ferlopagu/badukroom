@@ -7,8 +7,8 @@
  
 	{# Display django.contrib.messages as Bootstrap alerts #} 
 	{% bootstrap_messages %}
-<h3>Peticiones de amistad</h3> 
-<a id="limpiar_peticiones" href="#" class="btn btn-info" role="button">Eliminar peticiones</a>
+						<h3>Peticiones de amistad</h3> 
+						<a id="limpiar_peticiones" href="#" class="btn btn-info" role="button">Eliminar peticiones</a>
 								<div id='peticion'>
 								</div>
 								
@@ -17,12 +17,7 @@
 									<div class="panel panel-default">
 										<div class="panel-heading">
 													<h1>{{n.emisor.user.first_name}} {{n.emisor.user.last_name}} quiere ser tu amigo.</h1>
-													<!--  <img src='/static/{{n.emisor.foto_portada}}'> -->
 													<a href="{% url 'redsocial:perfil' n.emisor.user.username %}" class='btn btn-default'>Ver perfil</a>
-													<!--  
-													<a id="aceptar" href="#" class="btn btn-info" role="button">Aceptar</a>
-													<a id="rechazar" href="#" class="btn btn-info" role="button">Rechazar</a>
-													-->	
 										</div>
 									</div>
 								{% endfor %}
@@ -44,13 +39,12 @@
 								{% endfor %}
 								</div>	
 								
-								<h3>Sistema de revision</h3> <a id="limpiar_notificaciones" href="#" class="btn btn-info" role="button">Eliminar notificaciones</a>
+								<h3>Sistema de revision</h3> <a id="limpiar_revisiones" href="#" class="btn btn-info" role="button">Eliminar notificaciones revision</a>
 								<div id="revisiones">
 								</div>
 								
 								<div>
 								{% for p in lista_peticiones_revision %}
-									{% if p.revision == True %} 
 									<div class="panel panel-default">
 										<div class="panel-heading">
 													<h1>{{p.mensaje|safe}}</h1>
@@ -70,7 +64,6 @@
 													<a href="{% url 'redsocial:rechazar_partida_revisar' %}" class='btn btn-default'>Rechazar revision</a>						
 										</div>
 									</div>
-									{%endif%}
 								{% endfor %}
 								</div>	
 															
@@ -83,7 +76,7 @@
 		$.contar();
 		$.limpiarNotificaciones();
 		$.limpiarPeticiones();
-		
+		$.limpiarRevisiones();
 	});
 	
 	

@@ -2,8 +2,6 @@
 
 								{% block columna_principal %}
 								<div class="list-group">
-  					
-								
 									<h2>Amigos</h2>
 									{% for p in lista_amigos %}
 										<div class="panel panel-default" style="display: inline-table">
@@ -17,7 +15,6 @@
 												<h5>Ciudad: {{p.ciudad}}</h5>
 											</div>
 										</div>
-									 <!--  <ul><li><img src='/static/{{p.path_principal}}' width='40px' height='40px'><a href="/redsocial/{{p.user.username}}">{{ p.user.first_name }} {{p.user.last_name}}</a></li></ul> -->
 									{% endfor %}	
 								</div>
 								
@@ -35,12 +32,9 @@
 											<div class="panel-body">
 												<h5>Nacimiento: {{tupla.1.fecha_nacimiento}}</h5>
 												<h5>Rango: {{tupla.1.rango}}</h5>
+												<h5>Ciudad: {{tupla.1.ciudad}}</h5>
 											</div>
 										</div>
-										<!--  { else }
-											<h4>Ahora mismo no tenemos personas con amigos en comun que mostrarte </h4>
-										{ endif }-->
-									 <!--  <ul><li><img src='/static/{{p.path_principal}}' width='40px' height='40px'><a href="/redsocial/{{p.user.username}}">{{ p.user.first_name }} {{p.user.last_name}}</a></li></ul> -->
 									{% endfor %}	
 								{% else %}
 											<div class="alert alert-info" role="alert">Añade más amigos para encontrarte personas en común </div>
@@ -60,12 +54,9 @@
 											<div class="panel-body">
 												<h5>Nacimiento: {{tupla.1.fecha_nacimiento}}</h5>
 												<h5>Rango: {{tupla.1.rango}}</h5>
+												<h5>Ciudad: {{tupla.1.ciudad}}</h5>
 											</div>
 										</div>
-										<!--  { else }
-											<h4>Ahora mismo no tenemos personas con gustos similares que mostrarte </h4>
-										{ endif } -->
-									 <!--  <ul><li><img src='/static/{{p.path_principal}}' width='40px' height='40px'><a href="/redsocial/{{p.user.username}}">{{ p.user.first_name }} {{p.user.last_name}}</a></li></ul> -->
 									{% endfor %}
 								{% else %}
 											<div class="alert alert-info" role="alert">Ahora mismo no tenemos personas con gustos similares que mostrarte. Sigue a más jugadores </div>

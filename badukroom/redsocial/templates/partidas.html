@@ -1,11 +1,23 @@
 {% extends "base_perfil_home.html" %} 
 {% load staticfiles %} 
-{% block columna_principal %}
+
 	{# Load the tag library #} 
 	{% load bootstrap3 %} 
 	{# Load CSS and JavaScript #}  
-	{# Display django.contrib.messages as Bootstrap alerts #} 
-	{% bootstrap_messages %}
+
+
+{% block columna_principal %}
+
+{% if messages %}
+	<div>
+    <ul class="messages">
+        {% for message in messages %}
+        	<div class="alert alert-danger" role="alert">{{ message }}</div>
+        {% endfor %}
+    </ul>
+    </div>
+{% endif %}
+
 
 
 <div class="alert alert-info" role="alert">Bienvenido al Repositorio de Partidas, profesionales y amateur. Contribuye!</div>
@@ -302,13 +314,11 @@
 		
 		//Traer las partidas entre dos fechas
 		$("#formulario_fechas").on('submit', function(event){
-			alert("Enviamos formulario fechas");
 			$("#nuevos_datos_fechas").empty();
 			$('#next_partida_fechas').empty();
 			event.preventDefault();
 			var inicio=$('#id_inicio').val();
 			var fin=$('#id_fin').val();
-			alert(inicio);
 			$.ajax({ // create an AJAX call...
 				url: "{% url 'redsocial:partidas_entre_fechas' %}",
 				type: "GET",
@@ -345,11 +355,7 @@
 		//recargar partidas entre dos fechas
 		var pageNum_repositorio_fechas=1;
 		$(document).on('click', "#recargar_repositorio_fechas", function(event){
-		//$('#recargar_repositorio_fechas').on(
-				//'click',
-				//function(event) {
 					event.preventDefault();
-					alert("Entramos a recargar fechas");
 					pageNum_repositorio_fechas = pageNum_repositorio_fechas + 1;
 					var inicio=$('#id_inicio').val();
 					var fin=$('#id_fin').val();
@@ -390,103 +396,6 @@
 					});
 					//alert("Realizado con exito");
 				});
-		
-		
-		/*
-		$('#recargar').on(
-				'click',
-				function(event) {
-					//alert("entramos en recargar");
-					event.preventDefault();
-					console.log("Entramos en load items");
-					// If the next page doesn't exist, just quit now 
-					if (hasNextPage === false) {
-						//alert("hasNextPage es false");
-						return false //ya no haria falta ya que al comprobar si son menos de diez se eliminara el boton
-					}
-					// Update the page number
-					pageNum = pageNum + 1;
-					// Configure the url we're about to hit
-					$.ajax({
-						url : "{% url 'redsocial:partidas_ajax' %}",
-						data : {
-							page_number : pageNum
-						},
-						method:"GET",
-						dataType : 'json', //add esto cuando vayamos a recivir del servidor un json
-						success : function(data) {
-							//alert(data.length);
-							if(data.length < 10){
-								//alert("No hay mas páginas");
-								$('#next').html("<div class='alert alert-info' role='alert'>Ya no hay más partidas que mostrar</div>");
-							}
-							
-							//alert(JSON.stringify(data.fields));
-							//No se ejecuta lo de dentro y si el complete
-							//alert("entramos en success");
-							// Update global next page variable
-							hasNextPage = true;//.hasNext;
-							// Loop through all items
-							html = "";
-							console.log("Valor que tenia html: " + html);
-							//alert("Imprimimos json fields");
-							//alert(JSON.stringify(data.fields));
-							for (i = 0; i < data.length; i++){
-								
-								
-								//TRATAMIENTO DE LA FECHA
-								//console.log(data[i].fields.fecha);
-								fecha =  new Date(data[i].fields.fecha);
-								//console.log("Fecha: "+fecha.toUTCString());
-								var options = {weekday: "long", year: "numeric", month: "long", day: "numeric"};
-								fecha=fecha.toLocaleDateString("es-ES", options);
-								fecha_string=fecha.split(",");
-								fecha_def=fecha_string[1];
-								//console.log(fecha_def);
-								//FIN TRATAMIENTO DEL FORMATO DE LA FECHA
-								
-								
-								*
-								html += "<tr>" + "<th>"
-								+ "<a href='redsocial/jugadores/"+ data[i].fields.jugador_negro[1] +"/'></a>"
-										+ data[i].fields.jugador_negro[0]+ "</th>"
-										+ "<th>" + data[i].fields.jugador_blanco[0]
-										+ "</th>" + "<th>" + data[i].fields.fecha
-										+ "</th>" + "<th>" + data[i].fields.resultado
-										+ "</th>" + "<th>"
-										+ data[i].fields.path+ "</th>"
-										+ "</tr>"; *
-								html+="<tr><td><a href='/redsocial/jugadores/"+data[i].fields.jugador_negro[1]+"'>"+data[i].fields.jugador_negro[0]+"</a></td>"
-								+"<td><a href='/redsocial/jugadores/"+data[i].fields.jugador_blanco[1]+"'>"+data[i].fields.jugador_blanco[0]+"</a></td>"
-								+"<td>"+fecha_def+"</td>"
-								+"<td>"+data[i].fields.resultado+"</td>"
-								+"<td><a href='/redsocial/ver_partida/"+data[i].pk+"''>Visualizar</a></td>";
-								//+"<td>"+data[i].fields.path+"</td>";
-								
-								
-
-								*
-								$("#newItems").before(
-								// Do something with your json object response
-									//console.log(i)
-									//console.log(data[i])
-									
-								);*
-							}
-							$("#nuevos_datos").append(html);
-						},
-						error : function(data) {
-							// When I get a 400 back, fail safely
-							hasNextPage = false;
-						},
-				        complete: function(data, textStatus){
-				            // Turn the scroll monitor back on
-				            //alert("Completado");
-						}
-					});
-					//alert("Realizado con exito");
-				});
-		*/
 	});
 </script>
 

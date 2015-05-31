@@ -1,14 +1,15 @@
 {% extends "base_perfil_home.html" %}
 {% load staticfiles %}
-
-	{# Load the tag library #} 
-	{% load bootstrap3 %} 
-	{# Display django.contrib.messages as Bootstrap alerts #} 
-	{% bootstrap_messages %}
+{# Load the tag library #} 
+{% load bootstrap3 %} 
+{% bootstrap_javascript %}
 
 
 {% block columna_principal %}
+
+
 		<div class="well">
+		
 			<form id='formulario' method="post" action="{% url 'redsocial:creaComentario' %}" enctype="multipart/form-data">
 				{% csrf_token %} {% bootstrap_form formulario layout='vertical' size="sm" %}
 				<p>
@@ -68,7 +69,7 @@
 					<img src='/media/{{user.perfil.path_principal}}' width="40px" height="40px">
 					<a href='/redsocial/{{user.username}}'>{{user.first_name}}</a>
 					<form class="formulario_respuesta" id='formulario_respuesta' method="post" action="{% url 'redsocial:responder' %}" enctype="multipart/form-data">
-								{% csrf_token %} {{formulario.as_p}}
+								{% csrf_token %}   {{formulario.as_p}} 
 						<p>
 							<input class="{{c.id}}" id='responder' type='submit' value='Responder' />
 						</p>
@@ -90,28 +91,22 @@
 
 	$(function(){
 		
-		//código a ejecutar cuando el DOM está listo para recibir instrucciones.
+		//codigo a ejecutar cuando el DOM esta listo para recibir instrucciones.
 		   
 	    var $win = $(window);
 
         $win.scroll(function () {
-            /*if ($win.scrollTop() == 0)
-                alert('Scrolled to Page Top');
-            else*/ 
+
             if ($win.height() + $win.scrollTop()
                            == $(document).height()) {
-                //alert('Scrolled to Page Bottom');
-              //alert("entramos en recargar");
-				//event.preventDefault();
+
 				console.log("Entramos en load items");
 				// If the next page doesn't exist, just quit now 
 				if (hasNextPage === false) {
-					//alert("hasNextPage es false");
 					return false //ya no haria falta ya que al comprobar si son menos de diez se eliminara el boton
 				}
 				// Update the page number
 				pageNum = pageNum + 1;
-				//alert("Pagina a cargar: "+pageNum);
 				// Configure the url we're about to hit
 				$.ajax({
 					url : "{% url 'redsocial:home_ajax' %}",
@@ -120,24 +115,14 @@
 					},
 					dataType : 'json', //add esto cuando vayamos a recivir del servidor un json
 					success : function(data) {
-						//alert("Funciona");
-						//alert(data);
-						//alert(data.length);
 						if(data.length < 5){
-							//alert("No hay mas páginas");
 							$('#next').html("<div class='alert alert-info' role='alert'>Ya no hay más comentarios que mostrar</div>");
 						}
-						
-						//alert(JSON.stringify(data.fields));
-						//No se ejecuta lo de dentro y si el complete
-						//alert("entramos en success");
-						// Update global next page variable
+
 						hasNextPage = true;//.hasNext;
 						// Loop through all items
 						html = "";
 						console.log("Valor que tenia html: " + html);
-						//alert("Imprimimos json fields");
-						//alert(JSON.stringify(data.fields));
 						var html_lista_comentarios="";
 						for (i = 0; i < data.length; i++){
 							var html_comentario="<div class='panel panel-default'>";
@@ -188,7 +173,7 @@
 							}
 							html_lista_respuestas+="</div>";
 							//Creacion formulario respuesta
-							var formulario='{{formulario_respuesta.as_p|escapejs}}';
+							var formulario='{{formulario_respuesta.as_p|escapejs}}'; 
 							var csrf_token="{% csrf_token %}";
 							html_form_respuesta+="<div id='div_respuesta'>"
 							+"<img src='/media/{{user.perfil.path_principal}}' width='40px' height='40px'>"
@@ -246,18 +231,14 @@
 		$('#recargar_tablon').on(
 				'click',
 				function(event) {
-					//alert("entramos en recargar");
 					event.preventDefault();
 					console.log("Entramos en load items");
 					// If the next page doesn't exist, just quit now 
 					if (hasNextPage === false) {
-						//alert("hasNextPage es false");
 						return false //ya no haria falta ya que al comprobar si son menos de diez se eliminara el boton
 					}
 					// Update the page number
 					pageNum = pageNum + 1;
-					alert("Pagina a cargar: "+pageNum);
-					// Configure the url we're about to hit
 					$.ajax({
 						url : "{% url 'redsocial:home_ajax' %}",
 						data : {
@@ -265,11 +246,7 @@
 						},
 						dataType : 'json', //add esto cuando vayamos a recivir del servidor un json
 						success : function(data) {		
-							alert("Funciona");
-							alert(data);
-							//alert(data.length);
 							if(data.length < 5){
-								//alert("No hay mas páginas");
 								$('#next').html("<div class='alert alert-info' role='alert'>Ya no hay más comentarios que mostrar</div>");
 							}
 							// Update global next page variable
@@ -309,7 +286,7 @@
 									fechaR=new Date(data[i].respuestas[j].fecha);
 									var html_respuesta="";
 									html_respuesta+="<div class='panel-body' id='div_body_respuesta'>"
-									+"<img src='"+data[i].respuestas[j].imagen_perfil+"' width='40px' height='40px'>"
+									+"<img src='/media/"+data[i].respuestas[j].imagen_perfil+"' width='40px' height='40px'>"
 									+"<a href=/redsocial/"+data[i].respuestas[j].username+">"+data[i].respuestas[j].nombre+"</a>"
 									+"<h4 class='fecha_comentario'>"+cambiar_fecha_ajax(fechaR)+"</h4>"
 									+data[i].respuestas[j].texto;

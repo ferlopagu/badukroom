@@ -7,12 +7,22 @@
 	
 	{% bootstrap_javascript %} 
 	{# Display django.contrib.messages as Bootstrap alerts #} 
-	{% bootstrap_messages %}
 
 
 {% block columna_principal %}
 
 {% block menu_filtrar%}
+
+{% if messages %}
+	<div>
+    <ul class="messages">
+        {% for message in messages %}
+        	<div class="alert alert-danger" role="alert">{{ message }}</div>
+        {% endfor %}
+    </ul>
+    </div>
+{% endif %}
+
 
 <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
   Enviar partida a revisar
@@ -29,6 +39,9 @@
 	{% endblock %}
   </div>
 </div>
+
+
+
 
 <nav class="navbar navbar-default" id="nav_botones_portada">
 	<div class="container-fluid">
@@ -88,7 +101,6 @@
 	</div>
 	
 	<div role="tabpanel" class="tab-pane" id="fuerza">
-		<p>Fuerza</p>
 		<nav class="navbar navbar-default" id="nav_botones_portada">
 			<div class="container-fluid">
 				<ul class="nav navbar-nav navbar-right">
@@ -325,7 +337,6 @@
 			$("#nuevos_datos_fuerza_jugador").empty(); 
 			$("#boton_recarga_fuerza_jugador").empty();//quitamos los datos que hubiese
 			var rango_jugador=$(this).children().text();
-			//alert(rango_jugador);
 			$("#span_jugador").text(rango_jugador);
 			$.ajax({
 				url : "/redsocial/fuerza_jugador/",
@@ -366,7 +377,6 @@
 			}
 			// Update the page number
 			pageNum_revisiones_by_fuerza_jugador = pageNum_revisiones_by_fuerza_jugador + 1;
-			//alert(pageNum_revisiones_by_fuerza_jugador);
 			var rango_jugador=$('#span_jugador').text();
 			$.ajax({
 				url :"/redsocial/fuerza_jugador/",
@@ -377,9 +387,7 @@
 				method:"GET",
 				dataType : 'json', //add esto cuando vayamos a recivir del servidor un json
 				success : function(data) {
-					//alert(data.length);
 					if(data.length < 2){
-						//alert("No hay mas páginas");
 						$('#boton_recarga_fuerza_jugador').html("<div class='alert alert-info' role='alert'>Ya no hay más partidas que mostrar</div>");
 					}
 					hasNextPage = true;//.hasNext;
@@ -422,7 +430,6 @@
 			$("#nuevos_datos_fuerza_revisor").empty(); 
 			$("#boton_recarga_fuerza_revisor").empty();//quitamos los datos que hubiese
 			var rango_revisor=$(this).children().text();
-			//alert(rango_revisor);
 			$("#span_revisor").text(rango_revisor);
 			$.ajax({
 				url : "/redsocial/fuerza_revisor/",
@@ -463,7 +470,6 @@
 			}
 			// Update the page number
 			pageNum_revisiones_by_revisor_fuerza = pageNum_revisiones_by_revisor_fuerza + 1;
-			//alert(pageNum_revisiones_by_revisor_fuerza);
 			var rango_revisor=$('#span_revisor').text();
 			$.ajax({
 				url :"/redsocial/fuerza_revisor/",
@@ -474,9 +480,7 @@
 				method:"GET",
 				dataType : 'json', //add esto cuando vayamos a recivir del servidor un json
 				success : function(data) {
-					//alert(data.length);
 					if(data.length < 2){
-						//alert("No hay mas páginas");
 						$('#boton_recarga_fuerza_revisor').html("<div class='alert alert-info' role='alert'>Ya no hay más partidas que mostrar</div>");
 					}
 					hasNextPage = true;//.hasNext;
@@ -517,11 +521,8 @@
 			pageNum_revisiones_by_revisor_select=1; //volvemos a poner a uno
 			$("#nuevos_datos_byRevisor").empty(); 
 			$("#boton_recarga_by_revisor").empty();//quitamos los datos que hubiese
-			//alert(pageNum_revisiones_by_revisor_select);
-			//alert("Entramos en select_revisor");
 			event.preventDefault();
 			var revisor=$(this).val();
-			//alert(revisor);
 			$.ajax({
 				url : "/redsocial/by_revisor/"+revisor+"/",
 				data : {},
@@ -559,13 +560,10 @@
 			console.log("Entramos en load items");
 			// If the next page doesn't exist, just quit now 
 			if (hasNextPage_revisiones_by_revisor_select === false) {
-				//alert("hasNextPage es false");
 				return false //ya no haria falta ya que al comprobar si son menos de diez se eliminara el boton
 			}
-			// Update the page number
+			// Update pagina
 			pageNum_revisiones_by_revisor_select = pageNum_revisiones_by_revisor_select + 1;
-			//alert(pageNum_revisiones_by_revisor_select);
-			// Configure the url we're about to hit
 			var revisor=$('.selec_revisor').val();
 			$.ajax({
 				url :"/redsocial/by_revisor/"+revisor+"/",
@@ -575,22 +573,13 @@
 				method:"GET",
 				dataType : 'json', //add esto cuando vayamos a recivir del servidor un json
 				success : function(data) {
-					//alert(data.length);
 					if(data.length < 2){
-						//alert("No hay mas páginas");
 						$('#boton_recarga_by_revisor').html("<div class='alert alert-info' role='alert'>Ya no hay más partidas que mostrar</div>");
 					}
 					
-					//alert(JSON.stringify(data.fields));
-					//No se ejecuta lo de dentro y si el complete
-					//alert("entramos en success");
-					// Update global next page variable
 					hasNextPage = true;//.hasNext;
 					// Loop through all items
 					html = "";
-					console.log("Valor que tenia html: " + html);
-					//alert("Imprimimos json fields");
-					//alert(JSON.stringify(data.fields));
 					for (i = 0; i < data.length; i++){
 								//TRATAMIENTO DE LA FECHA
 								fecha =  new Date(data[i].fecha);
@@ -600,8 +589,6 @@
 								fecha_def=fecha_string[1];
 								//FIN TRATAMIENTO DEL FORMATO DE LA FECHA
 								html+="<tr><td><a href='/redsocial/by_revisor/"+data[i].revisor_nickname+"'>"+data[i].revisor_nickname +" ["+data[i].revisor_rango+"]</a></td>" //COMPLETAR EL JSON EN LA VISTA
-								//+"<td><a href='/redsocial/jugadores/"+data[i].jugador_negro_id+"'>"+data[i].jugador_negro_nombre+" ["+data[i].rango_negro+"]</a></td>"
-								//+"<td><a href='/redsocial/jugadores/"+data[i].jugador_blanco_id+"'>"+data[i].jugador_blanco_nombre+" ["+data[i].rango_blanco+"]</a></td>"
 								+"<td>"+data[i].jugador_negro_nombre+" ["+data[i].rango_negro+"]</td>"
 								+"<td>"+data[i].jugador_blanco_nombre+" ["+data[i].rango_blanco+"]</td>"
 								+"<td>"+fecha_def+"</td>"
@@ -615,7 +602,6 @@
 					hasNextPage_revisiones_by_revisor_select = false;
 				},
 		        complete: function(data, textStatus){
-		            // Turn the scroll monitor back on
 		            //alert("Completado");
 				}
 			});
@@ -647,7 +633,6 @@
 		$("#unirse_revisor").on('click', function(event){
 			event.preventDefault();
 			var nick_revisor=$("#nick_revisor").val();
-			alert("nuevo nick revisor es: "+nick_revisor);
 			$.ajax({
 				url : "{% url 'redsocial:unirse_revisor' %}",
 				data : {'nick': nick_revisor},
@@ -686,22 +671,13 @@
 						},
 						dataType : 'json', //add esto cuando vayamos a recivir del servidor un json
 						success : function(data) {
-							//alert(data.length);
 							if(data.length < 2){
-								//alert("No hay mas páginas");
 								$('#next').html("<div class='alert alert-info' role='alert'>Ya no hay más partidas que mostrar</div>");
 							}
 							
-							//alert(JSON.stringify(data.fields));
-							//No se ejecuta lo de dentro y si el complete
-							//alert("entramos en success");
-							// Update global next page variable
 							hasNextPage = true;//.hasNext;
 							// Loop through all items
 							html = "";
-							console.log("Valor que tenia html: " + html);
-							//alert("Imprimimos json fields");
-							//alert(JSON.stringify(data.fields));
 							for (i = 0; i < data.length; i++){
 										//TRATAMIENTO DE LA FECHA
 										fecha =  new Date(data[i].fecha);
@@ -727,7 +703,6 @@
 						},
 				        complete: function(data, textStatus){
 				            // Turn the scroll monitor back on
-				            //alert("Completado");
 						}
 					});
 					//alert("Realizado con exito");

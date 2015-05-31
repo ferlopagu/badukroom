@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from badukroom.settings import MEDIA_ROOT
 import random
 import string
+import os
 
 #esta es una clase para la serializacion de Jugador nos devuelva el nombre
 class JugadorManager(models.Manager):
@@ -47,6 +48,11 @@ class Sgf(models.Model):
             super(Sgf, self).save(*args, **kwargs)
         else:
             super(Sgf, self).save(*args, **kwargs)
+    
+    def extension(self):
+        name, extension = os.path.splitext(self.fichero.name)
+        print extension
+        return extension
     
 class Partida(models.Model):
     fecha = models.DateField()
@@ -93,6 +99,11 @@ class Partida(models.Model):
         else:
             super(Partida, self).save(*args, **kwargs)
 
+    def extension(self):
+        name, extension = os.path.splitext(self.fichero.name)
+        print extension
+        return extension
+    
 class PartidaRevisada(models.Model):
     fecha = models.DateField()
     jugador_negro = models.CharField(max_length=100)
@@ -126,3 +137,8 @@ class PartidaRevisada(models.Model):
             super(PartidaRevisada, self).save(*args, **kwargs)
         else:
             super(PartidaRevisada, self).save(*args, **kwargs)
+    
+    def extension(self):
+        name, extension = os.path.splitext(self.fichero.name)
+        print extension
+        return extension

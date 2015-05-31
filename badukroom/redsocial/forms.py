@@ -9,14 +9,11 @@ from redsocial.models import Grupo, PeticionRevision
 from principal.models import Revisor
 import datetime
 from django.db.models import Q
+from django.core.exceptions import ValidationError
 
-
-class RespuestaForm(forms.Form):
-    texto=forms.CharField(max_length=5000, required=False)
-    fichero=forms.FileField(label="Sgf", required=False)
 
 class ComentarioForm(forms.Form):
-    texto=forms.CharField(label="Tu comentario", max_length=5000, required=False, widget=forms.Textarea)
+    texto=forms.CharField(label="Tu comentario", max_length=5000, required=True, widget=forms.Textarea)
     fichero=forms.FileField(label="Sgf", required=False)
 
 class GrupoForm(ModelForm):
@@ -25,11 +22,19 @@ class GrupoForm(ModelForm):
         exclude=['miembros', 'path_portada']
 
 class EnvioForm(forms.Form):
-    fichero=forms.FileField(label="Sgf", required=True)
+    fichero=forms.FileField(label="Sgf")
     revisor=forms.ModelChoiceField(Revisor.objects.exclude(Q(perfil=PeticionRevision.objects.values("receptor")))) #Excluimos a los revisores opcupados
-
+    
+    def clean_fichero(self):
+        print "Entramos en metodo"
+        data = self.cleaned_data['fichero']
+        print data
+        if data == None:
+            raise forms.ValidationError("No hay fichero!")
+        return data
+    
 class SgfForm(forms.Form):
-    fichero=forms.FileField(label="Sgf", required=True)
+    fichero=forms.FileField(label="Sgf")
 
 class FechasForm(forms.Form):
     inicio=forms.DateField(initial='01/01/1875',required=True)
