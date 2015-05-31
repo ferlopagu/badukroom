@@ -23,6 +23,7 @@ from badukroom.settings import BASE_DIR
 from django.core.files import File
 
 import django
+from __builtin__ import True
 django.setup()
 
 #from datetime import datetime
@@ -341,5 +342,3 @@ def recorrer_sgfs_gokifu():
     for e in lista_diccionarios_res:
         print e     
 #recorrer_sgfs_gokifu()
-
-    

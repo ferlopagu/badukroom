@@ -22,6 +22,7 @@ from .recomendacion import perfiles_amigos, topMatches_amigos_comun, topMatches_
 from redsocial.recomendacion import perfiles_gustos
 from login.forms import PerfilForm,  UserForm2
 from django.contrib.auth.forms import SetPasswordForm
+from django.contrib import messages
 # Create your views here.
    
 @login_required(login_url='/login')
@@ -142,6 +143,7 @@ def comentarios_scroll(request):
 
 @login_required(login_url='/login')
 def home(request):
+    print "Soy redirigido"
     username=request.user.username
     p = get_object_or_404(Perfil, user__username=username)
     """
@@ -211,31 +213,31 @@ def crea_comentario(request):
             if form.is_valid():
                 fecha=datetime.now()
                 perfil=Perfil.objects.get(user=request.user)
-                path_fichero=BASE_DIR+"/static/sgf/"+request.FILES['fichero'].__str__()
-                """ Estamos leyendo la partida y sacando la informacion util para crearla"""
-                lineas=request.FILES['fichero'].chunks()
-                diccionario_informacion=informacion_partida2(lineas, path_fichero)
-                print diccionario_informacion
-                partida = Sgf(fecha=diccionario_informacion['fecha'],jugador_negro=diccionario_informacion['black'], 
-                               jugador_blanco=diccionario_informacion['blanco'], fichero=request.FILES['fichero'])
-                partida.save()
-                perfil=perfil
-                partida=partida
-                texto=form.cleaned_data['texto']
-                """Comprobamos si estamos en un grupo"""
-                url=request.POST['url']
-                lista=estamos_en_grupo(url)
-                if lista[0]==True:
-                    g=lista[1]
-                    comentario=Comentario(fecha=fecha, perfil=perfil, texto=texto, partida=partida, grupo=g)
+                partida = Sgf(fichero=request.FILES['fichero'])
+                if partida.extension() == ".sgf":
+                    partida.save()
+                    partida=partida
+                    texto=form.cleaned_data['texto']
+                    """Comprobamos si estamos en un grupo"""
+                    url=request.POST['url']
+                    lista=estamos_en_grupo(url)
+                    if lista[0]==True:
+                        g=lista[1]
+                        comentario=Comentario(fecha=fecha, perfil=perfil, texto=texto, partida=partida, grupo=g)
+                    else:
+                        comentario=Comentario(fecha=fecha, perfil=perfil, texto=texto, partida=partida)
+                    """Fin comprobar si es un grupo"""
+                    comentario.save()
+                    comentarios=list(Comentario.objects.values())
+                    return JsonResponse(comentarios, safe=False)
                 else:
-                    comentario=Comentario(fecha=fecha, perfil=perfil, texto=texto, partida=partida)
-                """Fin comprobar si es un grupo"""
-                comentario.save()
-                comentarios=list(Comentario.objects.values())
-                return JsonResponse(comentarios, safe=False)
+                    print "El fichero subido no tiene la extension correspondiente"
+                    dic={"error": "No ha sido posible publicar el comentario. El fichero no tiene extensión .sgf."}
+                    return JsonResponse(dic)
             else:
                 print "el formulario no es valido"
+                dic={"error": "No ha sido posible publicar el comentario. Recuerde rellenar el campo de texto al menos."}
+                return JsonResponse(dic)
         else:#no adjuntamos fichero
             form = ComentarioForm(request.POST)
             if form.is_valid():
@@ -256,6 +258,8 @@ def crea_comentario(request):
                 return JsonResponse(comentarios, safe=False)
             else:
                 print "no se contenia fichero pero el formulario no era valido"
+                dic={"error": "No ha sido posible publicar el comentario. Recuerde rellenar el campo de texto al menos."}
+                return JsonResponse(dic)
     else:
         print "ENTRAMOS EN ELSE AL NO SER AJAX"
         return HttpResponseRedirect(request.META['HTTP_REFERER'])
@@ -269,22 +273,23 @@ def responder(request):
             if form.is_valid():
                 fecha=datetime.now()
                 perfil=Perfil.objects.get(user=request.user)
-                path_fichero=BASE_DIR+"/static/sgf/"+request.FILES['fichero'].__str__()
-                """ Estamos leyendo la partida y sacando la informacion util para crearla"""
-                lineas=request.FILES['fichero'].chunks()
-                diccionario_informacion=informacion_partida2(lineas, path_fichero)
-                partida = Sgf(fecha=diccionario_informacion['fecha'],jugador_negro=diccionario_informacion['black'], 
-                               jugador_blanco=diccionario_informacion['blanco'], fichero=request.FILES['fichero'])
-                partida.save()
-                perfil=perfil
-                partida=partida
-                texto=form.cleaned_data['texto']
-                comentario=Comentario.objects.get(id=id_comentario)
-                respuesta=Respuesta(fecha=fecha, perfil=perfil, texto=texto, partida=partida, comentario=comentario)
-                respuesta.save()
-                comentarios=list(Comentario.objects.values())
-                return JsonResponse(comentarios, safe=False)
+                partida = Sgf(fichero=request.FILES['fichero'])
+                if partida.extension() == ".sgf":
+                    partida.save()
+                    partida=partida
+                    texto=form.cleaned_data['texto']
+                    comentario=Comentario.objects.get(id=id_comentario)
+                    respuesta=Respuesta(fecha=fecha, perfil=perfil, texto=texto, partida=partida, comentario=comentario)
+                    respuesta.save()
+                    comentarios=list(Comentario.objects.values())
+                    return JsonResponse(comentarios, safe=False)
+                else:
+                    print "El fichero subido no tiene la extension .sgf"
+                    dic={"error": "No ha sido posible publicar el comentario. El fichero no tiene extensión .sgf."}
+                    return JsonResponse(dic)
             else:
+                dic={"error": "No ha sido posible publicar su respuesta. Recuerde rellenar el campo de texto al menos."}
+                return JsonResponse(dic)
                 print "el formulario no es valido"
         else:#no adjuntamos fichero
             form = ComentarioForm(request.POST)
@@ -298,6 +303,8 @@ def responder(request):
                 comentarios=list(Comentario.objects.values())
                 return JsonResponse(comentarios, safe=False)
             else:
+                dic={"error": "No ha sido posible publicar su respuesta. Recuerde rellenar el campo de texto al menos."}
+                return JsonResponse(dic)
                 print "no se contenia fichero pero el formulario no era valido"
     else:
         print "ENTRAMOS EN ELSE AL NO SER AJAX"
@@ -425,6 +432,8 @@ def limpiar_notificaciones(request):
                 Notificacion.objects.filter(receptor=receptor).delete()
             elif boton=='limpiar_peticiones':
                 PeticionAmistad.objects.filter(receptor=receptor).delete()
+            elif boton=='limpiar_revisiones':
+                PeticionRevision.objects.filter(receptor=receptor).delete()
             return HttpResponse("Se borraron correctamente.")
     else:
         return HttpResponse('Error en la peticion Ajax')
@@ -712,20 +721,29 @@ def enviar_partida_revisar(request):
         p=Perfil.objects.get(user__username=request.user.username)
         revisor=Revisor.objects.get(id=request.POST['revisor'])
         if not PeticionRevision.objects.filter(receptor=revisor.perfil, emisor=p):
+            fichero = form.clean_fichero()
             partida = Sgf(fichero=request.FILES['fichero'])
-            partida.save()
-            """ Fin crear la partida """
-            """Mandamos las notificaciones"""
-            mensaje_a_revisor="Tienes una nueva partida para revisar, puedes descargarla aqui: <a href='/media/"+partida.path+"'>Descargar</a>."
-            peticion=PeticionRevision(receptor=revisor.perfil, emisor=p, mensaje=mensaje_a_revisor, revision=True, partida_id=partida.id)
-            peticion.save()
-            notificacion2=Notificacion(receptor=p, mensaje="Tu partida ha sido asignada con éxito, te rogamos esperes unos días antes de volver a enviarla a otro revisor.")
-            notificacion2.save()
-            return HttpResponseRedirect(request.META['HTTP_REFERER']) #recargamos la página
+            if partida.extension() == ".sgf":
+                partida.save()
+                """ Fin crear la partida """
+                """Mandamos las notificaciones"""
+                mensaje_a_revisor="Tienes una nueva partida para revisar, puedes descargarla aqui: <a href='/media/"+partida.path+"'>Descargar</a>."
+                peticion=PeticionRevision(receptor=revisor.perfil, emisor=p, mensaje=mensaje_a_revisor, partida_id=partida.id)
+                peticion.save()
+                notificacion2=Notificacion(receptor=p, mensaje="Tu partida ha sido asignada con éxito, te rogamos esperes unos días antes de volver a enviarla a otro revisor.")
+                notificacion2.save()
+                return HttpResponseRedirect(request.META['HTTP_REFERER']) #recargamos la página
+            else:
+                messages.add_message(request, messages.INFO, "No se ha podido subir la partida. Puede que no la haya seleccionado correctamente.")
+                return HttpResponseRedirect(request.META['HTTP_REFERER'])
         else:
             return ver_notificaciones(request)
     else:
-        print "el formulario no es valido"
+        #dic={"error": "No ha sido posible subir la partida. Puede que no la ha seleccionado correctamente."}
+        #return JsonResponse(dic)
+        messages.add_message(request, messages.INFO, "No se ha podido subir la partida. Puede que no la haya seleccionado correctamente.")
+        return HttpResponseRedirect(request.META['HTTP_REFERER'])
+        
 
 @login_required(login_url='/login')
 def aceptar_partida_revisar(request, username):
@@ -740,25 +758,31 @@ def aceptar_partida_revisar(request, username):
         partida = PartidaRevisada(fecha=diccionario_informacion['fecha'], jugador_negro=diccionario_informacion['black'], 
                           jugador_blanco=diccionario_informacion['blanco'], rango_negro=diccionario_informacion['rango_negro'],rango_blanco=diccionario_informacion['rango_blanco'], resultado=diccionario_informacion['result'], 
                           fichero=request.FILES['fichero'], revisor=revisor)
-        partida.save()
-        """ Fin crear la partida """
-        """Mandamos las notificaciones"""
-        mensaje_a_usuario="La partida ha sido revisada, puedes descargarla aqui: <a href='/media/"+partida.path+"'>Descargar</a>. O visualizarla desde el apartado de Revisiones"
-        p=Perfil.objects.get(user__username=username)
-        notificacion1=Notificacion(receptor=p, mensaje=mensaje_a_usuario)
-        notificacion1.save()
-        notificacion2=Notificacion(receptor=revisor.perfil, mensaje="La partida revisada fue almacenada con éxito en el sistema")
-        notificacion2.save()
-        peticion=PeticionRevision.objects.get(receptor=revisor.perfil, emisor=p)
-        #Borramos sgf
-        sgf = Sgf.objects.get(id=peticion.partida_id)
-        sgf.delete()
-        print "borramos SGF"
-        #Fin borrar sgf
-        peticion.delete()
-        return HttpResponseRedirect(request.META['HTTP_REFERER']) #recargamos la página
+        if partida.extension() == ".sgf":
+            partida.save()
+            """ Fin crear la partida """
+            """Mandamos las notificaciones"""
+            mensaje_a_usuario="La partida ha sido revisada, puedes descargarla aqui: <a href='/media/"+partida.path+"'>Descargar</a>. O visualizarla desde el apartado de Revisiones"
+            p=Perfil.objects.get(user__username=username)
+            notificacion1=Notificacion(receptor=p, mensaje=mensaje_a_usuario)
+            notificacion1.save()
+            notificacion2=Notificacion(receptor=revisor.perfil, mensaje="La partida revisada fue almacenada con éxito en el sistema")
+            notificacion2.save()
+            peticion=PeticionRevision.objects.get(receptor=revisor.perfil, emisor=p)
+            #Borramos sgf
+            sgf = Sgf.objects.get(id=peticion.partida_id)
+            sgf.delete()
+            print "borramos SGF"
+            #Fin borrar sgf
+            peticion.delete()
+            return HttpResponseRedirect(request.META['HTTP_REFERER']) #recargamos la página
+        else:
+            messages.add_message(request, messages.INFO, "No se ha podido subir la partida. Puede que no la haya seleccionado correctamente.")
+            return HttpResponseRedirect(request.META['HTTP_REFERER'])
     else:
         print "el formulario no es valido"
+        messages.add_message(request, messages.INFO, "No se ha podido subir la partida. Puede que no la haya seleccionado correctamente.")
+        return HttpResponseRedirect(request.META['HTTP_REFERER'])
 
 @login_required(login_url='/login')
 def rechazar_partida_revisar(request):
@@ -806,28 +830,33 @@ def eliminar_comentario_ajax(request):
 @login_required(login_url='/login')
 def crear_partida_repositorio(request):
     if request.method=='POST':
-        profesionales=["1p", "2p", "3p", "4p", "5p", "6p", "7p", "8p", "9p"]
-        path_fichero=BASE_DIR+"/static/sgf/"+request.FILES['fichero'].__str__()
-        lineas=request.FILES['fichero'].chunks()
-        diccionario_informacion=informacion_partida2(lineas, path_fichero)
-        print diccionario_informacion
-        jugador_negro, created = Jugador.objects.get_or_create(nombre=diccionario_informacion['black'])
-        jugador_blanco, created = Jugador.objects.get_or_create(nombre=diccionario_informacion['blanco'])
-        partida = Partida(fecha=diccionario_informacion['fecha'], jugador_negro=jugador_negro, 
-                          jugador_blanco=jugador_blanco,rango_negro=diccionario_informacion['rango_negro'],rango_blanco=diccionario_informacion['rango_blanco'], resultado=diccionario_informacion['result'], 
-                          fichero=request.FILES['fichero'])
-        
-        if partida.rango_negro in profesionales:
-            jugador_negro.es_profesional=True
-            jugador_negro.save()
-            partida.es_profesional=True
-        if partida.rango_blanco in profesionales:
-            jugador_blanco.es_profesional=True
-            jugador_blanco.save()
-            partida.es_profesional=True
-        partida.save()
-        print 'partida salvada con exito'
-        return HttpResponseRedirect("partidas")
+        form = EnvioForm(request.POST, request.FILES)
+        if form.is_valid():
+            profesionales=["1p", "2p", "3p", "4p", "5p", "6p", "7p", "8p", "9p"]
+            path_fichero=BASE_DIR+"/static/sgf/"+request.FILES['fichero'].__str__()
+            lineas=request.FILES['fichero'].chunks()
+            diccionario_informacion=informacion_partida2(lineas, path_fichero)
+            print diccionario_informacion
+            jugador_negro, created = Jugador.objects.get_or_create(nombre=diccionario_informacion['black'])
+            jugador_blanco, created = Jugador.objects.get_or_create(nombre=diccionario_informacion['blanco'])
+            partida = Partida(fecha=diccionario_informacion['fecha'], jugador_negro=jugador_negro, 
+                              jugador_blanco=jugador_blanco,rango_negro=diccionario_informacion['rango_negro'],rango_blanco=diccionario_informacion['rango_blanco'], resultado=diccionario_informacion['result'], 
+                              fichero=request.FILES['fichero'])
+            
+            if partida.rango_negro in profesionales:
+                jugador_negro.es_profesional=True
+                jugador_negro.save()
+                partida.es_profesional=True
+            if partida.rango_blanco in profesionales:
+                jugador_blanco.es_profesional=True
+                jugador_blanco.save()
+                partida.es_profesional=True
+            partida.save()
+            print 'partida salvada con exito'
+            return HttpResponseRedirect("partidas")
+        else:
+            messages.add_message(request, messages.INFO, "No ha sido posible subir la partida al repositorio. Comprueba que ha seleccionado correctamente un fichero .sgf")
+            return HttpResponseRedirect(request.META['HTTP_REFERER'])
     else:
         print "no entramos en POST"
 
@@ -962,8 +991,11 @@ def partidas_entre_fechas(request):
             partidas=list(Partida.objects.filter(fecha__range=[fecha_inicio, fecha_fin]).order_by("fecha").reverse())
             paginator = Paginator(partidas, 2)
             if request.GET.get('page_number'):
-                page_number=request.GET.get('page_number')
-                page_objects = paginator.page(page_number).object_list
+                try:
+                    page_number=request.GET.get('page_number')
+                    page_objects = paginator.page(page_number).object_list
+                except InvalidPage:
+                    page_objects=[]
             else:
                 page_objects = paginator.page(1).object_list
             for p in page_objects:

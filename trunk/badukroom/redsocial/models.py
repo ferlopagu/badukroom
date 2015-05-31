@@ -22,7 +22,6 @@ class PeticionRevision(models.Model):
     emisor=models.ForeignKey(Perfil, related_name='sender1')
     receptor=models.ForeignKey(Perfil, related_name='receiver1')
     mensaje=models.CharField(max_length=300)
-    revision=models.BooleanField(default=False)
     partida_id=models.IntegerField() #campo para quedarnos con el id de la partida
 
 class Grupo(models.Model):

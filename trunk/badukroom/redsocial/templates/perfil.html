@@ -4,7 +4,6 @@
 	{# Load the tag library #} 
 	{% load bootstrap3 %} 
 	{# Display django.contrib.messages as Bootstrap alerts #} 
-	{% bootstrap_messages %}
 
 {% block columna_principal %}
 
@@ -121,6 +120,7 @@
 <div class="tab-content">
     <div role="tabpanel" class="tab-pane active" id="tablon">
 	    {% if somos_nosotros == True %}
+
 	    <div class="well">
 	    <!-- {formulario.as_p} -->
 			<form id='formulario' method="post" action="{% url 'redsocial:creaComentario' %}" enctype="multipart/form-data">
@@ -212,12 +212,22 @@
 					<h3>Fecha de nacimiento: {{perfil.fecha_nacimiento}}</h3>
 					<h3>Ciudad: {{perfil.ciudad}}</h3>
 					<h3>Rango: {{perfil.rango}}</h3>
-					<h3>Jugadores Preferidos:</h3>
-					{% for e in perfil.jugadores_preferidos%}
-						<ul><li>{{e}}<li></li></ul>
-					{%endfor%}
 				</div>
     	</div>
+    	
+    	<div class="panel panel-info">
+				<div class="panel-heading">
+					Jugadores favoritos
+				</div>
+
+				{% for e in perfil.jugadores_favoritos.all %}
+					<div class="panel-body">
+						<a href="{% url 'redsocial:partidas_jugador' e.id %}">{{e.nombre}}</a>
+					</div>
+				{%endfor%}			
+    	</div>
+
+    	
     </div>
     <div role="tabpanel" class="tab-pane" id="amigos">
 			{% for p in amigos %}
@@ -229,7 +239,7 @@
 				<div class="panel-body">
 					<h5>Nacimiento: {{p.fecha_nacimiento}}</h5>
 					<h5>Rango: {{p.rango}}</h5>
-					<h5>Jugadores preferidos: {%for j in p.jugadores_favoritos.all%} {{j}} {%endfor%}</h5>
+					<h5>Ciudad: {{p.ciudad}}</h5>
 				</div>
 			</div>
 			{% endfor %}
@@ -269,7 +279,6 @@ $(document).ready(function(){
 				console.log("Entramos en load items");
 				// If the next page doesn't exist, just quit now 
 				if (hasNextPage === false) {
-					//alert("hasNextPage es false");
 					return false //ya no haria falta ya que al comprobar si son menos de diez se eliminara el boton
 				}
 				// Update the page number
@@ -402,13 +411,10 @@ $(document).ready(function(){
 				console.log("Entramos en load items");
 				// If the next page doesn't exist, just quit now 
 				if (hasNextPage === false) {
-					//alert("hasNextPage es false");
 					return false //ya no haria falta ya que al comprobar si son menos de diez se eliminara el boton
 				}
 				// Update the page number
 				pageNum = pageNum + 1;
-				alert("Pagina a cargar: "+pageNum);
-				// Configure the url we're about to hit
 				$.ajax({
 					url : "{% url 'redsocial:perfil_ajax' perfil.user.username %}",
 					data : {
@@ -416,11 +422,7 @@ $(document).ready(function(){
 					},
 					dataType : 'json', //add esto cuando vayamos a recivir del servidor un json
 					success : function(data) {
-						alert("Funciona");
-						alert(data);
-						//alert(data.length);
 						if(data.length < 5){
-							//alert("No hay mas páginas");
 							$('#next').html("<div class='alert alert-info' role='alert'>Ya no hay más comentarios que mostrar</div>");
 						}
 						hasNextPage = true;//.hasNext;
@@ -520,7 +522,6 @@ $(document).ready(function(){
 			            // Turn the scroll monitor back on
 					}
 				});
-				//alert("Realizado con exito");
 			});
 	});
 	
