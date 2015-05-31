@@ -60,7 +60,7 @@
 								<form id='formulario_busqueda' class="navbar-form navbar-right" method="POST" autocomplete="off"
 									action="{% url 'redsocial:buscar' %}">
 									{% csrf_token %} 
-									<input id='buscar_texto' name='buscar_texto' type="text" class="form-control" placeholder="Amigos, Grupos, Partidas...">
+									<input id='buscar_texto' name='buscar_texto' type="text" class="form-control" placeholder="Amigos, Grupos, Partidas..." onkeyup="buscador()" onkeydown="buscador()">
 									{% buttons %}
 									<button id='buscar' type="submit" class="btn btn-primary">{% bootstrap_icon "search" %} Buscar</button>
 									{% endbuttons %}
@@ -90,22 +90,15 @@
 						</ul>
 					</div>
 				</div>
-
 			</div>				
 		</nav>
 		{% endblock %}
 	</div>
 
 	<div id="cuerpo">
-
-	
 		{% block cuerpo %} {% endblock cuerpo%}
 	</div>
-
-
-    
-
-    
+  
 {% block js%}
 <script type="text/javascript">
 
@@ -141,7 +134,6 @@ $.dejarSeguir=function(){
 }
 
 $.seguirJugador=function(){
-	//$('#agregar').on('click', function(event){
 	$(document).on('click', "#siJugador", function(event){
 		event.preventDefault();
 		var dir_ip = location.href;
@@ -159,28 +151,17 @@ $.seguirJugador=function(){
 }	
 
 $.agregar=function(){
-	//$('#agregar').on('click', function(event){
 	$(document).on('click', "#agregar", function(event){
 		event.preventDefault();
-		
-		//Almacenamos el nick del perfil
-		//alert(location.href);
 		var dir_ip = location.href;
 		var array_dir = dir_ip.split("/");
-		//alert(array_dir);
 		var nickname=array_dir[array_dir.length-2]; //el -2 es por la url al finalizar con una barra al final
-		//alert(nickname);
-		
-		//var perfil=$('#nick').text();
 		var perfil = nickname;
-		//alert("El perfil que enviamos: "+perfil);
-		
 		$.ajax({
 			data:{"perfil_para_agregar":perfil},
 			type:'POST',
 			url: "{% url 'redsocial:agregar_ajax' %}",
 			success: function(data){
-				//var perfil=$('#nick').text();
 				html="<a id='#' href='#' class='btn btn-info' role='button'>La peticion ya ha sido enviada</a>";
 				$('#botones').html(html);
 				$("#example").modal('show'); 
@@ -191,17 +172,11 @@ $.agregar=function(){
 
 $.eliminar=function(){
 	$(document).on('click', "#eliminar", function(event){
-	//$('#eliminar').on('click', function(event){
 		event.preventDefault();
-		//var perfil=$('#nick').text();
-		
-		//Almacenamos el nick del revisor
 		var dir_ip = location.href;
 		var array_dir = dir_ip.split("/");
 		var nickname=array_dir[array_dir.length-2]; //el -2 es por la url al finalizar con una barra al final
 		var perfil = nickname;
-		//alert("El perfil que enviamos: "+perfil);
-		
 		$.ajax({
 			data:{"perfil_para_eliminar":perfil},
 			type:'GET',
@@ -218,24 +193,12 @@ $.eliminar=function(){
 
 
 $.aceptarPeticion=function(){
-	//$('#aceptar').on('click', function(event) {
 	$(document).on('click', "#aceptar", function(event){
 		event.preventDefault();
-		
-		//Almacenamos el nick del perfil
-		//alert(location.href);
 		var dir_ip = location.href;
 		var array_dir = dir_ip.split("/");
-		//alert(array_dir);
 		var nickname=array_dir[array_dir.length-2]; //el -2 es por la url al finalizar con una barra al final
-		//alert(nickname);
-		
-		//var perfil=$('#nick').text();
 		var perfil = nickname;
-		//alert("El perfil que enviamos: "+perfil);
-		
-		
-		//$.post("{% url 'redsocial:aceptar_peticion' %}",{ nick: $('#nick').text() }, function(data){
 		$.post("{% url 'redsocial:aceptar_peticion' %}",{ nick: perfil }, function(data){
 			html="<a id='eliminar' href='#' class='btn btn-info' role='button'>Eliminar amigo</a>";
 			$('#botones').html(html);
@@ -278,16 +241,8 @@ $.comentar=function(){
 		form.append("url",x);
 		console.log(x);
 		$.ajax({ // create an AJAX call...
-			/*
-			
-			type: $(this).attr('method'), // GET or POST
-			contentType:$(this).attr("enctype"), 
-			url: $(this).attr('action'), // the file to call
-			data: $(this).serialize(), // get the form data
-			*/
 			url: $(this).attr('action'),
 			type: $(this).attr('method'),
-		    //data: new FormData(this),
 		    data: form,
 		    processData: false,
 		    contentType: false,
@@ -304,12 +259,6 @@ $.responder=function(){
 	$(document).on('submit', ".formulario_respuesta", function(event){
 	//$('.formulario_respuesta').submit(function(event) { // catch the form's submit event
 		event.preventDefault();
-		/* Con esto cogemos el atributo clase del input 'enviar' correspondiente al formulario que estamos mandando
-	    alert(
-	        ($(this).children('p:last'))//seleccionamos <p> que contiene input responder
-	        .children(':last')//seleccionamos el input responder
-	        .attr("class"));
-		*/
 	    var id_comentario=$(this).children('p:last')//seleccionamos <p> que contiene input responder
         .children(':last')//seleccionamos el input responder
         .attr("class");
@@ -319,13 +268,6 @@ $.responder=function(){
 		form.append("url",x);
 		form.append("id_comentario",id_comentario);
 		$.ajax({ // create an AJAX call...
-			/*
-			
-			type: $(this).attr('method'), // GET or POST
-			contentType:$(this).attr("enctype"), 
-			url: $(this).attr('action'), // the file to call
-			data: $(this).serialize(), // get the form data
-			*/
 			url: $(this).attr('action'),
 			type: $(this).attr('method'),
 		    //data: new FormData(this),
@@ -334,21 +276,14 @@ $.responder=function(){
 		    contentType: false,
 			success: function(data){ // on success..
 				location.reload(true);
-				//alert("la funcion se ha ejecutado correctamente");
 			}  
 		});
 	});
 }
 
-//$('#buscar').on('click',function(event)  // catch the form's submit event
 
 $.buscador=function(){
 	//esta funcion no se usa pero la dejo aqui para luego cambiarla en home y perfil
-}
-
-//$.buscador=function(){
-	//click
-	//$('#buscar').on('click',function(event)
 	console.log("Buscamos1");
 	$('#buscar_texto').keyup(function(event){ //probar con keydown      //El problema venia de tener el keyup metido dentro de una funcion...
 		//event.preventDefault();
@@ -407,13 +342,18 @@ $.buscador=function(){
 			}  
 		});
 	});
+}
+
+//$.buscador=function(){
+	//click
+	//$('#buscar').on('click',function(event)
+	
 
 
 
 
 $.eliminar_comentario=function(){
 	$(".eliminar_comentario").on('click', function(event){
-		//alert("Acemos click en eliminar_comentario");
 		event.preventDefault();
 		var comentario_clase=$(this).attr("class");
 		var array_clases=comentario_clase.split("/");
@@ -457,7 +397,6 @@ $.limpiarPeticiones=function(){
 
 $.visualizarSGF=function(){
 	$(document).on('click', "#visualizar", function(event){
-	//$('#visualizar').on('click', function(event) {
 		alert("Estoy pulsando en visualizar");
 		event.preventDefault();
 		$("#partida").modal('show'); 
@@ -480,10 +419,6 @@ var pageNum_partidas_recientes_amateur=1;
 var hasNextPage_partidas_recientes_amateur=true;
 var pageNum_partidas_by_jugador=1;
 var hasNextPage_partidas_by_jugador=true;
-
-
-
-
 //FIN PRUEBAS VARIABLES RECARGA
 
 $.recargar = function() {
@@ -547,7 +482,6 @@ cambiar_fecha_ajax=function(fecha){
 }
 
 $.unirseGrupo=function(){
-	//$('#agregar').on('click', function(event){
 	$(document).on('click', "#unir_grupo", function(event){
 		event.preventDefault();
 		var dir_ip = location.href;
@@ -567,12 +501,10 @@ $.unirseGrupo=function(){
 }
 	
 $.dejarGrupo=function(){
-	//$('#agregar').on('click', function(event){
 	$(document).on('click', "#dejar_grupo", function(event){
 		event.preventDefault();
 		var dir_ip = location.href;
 		var array_dir = dir_ip.split("/");
-		//alert(array_dir);
 		var grupo_id=array_dir[array_dir.length-2]; //el -2 es por la url al finalizar con una barra al final
 		$.ajax({
 			data:{"grupo_id":grupo_id},
@@ -592,9 +524,6 @@ $.dejarGrupo=function(){
 		});
 	});
 }
-	
-
-
 </script>
 {% endblock js%}
     

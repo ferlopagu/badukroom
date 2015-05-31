@@ -22,9 +22,8 @@
 			<div class="panel panel-default">
 				<div class="panel-heading">
 					<img src='/media/{{c.perfil.path_principal}}' width="40px" height="40px">
-					<h4>{{ c.perfil.user.username }}</h4>
+					<a href="/redsocial/{{c.perfil.user.username}}">{{ c.perfil.user.first_name}} {{c.perfil.user.last_name}}</a>
 					<h4 class="fecha_comentario">{{ c.fecha|date:"d/m/y/H/i/s" }}</h4>
-					<h5>{{ c.fecha}}</h5>
 					{% if c.perfil.user.username == user.username %}
 						<a class="glyphicon glyphicon-remove eliminar_comentario /{{c.id}}"></a>
 					{%endif%}
@@ -48,6 +47,7 @@
 				{% for r in c.respuesta_set.all %}
 					<div class="panel-body" id="div_body_respuesta">
 					<img src='/media/{{r.perfil.path_principal}}' width="40px" height="40px">
+					<a href="/redsocial/{{r.perfil.user.username}}">{{ r.perfil.user.first_name}}</a>
 					<h4 class="fecha_comentario">{{ r.fecha|date:"d/m/y/H/i/s" }}</h4>
 					{{ r.texto }}
 					{% if r.partida.path != Null %}
@@ -66,7 +66,7 @@
 				<!-- FIN DE LA PRUEBA -->
 				<div id="div_respuesta">
 					<img src='/media/{{user.perfil.path_principal}}' width="40px" height="40px">
-					<!--  <img src='/static/{{e.perfil}}' width="40px" height="40px"> -->
+					<a href='/redsocial/{{user.username}}'>{{user.first_name}}</a>
 					<form class="formulario_respuesta" id='formulario_respuesta' method="post" action="{% url 'redsocial:responder' %}" enctype="multipart/form-data">
 								{% csrf_token %} {{formulario.as_p}}
 						<p>
@@ -145,28 +145,12 @@
 							var html_panelbody="";
 							var html_navbar="";
 							var html_lista_respuestas="";
-							
 							var html_form_respuesta="";
-							//TRATAMIENTO DE LA FECHA
-							//console.log(data[i].fields.fecha);
 							var fecha =  new Date(data[i].fecha);
-							/*
-							alert(fecha);
-							//console.log("Fecha: "+fecha.toUTCString());
-							var options = {weekday: "long", year: "numeric", month: "long", day: "numeric"};
-							var fecha1=fecha.toLocaleDateString("es-ES", options);
-							var fecha_string=fecha1.split(",");
-							
-							var options2 = {hour:"2-digit", minute:"2-digit"};
-							var tiempo=fecha.toLocaleTimeString("es-ES", options2);
-							var fecha_def=fecha_string[1]+" a la(s) "+tiempo;
-							*/
-							//console.log(fecha_def);
-							//FIN TRATAMIENTO DEL FORMATO DE LA FECHA
-							
 							//Creacion panelHeading
 							html_panelheading+="<div class='panel-heading'><img src='/media/"+data[i].path_principal+"' width='40px' height='40px'>"
-							+"<h4>"+data[i].nombre+"</h4><h4 class='fecha_comentario'>"+cambiar_fecha_ajax(fecha)+"</h4>";
+							+"<a href=/redsocial/"+data[i].username+">"+data[i].nombre+"</a>"
+							+"<h4 class='fecha_comentario'>"+cambiar_fecha_ajax(fecha)+"</h4>";
 							
 							var username="{{user.username}}" //username del usuario logueado
 							if(data[i].username == username){
@@ -182,14 +166,6 @@
 							}else{
 								html_panelbody+="</div>";
 							}
-							//Creacion navbar me gusta
-							/*
-							html_navbar+="<div class='collapse navbar-collapse navbar-ex1-collapse'>"
-							+"<ul class='nav navbar-nav'>"
-								+"<li><a href='#'>Me gusta</a></li>"
-								+"<li><a id='#' href='#'>Responder</a></li>"
-							+"</ul></div>";
-							*/
 							//Creacion divs respuestas
 							html_lista_respuestas+="<div class='panel-body' id='div_body_respuesta'>";
 							for(j=0; j<data[i].respuestas.length; j++){
@@ -198,22 +174,16 @@
 								var html_respuesta="";
 								html_respuesta+="<div class='panel-body' id='div_body_respuesta'>"
 								+"<img src='/media/"+data[i].respuestas[j].imagen_perfil+"' width='40px' height='40px'>"
+								+"<a href=/redsocial/"+data[i].respuestas[j].username+">"+data[i].respuestas[j].nombre+"</a>"
 								+"<h4 class='fecha_comentario'>"+cambiar_fecha_ajax(fechaR)+"</h4>"
 								+data[i].respuestas[j].texto;
 								//console.log(data[i].respuestas[j].partida);
 								if(data[i].respuestas[j].partida !=""){
-									//console.log("entramos en mostrar partida");
-									/*
-									html_respuesta+="<div class='wgo-player-main wgo-twocols wgo-large' data-wgo='/static/"+data[i].respuestas[j].partida+"'> Sorry, your browser doesn't support WGo.js. Download SGF <a href='/static/"+data[i].respuestas[j].partida+"'>directly</a>.</div>"
-									+"<div><a  href='/static/"+data[i].respuestas[j].partida+"' class='btn btn-info' role='button'>Descargar</a></div>"+"</div>";
-									*/
-									
 									html_respuesta+="<div class='player'>/media/"+data[i].respuestas[j].partida+"</div>"
 										+"<div><a  href='/media/"+data[i].respuestas[j].partida+"' class='btn btn-info' role='button'>Descargar</a></div>";
 								}else{
 									html_respuesta+= "</div>";
 								}
-								//html_lista_respuestas+=html_respuesta+"</div>";
 								html_lista_respuestas+=html_respuesta;
 							}
 							html_lista_respuestas+="</div>";
@@ -222,6 +192,7 @@
 							var csrf_token="{% csrf_token %}";
 							html_form_respuesta+="<div id='div_respuesta'>"
 							+"<img src='/media/{{user.perfil.path_principal}}' width='40px' height='40px'>"
+							+"<a href=/redsocial/"+data[i].username+">"+data[i].nombre+"</a>"
 							+"<form class='formulario_respuesta' id='formulario_respuesta' method='post' action='/redsocial/responder/' enctype='multipart/form-data'>"
 							+ csrf_token + formulario
 							+"<p><input class='"+data[i].id+"' id='responder' type='submit' value='Responder' /></p>"
@@ -251,26 +222,12 @@
 							//player.loadSgf(sgf);
 							console.log("SGF CARGADO");
 							});
-						
-						/*
-						var elem=$("#player");
-						//var sgf = $(this).attr("class");
-						console.log(elem);
-						//console.log(sgf);
-						var sgf='/static/sgf/Quentin-ersev.sgf';
-						var player = new WGo.BasicPlayer(elem, {sgfFile: '/static/sgf/Quentin-ersev.sgf' });
-						console.log(player);
-						player.loadSgf(sgf);
-						*/
-						
-						
 					},
 					error : function(data) {
 						// When I get a 400 back, fail safely
 						hasNextPage = false;
 					},
 			        complete: function(data, textStatus){
-
 					}
 				});
             }
@@ -284,47 +241,7 @@
 		$.responder();
 		restarFecha();
 		$.eliminar_comentario();
-		//alert($(".fecha_comentario").text());
-		//Con esto recorremos todas las fechas ahora deberiamos ir cambiando una a una segun corresponda
-		/*
-		$(".fecha_comentario").each(function( index ) {
-			console.log( index + ": " + $( this ).text() );
-			var string=$(this).text();
-			console.log(string);
-			array=string.split("/");
-			fecha_array=new Date("20"+array[2], array[1]-1, array[0], array[3], array[4], array[5]);
-			console.log(fecha_array);
-			var fecha=fecha_array.toLocaleDateString();
-			console.log("Nueva fecha: "+fecha);
 			
-			//FUNCIONA
-			var f1 = new Date(2015,04,02,15,30,41);
-			var f2 = new Date(2015,04,02,15,30,35);
-			var diff=f1.getTime()-f2.getTime();
-			 
-
-					var diffSeconds = (diff / 1000).toFixed(0) % 60;
-					var diffMinutes = (diff / (60 * 1000)).toFixed(0) % 60;
-					var diffHours = (diff / (60 * 60 * 1000)).toFixed(0) % 24;
-					var diffDays = (diff / (24 * 60 * 60 * 1000)).toFixed(0);
-					alert(diffSeconds + "\n" + diffMinutes + "\n" + diffHours
-							+ "\n" + "\n" + diffDays);
-					if (diffDays >= 1) {
-						alert("Se comento el " + f1);
-					} else if (diffHours >= 1 && diffHours < 24) {
-						alert("Fue hace " + diffHours + " horas");
-					} else if (diffHours != 1 && diffMinutes > 1
-							&& diffMinutes < 60) {
-						alert("Fue hace " + diffMinutes + " minutos");
-					} else if (diffMinutes != 1 && diffSeconds > 1
-							&& diffSeconds < 60) {
-						alert("Fue hace " + diffSeconds + " segundos");
-					}
-				});
-		*/
-		//MODIFICAR LO ANTERIOR
-		
-		
 		//FUNCION PARA RECARGAR COMENTARIOS EN EL TABLON
 		$('#recargar_tablon').on(
 				'click',
@@ -365,23 +282,12 @@
 								var html_panelbody="";
 								var html_navbar="";
 								var html_lista_respuestas="";
-								
 								var html_form_respuesta="";
-								//TRATAMIENTO DE LA FECHA
 								fecha =  new Date(data[i].fecha);
-								/*
-								var options = {weekday: "long", year: "numeric", month: "long", day: "numeric"};
-								fecha=fecha.toLocaleDateString("es-ES", options);
-								fecha_string=fecha.split(",");
-								fecha_def=fecha_string[1];
-								*/
-								//FIN TRATAMIENTO DEL FORMATO DE LA FECHA
-								
 								//Creacion panelHeading
 								html_panelheading+="<div class='panel-heading'><img src='/media/"+data[i].path_principal+"' width='40px' height='40px'>"
-								+"<h4>"+data[i].nombre+"</h4><h4 class='fecha_comentario'>"+cambiar_fecha_ajax(fecha)+"</h4>";
-								//<h4 class="fecha_comentario">{ c.fecha|date:"d/m/y/H/i/s" }</h4>
-								
+								+"<a href=/redsocial/"+data[i].username+">"+data[i].nombre+"</a>"
+								+"<h4 class='fecha_comentario'>"+cambiar_fecha_ajax(fecha)+"</h4>";
 								var username="{{user.username}}" //username del usuario logueado
 								if(data[i].username == username){
 									html_panelheading+="<a class='glyphicon glyphicon-remove eliminar_comentario /"+data[i].id+"'></a>"+"</div>";
@@ -390,30 +296,12 @@
 								}
 								//Creacion panelBody
 								html_panelbody+="<div class='panel-body'>"+data[i].texto;
-								/*
-								if(data[i].partida != ""){
-									html_panelbody+="<div data-wgo='/static/"+data[i].partida+"'></div>"
-									+"<div><a  href='/static/"+data[i].partida+"' class='btn btn-info' role='button'>Descargar</a></div>"+"</div>";
-								}else{
-									html_panelbody+="</div>";
-								}
-								*/
 								if(data[i].partida !=""){
 									html_respuesta+="<div class='player'>/media/"+data[i].partida+"</div>"
 										+"<div><a  href='/media/"+data[i].partida+"' class='btn btn-info' role='button'>Descargar</a></div>";
 								}else{
 									html_respuesta+= "</div>";
 								}
-								
-								
-								//Creacion navbar me gusta
-								/*
-								html_navbar+="<div class='collapse navbar-collapse navbar-ex1-collapse'>"
-								+"<ul class='nav navbar-nav'>"
-									+"<li><a href='#'>Me gusta</a></li>"
-									+"<li><a id='#' href='#'>Responder</a></li>"
-								+"</ul></div>";
-								*/
 								//Creacion divs respuestas
 								html_lista_respuestas+="<div class='panel-body' id='div_body_respuesta'>";
 								for(j=0; j<data[i].respuestas.length; j++){
@@ -422,6 +310,7 @@
 									var html_respuesta="";
 									html_respuesta+="<div class='panel-body' id='div_body_respuesta'>"
 									+"<img src='"+data[i].respuestas[j].imagen_perfil+"' width='40px' height='40px'>"
+									+"<a href=/redsocial/"+data[i].respuestas[j].username+">"+data[i].respuestas[j].nombre+"</a>"
 									+"<h4 class='fecha_comentario'>"+cambiar_fecha_ajax(fechaR)+"</h4>"
 									+data[i].respuestas[j].texto;
 									//console.log(data[i].respuestas[j].partida);
@@ -440,6 +329,7 @@
 								var csrf_token="{% csrf_token %}";
 								html_form_respuesta+="<div id='div_respuesta'>"
 								+"<img src='/media/{{user.perfil.path_principal}}' width='40px' height='40px'>"
+								+"<a href=/redsocial/"+data[i].username+">"+data[i].nombre+"</a>"
 								+"<form class='formulario_respuesta' id='formulario_respuesta' method='post' action='/redsocial/responder/' enctype='multipart/form-data'>"
 								+ csrf_token + formulario
 								+"<p><input class='"+data[i].id+"' id='responder' type='submit' value='Responder' /></p>"
@@ -476,15 +366,9 @@
 							//alert("error");
 						},
 				        complete: function(data, textStatus){
-				            // Turn the scroll monitor back on
-				            //alert("Completado");
-				            ;
 						}
 					});
-					//alert("Realizado con exito");
 				});
-		
-
 	});
 </script>
 {% endblock js2 %}

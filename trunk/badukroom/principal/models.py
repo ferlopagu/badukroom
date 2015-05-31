@@ -4,16 +4,6 @@ from django.contrib.auth.models import User
 from badukroom.settings import MEDIA_ROOT
 import random
 import string
-#from django.core.files.storage import FileSystemStorage
-
-#my_store = FileSystemStorage(location='/static/sgf')
-
-#user and pass is 'tfg' for admin
-
-# Create your models here.
-
-#PROBLEMA A RESOLVER, SE PUEDE GUARDAR VARIAS VECES EL MISMO JUGADOR
-# ESTADO: NO RESUELTO
 
 #esta es una clase para la serializacion de Jugador nos devuelva el nombre
 class JugadorManager(models.Manager):
@@ -22,7 +12,6 @@ class JugadorManager(models.Manager):
 
 class Jugador(models.Model):
     objects = JugadorManager() #para la serializacion
-    #primary_key=True
     nombre=models.CharField(max_length=50, unique=True)
     es_profesional=models.BooleanField(default=False)
     
@@ -137,4 +126,3 @@ class PartidaRevisada(models.Model):
             super(PartidaRevisada, self).save(*args, **kwargs)
         else:
             super(PartidaRevisada, self).save(*args, **kwargs)
-    

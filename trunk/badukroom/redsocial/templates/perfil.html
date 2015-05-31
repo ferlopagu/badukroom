@@ -11,16 +11,13 @@
 <div class="jumbotron" style="background-image: url('/media/{{perfil.path_portada}}')">
 	
 	<img id="imagen-principal" src='/media/{{perfil.path_principal}}'>
-	<!--  <img src="{% static e.portada %}"> -->
-
-	
-
 	<div id="div_nombre">
 	<h2 class="h_nombre_perfil" id="nombre">{{perfil.user.first_name}}</h2>
 	<h2 class="h_nombre_perfil" id="apellidos">{{perfil.user.last_name}}</h2>
-	</div>
-
 	
+	
+	
+	</div>
 			<div id="botones_portada">
 			<nav class="navbar navbar-default" id="nav_botones_portada">
 				<div class="container-fluid">
@@ -32,10 +29,9 @@
 				  </ul>
 
 				</div>
-	</nav>
+			</nav>
 			</div>
-
-</div>
+	</div>
 
 <div id="botones">
 		{% for option in lista_dic_amigo %} 
@@ -120,6 +116,7 @@
 	</div>
 </div>
 
+{% if perfil_visible or somos_nosotros or es_amigo %}
 
 <div class="tab-content">
     <div role="tabpanel" class="tab-pane active" id="tablon">
@@ -140,42 +137,31 @@
 			<div class="panel panel-default">
 				<div class="panel-heading">
 					<img src='/media/{{c.perfil.path_principal}}' width="40px" height="40px">
-					<h4>{{ c.perfil.user.username }}</h4>
+					<a href="/redsocial/{{c.perfil.user.username}}">{{ c.perfil.user.first_name}} {{c.perfil.user.last_name}}</a>
 					<h4 class="fecha_comentario">{{ c.fecha|date:"d/m/y/H/i/s" }}</h4> <!-- Devolvemos la fecha en el mismo formato que con jquery -->
-					<!--  |date:"r" -->
-					<h5>{{ c.fecha}}</h5>
 					{% if c.perfil.user.username == user.username %}
 						<a class="glyphicon glyphicon-remove eliminar_comentario /{{c.id}}"></a>
 					{%endif%}
 				</div>
 				<div class="panel-body">
-						
 						{{ c.texto }}
-						
 						{% if c.partida.path != Null %}
 						<div data-wgo="/media/{{c.partida.path}}">
 								Sorry, your browser doesn't support WGo.js. Download SGF <a
 								href="/media/{{c.partida.path}}">directly</a>.
 						</div>
-						
 						<div>
 						<a  href="/media/{{c.partida.path}}" class="btn btn-info" role="button">Descargar</a>
 						</div>
 						{% endif %}
 				</div>
-				<!--  
-				<div class="collapse navbar-collapse navbar-ex1-collapse">
-					<ul class="nav navbar-nav">
-						<li><a href="#">Me gusta</a></li>
-						<li><a id="#" href="#">Responder</a></li>
-					</ul>
-				</div>
-				-->
+
 				<!-- ESTO ES UNA PRUEBA -->
 				<div class="panel-body" id="div_body_respuesta">
 				{% for r in c.respuesta_set.all %}
 					<div class="panel-body" id="div_body_respuesta">
 					<img src='/media/{{r.perfil.path_principal}}' width="40px" height="40px">
+					<a href="/redsocial/{{r.perfil.user.username}}">{{ r.perfil.user.first_name}}</a>
 					{{ r.texto }}
 					<h4 class="fecha_comentario">{{ r.fecha|date:"d/m/y/H/i/s" }}</h4>
 					<!-- date:"d/m/y/H/i/s" -->
@@ -198,6 +184,7 @@
 				<div id="div_respuesta">
 					<img src='/media/{{user.perfil.path_principal}}' width="40px" height="40px">
 					<!--  <img src='/static/{{e.perfil}}' width="40px" height="40px"> -->
+					<a href='/redsocial/{{user.username}}'>{{user.first_name}}</a>
 					<form class="formulario_respuesta" id='formulario_respuesta' method="post" action="{% url 'redsocial:responder' %}" enctype="multipart/form-data">
 								{% csrf_token %} {{formulario_respuesta.as_p}}
 						<p>
@@ -222,16 +209,14 @@
 					Informacion
 				</div>
 				<div class="panel-body">
-					<h3>Edad: 21 años</h3>
+					<h3>Fecha de nacimiento: {{perfil.fecha_nacimiento}}</h3>
 					<h3>Ciudad: {{perfil.ciudad}}</h3>
 					<h3>Rango: {{perfil.rango}}</h3>
 					<h3>Jugadores Preferidos:</h3>
 					{% for e in perfil.jugadores_preferidos%}
 						<ul><li>{{e}}<li></li></ul>
 					{%endfor%}
-					<h3>{{perfil.user.username}}</h3>
 				</div>
-    
     	</div>
     </div>
     <div role="tabpanel" class="tab-pane" id="amigos">
@@ -265,34 +250,22 @@
     
 </div>
 
+{% else %}
+		<div class="alert alert-danger" role="alert">Este perfil solo es visible para sus amigos.</div>
+{% endif %}
 
-<!--  
-<div class='container-fluid'>
-<div data-wgo="{% static 'sgf/ersev-angler59.sgf' %}">
-	Sorry, your browser doesn't support WGo.js. Download SGF <a
-		href="{% static 'sgf/ersev-angler59.sgf' %}">directly</a>.
-</div>
-</div>
--->
+
 {% endblock columna_principal %} 
 
 {% block js2 %}
 <script type="text/javascript">
 
 $(document).ready(function(){
-	   //código a ejecutar cuando el DOM está listo para recibir instrucciones.
-	   
+	    //código a ejecutar cuando el DOM está listo para recibir instrucciones.
 	    var $win = $(window);
-
         $win.scroll(function () {
-            /*if ($win.scrollTop() == 0)
-                alert('Scrolled to Page Top');
-            else*/ 
             if ($win.height() + $win.scrollTop()
                            == $(document).height()) {
-                //alert('Scrolled to Page Bottom');
-              //alert("entramos en recargar");
-				//event.preventDefault();
 				console.log("Entramos en load items");
 				// If the next page doesn't exist, just quit now 
 				if (hasNextPage === false) {
@@ -301,8 +274,6 @@ $(document).ready(function(){
 				}
 				// Update the page number
 				pageNum = pageNum + 1;
-				//alert("Pagina a cargar: "+pageNum);
-				// Configure the url we're about to hit
 				$.ajax({
 					url : "{% url 'redsocial:perfil_ajax' perfil.user.username %}",
 					data : {
@@ -310,24 +281,12 @@ $(document).ready(function(){
 					},
 					dataType : 'json', //add esto cuando vayamos a recivir del servidor un json
 					success : function(data) {
-						//alert("Funciona");
-						//alert(data);
-						//alert(data.length);
 						if(data.length < 5){
-							//alert("No hay mas páginas");
 							$('#next').html("<div class='alert alert-info' role='alert'>Ya no hay más comentarios que mostrar</div>");
 						}
-						
-						//alert(JSON.stringify(data.fields));
-						//No se ejecuta lo de dentro y si el complete
-						//alert("entramos en success");
-						// Update global next page variable
 						hasNextPage = true;//.hasNext;
-						// Loop through all items
 						html = "";
 						console.log("Valor que tenia html: " + html);
-						//alert("Imprimimos json fields");
-						//alert(JSON.stringify(data.fields));
 						var html_lista_comentarios="";
 						for (i = 0; i < data.length; i++){
 							var html_comentario="<div class='panel panel-default'>";
@@ -335,30 +294,15 @@ $(document).ready(function(){
 							var html_panelbody="";
 							var html_navbar="";
 							var html_lista_respuestas="";
-							
 							var html_form_respuesta="";
 							//TRATAMIENTO DE LA FECHA
-							//console.log(data[i].fields.fecha);
 							var fecha =  new Date(data[i].fecha);
-							/*
-							alert(fecha);
-							//console.log("Fecha: "+fecha.toUTCString());
-							var options = {weekday: "long", year: "numeric", month: "long", day: "numeric"};
-							var fecha1=fecha.toLocaleDateString("es-ES", options);
-							var fecha_string=fecha1.split(",");
-							
-							var options2 = {hour:"2-digit", minute:"2-digit"};
-							var tiempo=fecha.toLocaleTimeString("es-ES", options2);
-							var fecha_def=fecha_string[1]+" a la(s) "+tiempo;
-							*/
-							//console.log(fecha_def);
-							//FIN TRATAMIENTO DEL FORMATO DE LA FECHA
-							
 							//Creacion panelHeading
 							html_panelheading+="<div class='panel-heading'><img src='/media/"+data[i].path_principal+"' width='40px' height='40px'>"
-							+"<h4>"+data[i].nombre+"</h4><h4 class='fecha_comentario'>"+cambiar_fecha_ajax(fecha)+"</h4>";
+							+"<a href=/redsocial/"+data[i].username+">"+data[i].nombre+"</a><h4 class='fecha_comentario'>"+cambiar_fecha_ajax(fecha)+"</h4>";
 							
 							var username="{{user.username}}" //username del usuario logueado
+							
 							if(data[i].username == username){
 								html_panelheading+="<a class='glyphicon glyphicon-remove eliminar_comentario /"+data[i].id+"'></a>"+"</div>";
 							}else{
@@ -372,14 +316,6 @@ $(document).ready(function(){
 							}else{
 								html_panelbody+="</div>";
 							}
-							//Creacion navbar me gusta
-							/*
-							html_navbar+="<div class='collapse navbar-collapse navbar-ex1-collapse'>"
-							+"<ul class='nav navbar-nav'>"
-								+"<li><a href='#'>Me gusta</a></li>"
-								+"<li><a id='#' href='#'>Responder</a></li>"
-							+"</ul></div>";
-							*/
 							//Creacion divs respuestas
 							html_lista_respuestas+="<div class='panel-body' id='div_body_respuesta'>";
 							for(j=0; j<data[i].respuestas.length; j++){
@@ -387,17 +323,12 @@ $(document).ready(function(){
 								fechaR=new Date(data[i].respuestas[j].fecha);
 								var html_respuesta="";
 								html_respuesta+="<div class='panel-body' id='div_body_respuesta'>"
-								+"<img src='"+data[i].respuestas[j].imagen_perfil+"' width='40px' height='40px'>"
+								+"<img src='/media/"+data[i].respuestas[j].imagen_perfil+"' width='40px' height='40px'>"
+								+"<a href=/redsocial/"+data[i].respuestas[j].username+">"+data[i].respuestas[j].nombre+"</a>"
 								+"<h4 class='fecha_comentario'>"+cambiar_fecha_ajax(fechaR)+"</h4>"
 								+data[i].respuestas[j].texto;
 								//console.log(data[i].respuestas[j].partida);
 								if(data[i].respuestas[j].partida !=""){
-									//console.log("entramos en mostrar partida");
-									/*
-									html_respuesta+="<div class='wgo-player-main wgo-twocols wgo-large' data-wgo='/static/"+data[i].respuestas[j].partida+"'> Sorry, your browser doesn't support WGo.js. Download SGF <a href='/static/"+data[i].respuestas[j].partida+"'>directly</a>.</div>"
-									+"<div><a  href='/static/"+data[i].respuestas[j].partida+"' class='btn btn-info' role='button'>Descargar</a></div>"+"</div>";
-									*/
-									
 									html_respuesta+="<div class='player'>/media/"+data[i].respuestas[j].partida+"</div>"
 										+"<div><a  href='/media/"+data[i].respuestas[j].partida+"' class='btn btn-info' role='button'>Descargar</a></div>";
 								}else{
@@ -412,6 +343,7 @@ $(document).ready(function(){
 							var csrf_token="{% csrf_token %}";
 							html_form_respuesta+="<div id='div_respuesta'>"
 							+"<img src='/media/{{user.perfil.path_principal}}' width='40px' height='40px'>"
+							+"<a href=/redsocial/"+data[i].username+">"+data[i].nombre+"</a>"
 							+"<form class='formulario_respuesta' id='formulario_respuesta' method='post' action='/redsocial/responder/' enctype='multipart/form-data'>"
 							+ csrf_token + formulario
 							+"<p><input class='"+data[i].id+"' id='responder' type='submit' value='Responder' /></p>"
@@ -440,20 +372,7 @@ $(document).ready(function(){
 								});
 							//player.loadSgf(sgf);
 							console.log("SGF CARGADO");
-							});
-						
-						/*
-						var elem=$("#player");
-						//var sgf = $(this).attr("class");
-						console.log(elem);
-						//console.log(sgf);
-						var sgf='/static/sgf/Quentin-ersev.sgf';
-						var player = new WGo.BasicPlayer(elem, {sgfFile: '/static/sgf/Quentin-ersev.sgf' });
-						console.log(player);
-						player.loadSgf(sgf);
-						*/
-						
-						
+							});		
 					},
 					error : function(data) {
 						// When I get a 400 back, fail safely
@@ -464,9 +383,7 @@ $(document).ready(function(){
 					}
 				});
             }
-        });
-	   
-	   
+        }); 
 	$.comentar();
 	$.buscador();
 	$.contar();
@@ -481,8 +398,6 @@ $(document).ready(function(){
 	$('#recargar_perfil').on(
 			'click',
 			function(event) {
-				
-				//alert("entramos en recargar");
 				event.preventDefault();
 				console.log("Entramos en load items");
 				// If the next page doesn't exist, just quit now 
@@ -501,10 +416,6 @@ $(document).ready(function(){
 					},
 					dataType : 'json', //add esto cuando vayamos a recivir del servidor un json
 					success : function(data) {
-						
-						
-							
-						
 						alert("Funciona");
 						alert(data);
 						//alert(data.length);
@@ -512,17 +423,10 @@ $(document).ready(function(){
 							//alert("No hay mas páginas");
 							$('#next').html("<div class='alert alert-info' role='alert'>Ya no hay más comentarios que mostrar</div>");
 						}
-						
-						//alert(JSON.stringify(data.fields));
-						//No se ejecuta lo de dentro y si el complete
-						//alert("entramos en success");
-						// Update global next page variable
 						hasNextPage = true;//.hasNext;
 						// Loop through all items
 						html = "";
 						console.log("Valor que tenia html: " + html);
-						//alert("Imprimimos json fields");
-						//alert(JSON.stringify(data.fields));
 						var html_lista_comentarios="";
 						for (i = 0; i < data.length; i++){
 							var html_comentario="<div class='panel panel-default'>";
@@ -530,28 +434,13 @@ $(document).ready(function(){
 							var html_panelbody="";
 							var html_navbar="";
 							var html_lista_respuestas="";
-							
 							var html_form_respuesta="";
 							//TRATAMIENTO DE LA FECHA
-							//console.log(data[i].fields.fecha);
-							var fecha =  new Date(data[i].fecha);
-							/*
-							alert(fecha);
-							//console.log("Fecha: "+fecha.toUTCString());
-							var options = {weekday: "long", year: "numeric", month: "long", day: "numeric"};
-							var fecha1=fecha.toLocaleDateString("es-ES", options);
-							var fecha_string=fecha1.split(",");
-							
-							var options2 = {hour:"2-digit", minute:"2-digit"};
-							var tiempo=fecha.toLocaleTimeString("es-ES", options2);
-							var fecha_def=fecha_string[1]+" a la(s) "+tiempo;
-							*/
-							//console.log(fecha_def);
-							//FIN TRATAMIENTO DEL FORMATO DE LA FECHA
-							
+							var fecha =  new Date(data[i].fecha);				
 							//Creacion panelHeading
 							html_panelheading+="<div class='panel-heading'><img src='/media/"+data[i].path_principal+"' width='40px' height='40px'>"
-							+"<h4>"+data[i].nombre+"</h4><h4 class='fecha_comentario'>"+cambiar_fecha_ajax(fecha)+"</h4>";
+							+"<a href=/redsocial/"+data[i].username+">"+data[i].nombre+"</a>"
+							+"<h4 class='fecha_comentario'>"+cambiar_fecha_ajax(fecha)+"</h4>";
 							
 							var username="{{user.username}}" //username del usuario logueado
 							if(data[i].username == username){
@@ -567,14 +456,6 @@ $(document).ready(function(){
 							}else{
 								html_panelbody+="</div>";
 							}
-							//Creacion navbar me gusta
-							/*
-							html_navbar+="<div class='collapse navbar-collapse navbar-ex1-collapse'>"
-							+"<ul class='nav navbar-nav'>"
-								+"<li><a href='#'>Me gusta</a></li>"
-								+"<li><a id='#' href='#'>Responder</a></li>"
-							+"</ul></div>";
-							*/
 							//Creacion divs respuestas
 							html_lista_respuestas+="<div class='panel-body' id='div_body_respuesta'>";
 							for(j=0; j<data[i].respuestas.length; j++){
@@ -582,17 +463,12 @@ $(document).ready(function(){
 								fechaR=new Date(data[i].respuestas[j].fecha);
 								var html_respuesta="";
 								html_respuesta+="<div class='panel-body' id='div_body_respuesta'>"
-								+"<img src='"+data[i].respuestas[j].imagen_perfil+"' width='40px' height='40px'>"
-								+"<h4 class='fecha_comentario'>"+cambiar_fecha_ajax(fechaR)+"</h4>"
-								+data[i].respuestas[j].texto;
+									+"<img src='/media/"+data[i].respuestas[j].imagen_perfil+"' width='40px' height='40px'>"
+									+"<a href=/redsocial/"+data[i].respuestas[j].username+">"+data[i].respuestas[j].nombre+"</a>"
+									+"<h4 class='fecha_comentario'>"+cambiar_fecha_ajax(fechaR)+"</h4>"
+									+data[i].respuestas[j].texto;
 								//console.log(data[i].respuestas[j].partida);
-								if(data[i].respuestas[j].partida !=""){
-									//console.log("entramos en mostrar partida");
-									/*
-									html_respuesta+="<div class='wgo-player-main wgo-twocols wgo-large' data-wgo='/static/"+data[i].respuestas[j].partida+"'> Sorry, your browser doesn't support WGo.js. Download SGF <a href='/static/"+data[i].respuestas[j].partida+"'>directly</a>.</div>"
-									+"<div><a  href='/static/"+data[i].respuestas[j].partida+"' class='btn btn-info' role='button'>Descargar</a></div>"+"</div>";
-									*/
-									
+								if(data[i].respuestas[j].partida !=""){						
 									html_respuesta+="<div class='player'>/media/"+data[i].respuestas[j].partida+"</div>"
 										+"<div><a  href='/media/"+data[i].respuestas[j].partida+"' class='btn btn-info' role='button'>Descargar</a></div>";
 								}else{
@@ -607,6 +483,7 @@ $(document).ready(function(){
 							var csrf_token="{% csrf_token %}";
 							html_form_respuesta+="<div id='div_respuesta'>"
 							+"<img src='/media/{{user.perfil.path_principal}}' width='40px' height='40px'>"
+							+"<a href=/redsocial/"+data[i].username+">"+data[i].nombre+"</a>"
 							+"<form class='formulario_respuesta' id='formulario_respuesta' method='post' action='/redsocial/responder/' enctype='multipart/form-data'>"
 							+ csrf_token + formulario
 							+"<p><input class='"+data[i].id+"' id='responder' type='submit' value='Responder' /></p>"
@@ -620,9 +497,7 @@ $(document).ready(function(){
 						$(".player").addClass("player2");
 						$(".player2").removeClass("player");
 						//Fin cambiar clase player
-						
 						$("#nuevos_datos").append(html);
-						
 						$( ".player" ).each(function( index ) {
 							console.log( index + ": " + $( this ).text() );
 							var elem = $(this);
@@ -636,19 +511,6 @@ $(document).ready(function(){
 							//player.loadSgf(sgf);
 							console.log("SGF CARGADO");
 							});
-						
-						/*
-						var elem=$("#player");
-						//var sgf = $(this).attr("class");
-						console.log(elem);
-						//console.log(sgf);
-						var sgf='/static/sgf/Quentin-ersev.sgf';
-						var player = new WGo.BasicPlayer(elem, {sgfFile: '/static/sgf/Quentin-ersev.sgf' });
-						console.log(player);
-						player.loadSgf(sgf);
-						*/
-						
-						
 					},
 					error : function(data) {
 						// When I get a 400 back, fail safely
@@ -656,160 +518,11 @@ $(document).ready(function(){
 					},
 			        complete: function(data, textStatus){
 			            // Turn the scroll monitor back on
-			            //alert("Completado");
-;
 					}
 				});
 				//alert("Realizado con exito");
 			});
 	});
-	
-	
-/*
-$(function(){
-	
-	$.comentar();
-	$.buscador();
-	$.contar();
-	$.aceptarPeticion();
-	$.agregar();
-	$.eliminar();
-	$.responder();
-	$.eliminar_comentario();
-	
-	$('#recargar_perfil').on(
-			'click',
-			function(event) {
-				//alert("entramos en recargar");
-				event.preventDefault();
-				console.log("Entramos en load items");
-				// If the next page doesn't exist, just quit now 
-				if (hasNextPage === false) {
-					//alert("hasNextPage es false");
-					return false //ya no haria falta ya que al comprobar si son menos de diez se eliminara el boton
-				}
-				// Update the page number
-				pageNum = pageNum + 1;
-				// Configure the url we're about to hit
-				$.ajax({
-					url : "{% url 'redsocial:perfil_ajax' perfil.user.username %}",
-					data : {
-						page_number : pageNum
-					},
-					dataType : 'json', //add esto cuando vayamos a recivir del servidor un json
-					success : function(data) {
-						
-						alert("Funciona");
-						alert(data);
-						//alert(data.length);
-						if(data.length < 5){
-							//alert("No hay mas páginas");
-							$('#next').html("<div class='alert alert-info' role='alert'>Ya no hay más comentarios que mostrar</div>");
-						}
-						
-						//alert(JSON.stringify(data.fields));
-						//No se ejecuta lo de dentro y si el complete
-						//alert("entramos en success");
-						// Update global next page variable
-						hasNextPage = true;//.hasNext;
-						// Loop through all items
-						html = "";
-						console.log("Valor que tenia html: " + html);
-						//alert("Imprimimos json fields");
-						//alert(JSON.stringify(data.fields));
-						var html_lista_comentarios="";
-						for (i = 0; i < data.length; i++){
-							var html_comentario="<div class='panel panel-default'>";
-							var html_panelheading="";
-							var html_panelbody="";
-							var html_navbar="";
-							var html_lista_respuestas="";
-							var html_form_respuesta="";
-							//TRATAMIENTO DE LA FECHA
-							//console.log(data[i].fields.fecha);
-							fecha =  new Date(data[i].fecha);
-							//console.log("Fecha: "+fecha.toUTCString());
-							var options = {weekday: "long", year: "numeric", month: "long", day: "numeric"};
-							fecha=fecha.toLocaleDateString("es-ES", options);
-							fecha_string=fecha.split(",");
-							fecha_def=fecha_string[1];
-							//console.log(fecha_def);
-							//FIN TRATAMIENTO DEL FORMATO DE LA FECHA
-							
-							//Creacion panelHeading
-							html_panelheading+="<div class='panel-heading'><img src='/static/"+data[i].path_principal+"' width='40px' height='40px'>"
-							+"<h4>"+data[i].nombre+"</h4><h5>"+data[i].fecha+"</h5>";
-							
-							var username="{{user.username}}" //username del usuario logueado
-							if(data[i].username == username){
-								html_panelheading+="<a class='glyphicon glyphicon-remove eliminar_comentario /"+data[i].id+"'></a>"+"</div>";
-							}else{
-								html_panelheading+="</div>";
-							}
-							//Creacion panelBody
-							html_panelbody+="<div class='panel-body'>"+data[i].texto;
-							if(data[i].partida != ""){
-								html_panelbody+="<div data-wgo='/static/"+data[i].partida+"'></div>"
-								+"<div><a  href='/static/"+data[i].partida+"' class='btn btn-info' role='button'>Descargar</a></div>"+"</div>";
-							}else{
-								html_panelbody+="</div>";
-							}
-							//Creacion navbar me gusta
-							html_navbar+="<div class='collapse navbar-collapse navbar-ex1-collapse'>"
-							+"<ul class='nav navbar-nav'>"
-								+"<li><a href='#'>Me gusta</a></li>"
-								+"<li><a id='#' href='#'>Responder</a></li>"
-							+"</ul></div>";
-							//Creacion divs respuestas
-							html_lista_respuestas+="<div class='panel-body' id='div_body_respuesta'>";
-							for(j=0; j<data[i].respuestas; j++){
-								var html_respuesta="";
-								html_respuesta+="<div class='panel-body' id='div_body_respuesta'>"
-								+"<img src='"+data[i].respuestas[j].imagen_perfil+"' width='40px' height='40px'>"
-								+data[i].respuestas[j].texto;
-								
-								if(data[i].respuestas[j].partida !=""){
-									html_respuesta+="<div data-wgo='/static/"+data[i].partida+"'></div>"
-									+"<div><a  href='/static/"+data[i].partida+"' class='btn btn-info' role='button'>Descargar</a></div>"+"</div>";
-								}else{
-									html_respuesta+= "</div>";
-								}
-								html_lista_respuesta+=html_respuesta+"</div>";
-							}
-							//Creacion formulario respuesta
-							var formulario='{{formulario_respuesta.as_p|escapejs}}';
-							var csrf_token="{% csrf_token %}";
-							html_form_respuesta+="<div id='div_respuesta'>"
-							+"<img src='{ static user.perfil.path_principal }' width='40px' height='40px'>"
-							+"<form class='formulario_respuesta' id='formulario_respuesta' method='post' action='/redsocial/responder/' enctype='multipart/form-data'>"
-							+ csrf_token + formulario
-							+"<p><input class='"+data[i].id+"' id='responder' type='submit' value='Responder' /></p>"
-							+"</form></div>";
-							//Se juntan todas las partes
-							html_comentario+=html_panelheading+html_panelbody+html_navbar+html_lista_respuestas;
-							html_lista_comentarios+=html_comentario+html_form_respuesta+"</div>"+"</div>";
-						}
-						html=html_lista_comentarios;
-						$("#nuevos_datos").append(html);
-					},
-					error : function(data) {
-						// When I get a 400 back, fail safely
-						hasNextPage = false;
-					},
-			        complete: function(data, textStatus){
-			            // Turn the scroll monitor back on
-			            //alert("Completado");
-					}
-				});
-				//alert("Realizado con exito");
-			});
-	
-});
-	*/
-	
-	$(function () {
-
-    });
 	
 </script>
 

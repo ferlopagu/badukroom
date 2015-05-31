@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('principal', '0001_initial'),
-        ('login', '0002_auto_20150422_1831'),
+        ('login', '0002_auto_20150530_2126'),
     ]
 
     operations = [
@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('fecha', models.DateTimeField()),
-                ('texto', models.CharField(max_length=2000)),
+                ('texto', models.TextField()),
             ],
             options={
             },
@@ -29,22 +29,9 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('titulo', models.CharField(max_length=300)),
                 ('descripcion', models.TextField(max_length=600)),
-                ('foto_portada', models.ImageField(default=b'/home/fla2727/workspace/badukroom/media/imagenes/sin_portada.jpg', upload_to=b'/home/fla2727/workspace/badukroom/mediaimagenes', blank=True)),
+                ('foto_portada', models.ImageField(default=b'imagenes/sin_portada.jpg', upload_to=b'imagenes', blank=True)),
                 ('path_portada', models.CharField(default=b'imagenes/sin_portada.jpg', max_length=70, blank=True)),
                 ('miembros', models.ManyToManyField(to='login.Perfil')),
-            ],
-            options={
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
-            name='Mensaje',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('mensaje', models.CharField(max_length=300)),
-                ('fecha', models.DateTimeField()),
-                ('emisor', models.ForeignKey(related_name=b'emisorMensaje', to='login.Perfil')),
-                ('receptor', models.ForeignKey(related_name=b'receptorMensaje', to='login.Perfil')),
             ],
             options={
             },

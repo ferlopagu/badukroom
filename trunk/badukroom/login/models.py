@@ -13,14 +13,12 @@ class Perfil(models.Model):
     rango = models.CharField(max_length=50, choices=rango)
     jugadores_favoritos=models.ManyToManyField(Jugador,  blank=True)
     foto_principal=models.ImageField( blank=True, upload_to='imagenes', default="/imagenes/sin_foto.jpg")
-    #path_principal=models.FilePathField(path=MEDIA_ROOT+'imagenes')
-    #default=MEDIA_ROOT+'imagenes/'+foto_principal.name.__str__()
     path_principal = models.CharField(max_length=70, default='imagenes/sin_foto.jpg', blank=True)
     foto_portada=models.ImageField( blank=True, upload_to='imagenes', default="/imagenes/sin_portada.jpg")
     path_portada = models.CharField(max_length=70, default='imagenes/sin_portada.jpg' ,blank=True)
-    #path_portada=models.FilePathField(path=MEDIA_ROOT+'imagenes')
     amigos=models.ManyToManyField('self',  blank=True)
     confirmation_code = models.CharField(max_length=100, blank=True)
+    visible_perfil=models.BooleanField(default=False)
     
     def __unicode__(self):
         return self.user.username
@@ -48,7 +46,6 @@ class Perfil(models.Model):
                 path_portada="imagenes/"+self.foto_portada.name
                 #self.path_principal = 'imagenes/'+self.foto_principal.name.__str__() #Sobreescribimos el save para que actualice el path con el nombre del fichero
                 self.path_portada=path_portada
-        #super(Perfil, self).save()
         #Guardamos cambios
         super(Perfil, self).save(*args, **kwargs)
     

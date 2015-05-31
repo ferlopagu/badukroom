@@ -26,11 +26,11 @@ from django.contrib.auth.forms import SetPasswordForm
    
 @login_required(login_url='/login')
 def perfil(request, username):
-    p = get_object_or_404(Perfil, user__username=username) 
+    p = get_object_or_404(Perfil, user__username=username) #perfil visitado
     comentarios_list=list(Comentario.objects.filter(perfil=p, grupo=None).order_by('fecha').reverse())
     paginator=Paginator(comentarios_list,5)
     comentarios=paginator.page(1).object_list
-    
+    yo = get_object_or_404(Perfil, user__username=request.user.username) #mi perfil
     """comprobamos si el perfil que visualizamos somos nosotros, es un amigo o desconocido """
     somos_nosotros=False
     es_amigo=False
@@ -67,11 +67,13 @@ def perfil(request, username):
     grupos=list(Grupo.objects.filter(miembros__user__username=p.user.username))
     
     formulario_respuesta=ComentarioForm() #formulario para responder a los comentarios
-    context = {'comentarios': comentarios, 'formulario_respuesta':formulario_respuesta,'lista_dic_amigo':lista_dic_amigo, 'perfil':p, 'amigos':amigos, 'grupos':grupos, 'somos_nosotros':somos_nosotros}
+    context = {'comentarios': comentarios, 'formulario_respuesta':formulario_respuesta,'lista_dic_amigo':lista_dic_amigo, 'perfil':p, 'amigos':amigos, 'grupos':grupos, 'somos_nosotros':somos_nosotros, 'perfil_visible':p.visible_perfil, 'es_amigo':diccionario_amigos["es_amigo"]}
     
     if somos_nosotros==True: #somos nosotros luego add formulario para actualizar estado
         formulario=ComentarioForm()
         context['formulario']=formulario
+    print 'somos_nosotros: '+str(somos_nosotros)+'\nperfil_visible: '+str(yo.visible_perfil)+'\nes_amigo: '+str(diccionario_amigos["es_amigo"])
+    
     return render_to_response('perfil.html',context,context_instance=RequestContext(request))
 
 @login_required(login_url='/login')
@@ -104,7 +106,7 @@ def perfil_ajax(request, username):
                     resp=Respuesta.objects.filter(comentario=c)
                     lista_respuestas=[]
                     for r in resp:
-                        dic_respuesta={"texto":r.texto,"fecha":r.fecha, "imagen_perfil":r.perfil.path_principal}
+                        dic_respuesta={"texto":r.texto,"fecha":r.fecha, "imagen_perfil":r.perfil.path_principal, "username":r.perfil.user.username, "nombre":r.perfil.user.first_name}
                         if r.partida != None:
                             dic_respuesta["partida"]=r.partida.path
                         else:
@@ -191,7 +193,7 @@ def home_ajax(request): #No se para que recojo la variable username si luego la 
                     resp=Respuesta.objects.filter(comentario=c)
                     lista_respuestas=[]
                     for r in resp:
-                        dic_respuesta={"texto":r.texto,"fecha":r.fecha, "imagen_perfil":r.perfil.path_principal}
+                        dic_respuesta={"texto":r.texto,"fecha":r.fecha, "imagen_perfil":r.perfil.path_principal, "username":r.perfil.user.username, "nombre":r.perfil.user.first_name}
                         if r.partida != None:
                             dic_respuesta["partida"]=r.partida.path
                         else:
@@ -667,27 +669,23 @@ def partidas_by_revisor(request, nickname_kgs):
                 lista_partidas.append(dic_partida)
             print lista_partidas
             return JsonResponse(lista_partidas, safe=False)
-    else:
-        name='by_revisor.html'
-        lista=list(PartidaRevisada.objects.filter(revisor__nickname_kgs=nickname_kgs))
-        revisor=Revisor.objects.get(nickname_kgs=nickname_kgs)
-        context={'partidas_revisadas':lista, 'nick':nickname_kgs, 'rango':revisor.perfil.rango}
-        return render(request, name, context)
 
 @login_required(login_url='/login')
 def crear_grupo(request):
+    print "ENTRO EN CREAR GRUPO"
     if request.method=="POST":
         if 'foto_portada' in request.FILES: #comprobamos que tenga fichero
             form = GrupoForm(request.POST, request.FILES)
+            print form
             if form.is_valid():
                 titulo=form.cleaned_data['titulo']
                 descripcion=form.cleaned_data['descripcion']
                 foto_portada=form.cleaned_data['foto_portada']
-                path_portada='imagenes'+foto_portada.name
-                grupo, created=Grupo.objects.get_or_create(titulo=titulo, descripcion=descripcion, foto_portada=foto_portada, path_portada=path_portada)
+                grupo, created=Grupo.objects.get_or_create(titulo=titulo, descripcion=descripcion, foto_portada=foto_portada)
                 perfil=Perfil.objects.get(user__username=request.user.username)
                 grupo.miembros.add(perfil)
                 grupo.save()
+                print "EL GRUPO CON FOTO HA SIDO SALVADO"
                 return HttpResponseRedirect(request.META['HTTP_REFERER'])
             else:
                 print "el fichero con imagen no es valido"
@@ -714,12 +712,7 @@ def enviar_partida_revisar(request):
         p=Perfil.objects.get(user__username=request.user.username)
         revisor=Revisor.objects.get(id=request.POST['revisor'])
         if not PeticionRevision.objects.filter(receptor=revisor.perfil, emisor=p):
-            """ Estamos leyendo la partida y sacando la informacion util para crearla"""
-            path_fichero=BASE_DIR+"/static/sgf/"+request.FILES['fichero'].__str__()
-            lineas=request.FILES['fichero'].chunks()
-            diccionario_informacion=informacion_partida2(lineas, path_fichero) 
-            partida = Sgf(fecha=diccionario_informacion['fecha'],jugador_negro=diccionario_informacion['black'], 
-                               jugador_blanco=diccionario_informacion['blanco'], fichero=request.FILES['fichero'])
+            partida = Sgf(fichero=request.FILES['fichero'])
             partida.save()
             """ Fin crear la partida """
             """Mandamos las notificaciones"""

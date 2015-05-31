@@ -40,11 +40,12 @@ def login_view(request):
                     else:
                         return render_to_response('noactivo.html', context_instance=RequestContext(request))
                 else:
+                    error_login=True
                     login_incorrecto="El nick o password no son validos."
                     formulario_login=AuthenticationForm()
                     user_form = UserForm()
                     perfil_form=PerfilForm()
-                    return render_to_response('login.html', {'formulario_login':formulario_login, 'user_form':user_form, 'perfil_form':perfil_form, 'login_incorrecto':login_incorrecto} ,context_instance=RequestContext(request) )
+                    return render_to_response('login.html', {'formulario_login':formulario_login, 'user_form':user_form, 'perfil_form':perfil_form, 'login_incorrecto':login_incorrecto, 'error':error_login} ,context_instance=RequestContext(request) )
         elif 'registrar' in request.POST:
             #AQUI TENEMOS QUE COMPROBAR SI EL FORMULARIO ES VALIDO
             #if messageform.is_valid():   <-- INCLUIR EL PARENTESIS http://stackoverflow.com/questions/5358566/saving-modelform-erroruser-message-could-not-be-created-because-the-data-didnt
