@@ -34,8 +34,18 @@
 		<button type="submit" class="btn btn-primary" name='actualizar_perfil'>{% bootstrap_icon "star" %}Guardar cambios</button>
 		{% endbuttons %}
 	
-					</form>
-		</div>								
+		</form>
+		</div>				
+		
+		<div class="well">
+			<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseBorrar" aria-expanded="false" aria-controls="collapseBorrar">
+  				Borrar cuenta
+			</button>
+			<div class="collapse" id="collapseBorrar">
+				<div class="alert alert-warning" role="alert">Una vez realizado este proceso no podra recuperar su informacion.</div>
+				<div><a class="btn btn-danger" href="{% url 'redsocial:eliminar_cuenta' %}"> Confirmar </a></div>
+		    </div>
+		</div>				
 								
 {%endblock%}
 

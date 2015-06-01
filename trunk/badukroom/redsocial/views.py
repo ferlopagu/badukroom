@@ -1081,3 +1081,11 @@ def seguir_jugador(request):
         perfil.save()
         print "PERFIL ACTUALIZADO"
         return JsonResponse({})
+
+@login_required(login_url='/login')
+def eliminar_cuenta(request):
+    print "Entro en eliminar cuenta"
+    user = User.objects.get(username=request.user.username)
+    user.delete()
+    print "PERFIL BORRADO"
+    return HttpResponseRedirect("/")
