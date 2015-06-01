@@ -623,13 +623,12 @@ def revisiones(request):
                 page_objects=[]
             lista_partidas=[]
             for p in page_objects:
+                print p
                 dic_partida={}
                 dic_partida["revisor_nickname"]=p.revisor.nickname_kgs
                 dic_partida["revisor_rango"]=p.revisor.perfil.rango
-                dic_partida["jugador_negro_nombre"]=p.jugador_negro.nombre
-                dic_partida["jugador_negro_id"]=p.jugador_negro.id
-                dic_partida["jugador_blanco_nombre"]=p.jugador_blanco.nombre
-                dic_partida["jugador_blanco_id"]=p.jugador_blanco.id
+                dic_partida["jugador_negro_nombre"]=p.jugador_negro
+                dic_partida["jugador_blanco_nombre"]=p.jugador_blanco
                 dic_partida["rango_negro"]=p.rango_negro
                 dic_partida["rango_blanco"]=p.rango_blanco
                 dic_partida["fecha"]=p.fecha

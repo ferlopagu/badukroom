@@ -21,19 +21,43 @@ def cargaComentariosRelleno():
         fecha=datetime.datetime.now()
         #total = Perfil.objects.all().count()
         #id=random.randrange(0,total-1)
-        perfil = Perfil.objects.get(user__username='priscilacb')
+        perfil = Perfil.objects.get(user__username='manu')
         comentario = Comentario(fecha=fecha, perfil=perfil, texto=texto)
         comentario.save()
         print comentario.__unicode__()
         j=0
         while j<3:
-            perfil2 = Perfil.objects.get(user__username='fla2727')
+            perfil2 = Perfil.objects.get(user__username='fran')
             texto2="Respuesta a comentario "+str(i)+' - '+str(j)+'   '.join(random.choice(string.ascii_lowercase) for x in range(350))
             respuesta=Respuesta(fecha=fecha, perfil=perfil2, texto=texto2, comentario=comentario)
             respuesta.save()
             j+=1
             print "Respuesta: "+str(j)
         i+=1
+    print "=======CARGA FINALIZADA====="
+
+
+def cargaComentariosRelleno2():
+    
+    print "=====EMPEZANDO CARGA======"
+    
+    for p in Perfil.objects.all():
+        i=0
+        while i < 20:
+            texto="Comentario "+str(i)+'  '.join(random.choice(string.ascii_lowercase) for x in range(150))
+            fecha=datetime.datetime.now()
+            comentario = Comentario(fecha=fecha, perfil=p, texto=texto)
+            comentario.save()
+            print comentario.__unicode__()
+            j=0
+            while j<3:
+                perfil2 = Perfil.objects.get(user__username='lolo')
+                texto2="Respuesta a comentario "+str(i)+' - '+str(j)+'   '.join(random.choice(string.ascii_lowercase) for x in range(100))
+                respuesta=Respuesta(fecha=fecha, perfil=perfil2, texto=texto2, comentario=comentario)
+                respuesta.save()
+                j+=1
+                print "Respuesta: "+str(j)
+            i+=1
     print "=======CARGA FINALIZADA====="
 
 def creaUser(n_username, n_password, n_email, n_first_name, n_last_name):
@@ -61,6 +85,7 @@ if __name__ == '__main__':
     import django
     django.setup()
     
+    """ DESCOMENTAR SEGUN LA CARGA DE CONTENIDO QUE SE QUIERA HACER TENIENDO EN CUENTA QUE EXISTAN LOS PERFILES ANTES DE CARGAR COMENTARIOS
     
     a=creaUser("lolo", "lolo", "lolo@hotmail.com", "Lolo", "Amador")
     b=creaUser("fran", "fran", "fran@hotmail.com", "Fran", "Hernandez")
@@ -113,7 +138,9 @@ if __name__ == '__main__':
     addAmigos(pf, amigos=[pa,pb,pc,pd,ph,pi,pj,pk,pl])
     addAmigos(pg, amigos=[pa])
     
-    #cargaComentariosRelleno()
     
+    cargaComentariosRelleno()
+    
+    cargaComentariosRelleno2()
     print "Carga completada de perfiles y relaciones"
-    
+    """
